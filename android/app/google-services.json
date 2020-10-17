@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "611236432613",
+    "firebase_url": "https://wewatch-16741.firebaseio.com",
+    "project_id": "wewatch-16741",
+    "storage_bucket": "wewatch-16741.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:611236432613:android:3c48e4df7cc7f0441d220c",
+        "android_client_info": {
+          "package_name": "watch.we.we_watch_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "611236432613-6sqsev2ne8ocpnd7i8a00coflkpskm2h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCOgR1rslP9UAqZbYFm2ZL5QB79Sx6XP_c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "611236432613-6sqsev2ne8ocpnd7i8a00coflkpskm2h.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="20.479" height="29.844" viewBox="0 0 20.479 29.844">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #444b69;
+      }
+    </style>
+  </defs>
+  <g id="bookmark" transform="translate(-80.333)">
+    <g id="Group_6280" data-name="Group 6280" transform="translate(80.333)">
+      <path id="Path_6390" data-name="Path 6390" class="cls-1" d="M81.207,0h18.73a.874.874,0,0,1,.874.874v28.1a.874.874,0,0,1-1.493.618l-8.747-8.747-8.747,8.747a.874.874,0,0,1-1.493-.618V.874A.874.874,0,0,1,81.207,0Zm9.365,18.73a.874.874,0,0,1,.618.256l7.873,7.873V1.749H82.082v25.11l7.872-7.872A.874.874,0,0,1,90.572,18.73Z" transform="translate(-80.333)"/>
+    </g>
+  </g>
+</svg>
