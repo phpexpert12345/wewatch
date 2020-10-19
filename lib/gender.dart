@@ -13,6 +13,7 @@ import 'package:we_watch_app/email_id.dart';
 import 'package:we_watch_app/experience_details.dart';
 import 'package:we_watch_app/size_config.dart';
 import 'package:we_watch_app/ui/show_up.dart';
+import 'package:we_watch_app/util/ImageSelector.dart';
 import 'package:we_watch_app/your_birthday.dart';
 
 
@@ -399,7 +400,7 @@ class _GenderState extends State<Gender> {
                           Navigator.push(
                             context,
                             CupertinoPageRoute(
-                                builder: (context) => Birthday()),
+                                builder: (context) => ImageSelector()),
                           );
                         }
                         else{

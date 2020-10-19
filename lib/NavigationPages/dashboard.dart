@@ -59,7 +59,7 @@ class _DashboardState extends State<Dashboard> {
     setLoading(true);
   }
 
-  String first_name, last_name, image;
+  String first_name, last_name, image,user_type;
   String greeting = "";
   bool visible = false;
   TargetPlatform _platform;
@@ -132,6 +132,7 @@ class _DashboardState extends State<Dashboard> {
             " " +
             body['data']['last_name'].toString();
         image = body['data']['image'].toString();
+        user_type=body['data']['user_type'].toString();
 
         print("Ankit 22" + first_name);
         prefs.setString("user_name", first_name);
@@ -470,7 +471,7 @@ class _DashboardState extends State<Dashboard> {
 
 
     return Scaffold(
-        floatingActionButton: first_name != null
+        floatingActionButton: !["",null].contains(user_type) && user_type.compareTo("reporter")==0
             ? FloatingActionButton(
                 child: Icon(Icons.switch_video),
                 onPressed: () {

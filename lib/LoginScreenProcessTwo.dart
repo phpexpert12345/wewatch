@@ -64,7 +64,7 @@ class _LoginScreenProcessTwoState extends State<LoginScreenProcessTwo> {
     });
 
 
-    _register();
+    await _register();
 
     // Getting value from Controller
 
@@ -94,20 +94,21 @@ class _LoginScreenProcessTwoState extends State<LoginScreenProcessTwo> {
     }
 
 
-    // Starting Web API Call.
-    var response = await http.post(url, body: formData);
 
-    // Getting Server response into variable.
-
-    var body = await json.decode(response.body);
-    var message = jsonDecode(response.body);
-
-    print("ffff" + formData.toString());
 
 //testing
     try {
+      // Starting Web API Call.
+      var response = await http.post(url, body: formData);
+
+      // Getting Server response into variable.
+
+
+      print("ffff" + formData.toString());
 
       if (response.statusCode==200) {
+        var message = jsonDecode(response.body);
+        var body = await json.decode(response.body);
         prefs.setString('access_token',body['data']['access_token'] );
         prefs.setString('token_type',body['data']['token_type'] );
         prefs.setInt('expires_in',body['data']['expires_in'] );
@@ -238,12 +239,12 @@ class _LoginScreenProcessTwoState extends State<LoginScreenProcessTwo> {
           );
         }
     } catch (e) {
-      Fluttertoast.showToast(
-        msg: e.toString(),
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-//        timeInSecForIos: 1,
-      );
+//       Fluttertoast.showToast(
+//         msg: e.toString(),
+//         toastLength: Toast.LENGTH_SHORT,
+//         gravity: ToastGravity.CENTER,
+// //        timeInSecForIos: 1,
+//       );
       throw Exception(e);
     }
     // If the Response Message is Matched.

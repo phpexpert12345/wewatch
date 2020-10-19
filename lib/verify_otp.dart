@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:we_watch_app/API/WatchAPI.dart';
 import 'package:we_watch_app/LoginScreenProcessTwo.dart';
 import 'package:we_watch_app/create_an_account.dart';
 import 'package:we_watch_app/ui/show_up.dart';
@@ -53,8 +54,7 @@ class _VerifyOTPState extends State<VerifyOTP> {
 //    String password = _mobileFilter.text.toString();
 
     // SERVER LOGIN API URL
-    var url =
-        'https://wewatch.in/wewatch-up/api/v1/user_otp_verify';
+    var url =WatchAPI.USER_OTP_VERIFY;
     Map data = {
 
       'otp':_emailFilter.text.toString(),
@@ -81,14 +81,15 @@ class _VerifyOTPState extends State<VerifyOTP> {
     // Starting Web API Call.
     var response = await http.post(url, body: formD,headers: headers);
 
-    // Getting Server response into variable.
-
-    var body = await json.decode(response.body);
-    var message = jsonDecode(response.body);
-
-    print("ffff" + message.toString());
 
     try {
+      // Getting Server response into variable.
+
+      var body = await json.decode(response.body);
+      var message = jsonDecode(response.body);
+
+      print("ffff" + message.toString());
+
       if (response.statusCode == 200) {
 //        otp = body["otp"];
         //prefs.setString('user_token',body['user_token'] );

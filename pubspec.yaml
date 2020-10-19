@@ -61,6 +61,7 @@ dependencies:
   permission_handler: ^5.0.1+1
   geocoder: 0.2.1
   video_thumbnail : 0.2.2
+#  google_maps_webservice: 0.0.18
 
   flutter_places_autocomplete: 0.2.0
 

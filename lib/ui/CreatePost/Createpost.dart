@@ -111,7 +111,7 @@ class _CreatePostState extends State<CreatePost> {
                               )
                             : Container()
                         : Container(
-                            height: 150,
+                            //height: 150,
                             margin: EdgeInsets.only(left: 5.0,right: 5.0),
                             decoration: BoxDecoration(
                               border: Border(top: BorderSide(color: COLORS.CONTAINER_BORDER_COLOR),
@@ -123,7 +123,7 @@ class _CreatePostState extends State<CreatePost> {
 
                             ),
                             child: TextFormField(
-                              maxLines: 15,
+                              maxLines: 2,
                               cursorColor: Colors.black,
                               decoration: new InputDecoration(
                                   border: InputBorder.none,
@@ -133,8 +133,11 @@ class _CreatePostState extends State<CreatePost> {
                                   disabledBorder: InputBorder.none,
                                   contentPadding: EdgeInsets.only(
                                       left: 15, bottom: 11, top: 11, right: 15),
-                                  hintText: 'What is your mind '+widget.userName +"?",
+                                  hintText: "Video title ",
                               hintStyle: new TextStyle(color: Colors.black45)),
+                              inputFormatters: [
+                                LengthLimitingTextInputFormatter(50),
+                              ],
                             ),
                           ),
                     SizedBox(height: 5.0,),
@@ -149,7 +152,7 @@ class _CreatePostState extends State<CreatePost> {
                           borderRadius: BorderRadius.all(Radius.circular(8.0))
                         ),
                       child: TextFormField(
-                        maxLines: 2,
+                        maxLines: 5,
                         cursorColor: Colors.black,
                         decoration: new InputDecoration(
                             border: InputBorder.none,
@@ -187,7 +190,7 @@ class _CreatePostState extends State<CreatePost> {
                           children: [
                             Text('Add Video'),
                             //Text(fileNameVideo!=null?fileNameVideo:"",style: new TextStyle(fontSize: 12,color: Colors.black45),)
-                            fileNameVideo!=null?Icon(Icons.check_circle,size: 18,color: Colors.green.shade500,):Container()
+                            _videoFile!=null?Icon(Icons.check_circle,size: 18,color: Colors.green.shade500,):Container()
                           ],
                         ),
                         leading: Icon(
@@ -273,8 +276,8 @@ class _CreatePostState extends State<CreatePost> {
                       title: Text('Add Location'),
                       trailing: GestureDetector(
                         onTap: (){
-                          _getCurrentLocation();
-                          //Navigator.push(context, new MaterialPageRoute(builder: (context) => GeoLocation()));
+                          //_getCurrentLocation();
+                          Navigator.push(context, new MaterialPageRoute(builder: (context) => GeoLocation()));
                         },
                         child: Icon(
                           Icons.add_circle_outline,
@@ -438,6 +441,63 @@ class _CreatePostState extends State<CreatePost> {
     );
   }
 
+  showTrimAlert(){
+    showDialog(context: context,
+    builder: (BuildContext cntxt){
+      return AlertDialog(
+        title: Text("You want to trim/ crop the video ?"),
+        actions: [
+          RaisedButton(
+            onPressed: () async{
+              Navigator.pop(cntxt);
+              await loadTrimmer(_videoFile);
+            },
+            color: Colors.blue,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10)
+            ),
+            child: Text("Yes"),
+          ),
+          RaisedButton(
+            onPressed: (){
+              Navigator.pop(cntxt);
+            },
+            color: Colors.blue,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10)
+            ),
+            child: Text("No"),
+          ),
+        ],
+      );
+    });
+  }
+  Future<void> captureVideo(ImageSource imageSource) async {
+    try {
+      var videoFile = await ImagePicker.pickVideo(source: imageSource);
+//      videoFile = await videoFile.rename("${_videoFile.path}.mp4");
+      int dt=DateTime.now().millisecondsSinceEpoch;
+
+      await new File(videoFile.toString()).copy("/storage/emulated/0/${dt}.mp4");
+      await new File(videoFile.toString()).delete();
+      setState(() {
+
+        _videoFile = videoFile;
+        print("path"+_videoFile.path);
+        bytevideo = videoFile.readAsBytesSync();
+        base64video = base64Encode(videoFile.readAsBytesSync());
+        fileNameVideo = videoFile.path.split('/').last;
+        final letter = 'jpg';
+        final newLetter = 'mp4';
+        fileNameVideo = fileNameVideo.replaceAll(letter, newLetter);
+
+        print(fileNameVideo + '------' + base64video);
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
   showBottomDialogAddVideo(String s){
     showModalBottomSheet(
         backgroundColor: Colors.transparent,
@@ -481,6 +541,7 @@ class _CreatePostState extends State<CreatePost> {
                             onTap: () async{
                               if(s.trim().compareTo("Video")==0){
                                 Navigator.pop(cntxt);
+                                //captureVideo(ImageSource.camera);
                                 await _recordVideo();
                               } else if(s.trim().compareTo("Image")==0){
                                 Navigator.pop(cntxt);
@@ -564,23 +625,29 @@ class _CreatePostState extends State<CreatePost> {
 
   // it will override audio of video file
   void _videoMerger() async {
-    _video = File('/storage/emulated/0/mute_${id}.mp4');
-    final appDir = await syspaths.getApplicationDocumentsDirectory();
-    String rawDocumentPath = appDir.path;
-    final outputPath = '$rawDocumentPath/output.mp4';
-    final op = '/storage/emulated/0/news_${id}.mkv';
-    final FlutterFFmpeg _flutterFFmpeg = new FlutterFFmpeg();
-    print('sundar' + outputPath);
-    String commandToExecute =
-        '-y -i ${_video.path} -i ${recording.path} -c:v copy -c:a aac ${op}';
-    // '-y -i ${_storedVideoOne.path} -an ${op}';
-    // '-y -i ${_storedVideoOne.path} -i ${_storedVideoTwo.path} -r 24000/1001 -filter_complex \'[0:v:0][0:a:0][1:v:0][1:a:0]concat=n=2:v=1:a=1[out]\' -map \'[out]\' $outputPath';
-    // '-y -i ${_storedVideoOne.path} -i ${_storedVideoTwo.path} -filter_complex \'[0:0][1:0]concat=n=2:v=1:a=0[out]\' -map \'[out]\' $outputPath';
-    _flutterFFmpeg.execute(commandToExecute).then((r) {
-      setState(() {
-        rc = r;
+    try {
+      _video = File('/storage/emulated/0/mute_${id}.mp4');
+      final appDir = await syspaths.getApplicationDocumentsDirectory();
+      String rawDocumentPath = appDir.path;
+      final outputPath = '$rawDocumentPath/output.mp4';
+      final op = '/storage/emulated/0/news_${id}.mkv';
+      final FlutterFFmpeg _flutterFFmpeg = new FlutterFFmpeg();
+      print('sundar' + outputPath);
+      String commandToExecute;
+        commandToExecute =
+            '-y -i ${_video.path} -i ${recording
+            .path} -c:v copy -c:a aac ${op}';
+        // '-y -i ${_storedVideoOne.path} -an ${op}';
+        // '-y -i ${_storedVideoOne.path} -i ${_storedVideoTwo.path} -r 24000/1001 -filter_complex \'[0:v:0][0:a:0][1:v:0][1:a:0]concat=n=2:v=1:a=1[out]\' -map \'[out]\' $outputPath';
+        // '-y -i ${_storedVideoOne.path} -i ${_storedVideoTwo.path} -filter_complex \'[0:0][1:0]concat=n=2:v=1:a=0[out]\' -map \'[out]\' $outputPath';
+      _flutterFFmpeg.execute(commandToExecute).then((r) {
+        setState(() {
+          rc = r;
+        });
       });
-    });
+    }catch(ex){
+      debugPrint("merging exception"+ex);
+    }
   }
 
 // This funcion will helps you to pick a Video File
@@ -628,6 +695,7 @@ class _CreatePostState extends State<CreatePost> {
   Future<String> _recordVideo() async {
     final appDir = await syspaths.getApplicationDocumentsDirectory();
     String rawDocumentPath = appDir.path;
+    print("record path"+rawDocumentPath);
     final outputPath = '$rawDocumentPath/output.mp4';
     final op = '/storage/emulated/0/mute_${id}.mp4';
     final FlutterFFmpeg _flutterFFmpeg = new FlutterFFmpeg();
@@ -638,7 +706,11 @@ class _CreatePostState extends State<CreatePost> {
       });
       GallerySaver.saveVideo(recordedVideo.path).then((_) {
         print("path"+recordedVideo.path);
-        loadTrimmer(recordedVideo);
+        setState(() {
+          _videoFile=recordedVideo;
+        });
+        //showTrimAlert();
+        //loadTrimmer(recordedVideo);
         setState(() {
           _buttonText = 'Video Saved!\n\nClick to Record New Video';
           if (_storedVideoOne == null) {
@@ -646,6 +718,7 @@ class _CreatePostState extends State<CreatePost> {
             String commandToExecute =
                 // '-y -i ${_storedVideoOne.path} -i ${recording.path} -c:v copy -c:a aac ${op}';
                 '-y -i ${_storedVideoOne.path} -an ${op}';
+            print("stored"+commandToExecute);
             // '-y -i ${_storedVideoOne.path} -i ${_storedVideoTwo.path} -r 24000/1001 -filter_complex \'[0:v:0][0:a:0][1:v:0][1:a:0]concat=n=2:v=1:a=1[out]\' -map \'[out]\' $outputPath';
             // '-y -i ${_storedVideoOne.path} -i ${_storedVideoTwo.path} -filter_complex \'[0:0][1:0]concat=n=2:v=1:a=0[out]\' -map \'[out]\' $outputPath';
             _flutterFFmpeg
@@ -657,6 +730,7 @@ class _CreatePostState extends State<CreatePost> {
             String commandToExecute =
                 // '-y -i ${_storedVideoOne.path} -i ${recording.path} -c:v copy -c:a aac ${op}';
                 '-y -i ${_storedVideoOne.path} -an ${op}';
+            print("stored"+commandToExecute);
             // setState(() {
             //   fileNameVideo="${op}";
             //
@@ -675,13 +749,13 @@ class _CreatePostState extends State<CreatePost> {
 
   }
   loadTrimmer(File f) async{
-
     if (f != null) {
       await _trimmer.loadVideo(videoFile: File(f.path));
-      var sk= await  Navigator.of(context).push(MaterialPageRoute(builder: (context)=>TrimmerView(_trimmer)));
-      if(sk!=null){
+      var trimFile= await  Navigator.of(context).push(MaterialPageRoute(builder: (context)=>TrimmerView(_trimmer)));
+      print("trim"+trimFile);
+      if(trimFile!=null){
         setState(() {
-          _videoFile=new File(sk);
+          _videoFile=new File(trimFile);
         });
       }
     }
@@ -707,7 +781,8 @@ class _CreatePostState extends State<CreatePost> {
         fileNameVideo = fileNameVideo.replaceAll(letter, newLetter);
         print(fileNameVideo + '------' + base64video);
       });
-      await loadTrimmer(_videoFile);
+      //showTrimAlert();
+      //await loadTrimmer(_videoFile);
 
     } catch (e) {
       print(e);

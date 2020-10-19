@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:we_watch_app/ui/GeoLocation/Suggestion.dart';
 
 class AddressSearch extends SearchDelegate<Suggestion> {
+  final token;
+  final text;
+  AddressSearch({this.token,this.text});
   @override
   List<Widget> buildActions(BuildContext context) {
     return [
@@ -31,11 +34,13 @@ class AddressSearch extends SearchDelegate<Suggestion> {
     return null;
   }
 
+
   @override
   Widget buildSuggestions(BuildContext context) {
     return FutureBuilder(
       // We will put the api call here
-      future: null,
+
+      future: new PlaceApiProvider(token).fetchSuggestions(text, "74.636383"),  //pass test lang & lati data
       builder: (context, snapshot) => query == ''
           ? Container(
         padding: EdgeInsets.all(16.0),
