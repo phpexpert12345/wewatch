@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:we_watch_app/API/WatchAPI.dart';
 import 'package:we_watch_app/LoginScreenProcessTwo.dart';
 import 'package:we_watch_app/create_an_account.dart';
 import 'package:we_watch_app/ui/show_up.dart';
@@ -16,7 +17,8 @@ import 'package:http/http.dart' as http;
 
 class PasswordOTP extends StatefulWidget {
   final String mobileNumber;
-  PasswordOTP({Key key, @required this.mobileNumber}) : super(key: key);
+  final via;
+  PasswordOTP({Key key, @required this.mobileNumber,this.via}) : super(key: key);
   @override
   _PasswordOTPState createState() => new _PasswordOTPState();
 }
@@ -59,15 +61,25 @@ class _PasswordOTPState extends State<PasswordOTP> {
 
     // SERVER LOGIN API URL
     var url =
-        'https://wewatch.in/wewatch-up/api/v1/forgot-password-otp-verify';
-    Map data = {
+        WatchAPI.FORGOT_PASSWORD_OTP_VERIFY;
+    Map data;
+    if(!["",null].contains(widget.via) &&widget.via.toString().compareTo("email")==0) {
+      data = {
+        'otp': _emailFilter.text.toString(),
+        'email': widget.mobileNumber,
+        'password': _passwordFilter.text.toString(),
+        'password_confirmation': _passwordFilter.text.toString(),
 
-      'otp':_emailFilter.text.toString(),
-      'phone':widget.mobileNumber,
-      'password':_passwordFilter.text.toString(),
-      'password_confirmation':_passwordFilter.text.toString(),
+      };
+    }else {
+      data = {
+        'otp': _emailFilter.text.toString(),
+        'phone': widget.mobileNumber,
+        'password': _passwordFilter.text.toString(),
+        'password_confirmation': _passwordFilter.text.toString(),
 
-    };
+      };
+    }
     String formD = json.encode(data);
 
     // Store all data with Param Name.
@@ -82,13 +94,14 @@ class _PasswordOTPState extends State<PasswordOTP> {
 
     // Getting Server response into variable.
 
-    var body = await json.decode(response.body);
-    var message = jsonDecode(response.body);
-
-    print("ffff" + message.toString());
 
     try {
       if (response.statusCode == 200) {
+
+        var body = await json.decode(response.body);
+        var message = jsonDecode(response.body);
+
+        print("ffff" + message.toString());
 //        otp = body["otp"];
         //prefs.setString('user_token',body['user_token'] );
 //        prefs.setString('id', body['id']);
@@ -229,12 +242,12 @@ class _PasswordOTPState extends State<PasswordOTP> {
         );
       }
     } catch (e) {
-      Fluttertoast.showToast(
-        msg: e.toString(),
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-//        timeInSecForIos: 1,
-      );
+//       Fluttertoast.showToast(
+//         msg: e.toString(),
+//         toastLength: Toast.LENGTH_SHORT,
+//         gravity: ToastGravity.CENTER,
+// //        timeInSecForIos: 1,
+//       );
       throw Exception(e);
     }
     // If the Response Message is Matched.
@@ -535,7 +548,7 @@ class _PasswordOTPState extends State<PasswordOTP> {
 
                       physics: NeverScrollableScrollPhysics(),
                       children: <Widget>[
-                        ShowUp(
+                        !["",null].contains(widget.via) && widget.via.toString().compareTo("phone")==0?ShowUp(
                           child: Padding(
                             padding: const EdgeInsets.fromLTRB(
                                 0.0, 20.0, 0.0, 0.0),
@@ -555,7 +568,27 @@ class _PasswordOTPState extends State<PasswordOTP> {
                             ),
                           ),
                           delay: delayAmount,
-                        ),
+                        ):ShowUp(
+                                child: Padding(
+                                  padding: const EdgeInsets.fromLTRB(
+                                      0.0, 20.0, 0.0, 0.0),
+                                  child: Align(
+                                    child: new Text(
+                                      'Please enter the code you received via email on ${widget.mobileNumber}',
+                                      style: TextStyle(
+                                        color: Color(0xFF5a6381),
+                                        fontSize: 15,
+                                        letterSpacing:0,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                      textDirection: TextDirection.ltr,
+                                    ),
+                                    alignment: Alignment.center,
+                                  ),
+                                ),
+                                delay: delayAmount,
+                              ),
 
 
                         SizedBox(height: 20,),

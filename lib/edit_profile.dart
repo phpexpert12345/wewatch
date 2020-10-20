@@ -195,12 +195,12 @@ class _EditProfileState extends State<EditProfile> {
         );
       }
     } catch (e) {
-      Fluttertoast.showToast(
-        msg: e.toString(),
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-//        timeInSecForIosWeb: 1,
-      );
+//       Fluttertoast.showToast(
+//         msg: e.toString(),
+//         toastLength: Toast.LENGTH_SHORT,
+//         gravity: ToastGravity.CENTER,
+// //        timeInSecForIosWeb: 1,
+//       );
       throw Exception(e);
     }
     // If the Response Message is Matched.
@@ -304,6 +304,52 @@ class _EditProfileState extends State<EditProfile> {
     } catch (e) {
       print(e);
     }
+  }
+  Future removeProfilePic() async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String access_token = prefs.getString('access_token');
+    setState(() {
+      visible = true;
+    });
+    Map<String, String> headers = {'Authorization': 'Bearer $access_token'};
+    //var stream = new http.ByteStream("");
+    // get file length
+
+   // var length = await _imageFile.length();
+    var request = http.MultipartRequest(
+        'POST', Uri.parse('https://wewatch.in/wewatch-up/api/v1/profile'));
+    request.fields["first_name"] = _firstnameController.text;
+    request.fields["last_name"] = _lastnameController.text;
+    request.fields["address"] = _addressController.text;
+    request.fields["state_id"] = _myselection2;
+    request.fields["city_id"] = _mySelection;
+    request.fields["zipcode"] = _zipcodeController.text;
+    request.fields["gender"] = gender;
+    request.fields["dob"] = dob;
+    request.fields["image"]="";
+    request.headers.addAll(headers);
+    var response = await request.send();
+    if(response.statusCode==200){
+      setState(() {
+        visible = false;
+      });
+      Fluttertoast.showToast(
+          msg: "Your profile update successfully!!",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.lightGreen,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      Navigator.pushReplacement(
+          context,
+          CupertinoPageRoute(builder: (context) => HomePageTwo()),);
+    }else{
+      setState(() {
+        visible = false;
+      });
+    }
+
   }
 
   Future updateProfile() async {
@@ -491,12 +537,12 @@ class _EditProfileState extends State<EditProfile> {
             fontSize: 16.0);
       }
     } catch (e) {
-      Fluttertoast.showToast(
-        msg: e.toString(),
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-//        timeInSecForIos: 1,
-      );
+//       Fluttertoast.showToast(
+//         msg: e.toString(),
+//         toastLength: Toast.LENGTH_SHORT,
+//         gravity: ToastGravity.CENTER,
+// //        timeInSecForIos: 1,
+//       );
       throw Exception(e);
     }
     // If the Response Message is Matched.
@@ -1767,6 +1813,7 @@ class _EditProfileState extends State<EditProfile> {
             content: Container(
               child: Center(
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
                     GestureDetector(
                       onTap: () {
@@ -1790,6 +1837,34 @@ class _EditProfileState extends State<EditProfile> {
                         width: 150,
                       ),
                     ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.of(context, rootNavigator: true).pop();
+                        //captureImage(ImageSource.gallery);
+                        removeProfilePic();
+                      },
+                      child: Container(
+                        width: 140,
+                        padding: EdgeInsets.all(2.0),
+                        margin: EdgeInsets.only(bottom: 4.0),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.red.shade200
+
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.only(left:3.0,right: 2),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                                Text("Remove Profile ",style: new TextStyle(color:Colors.white),),
+                                Icon(Icons.delete,color: Colors.white,)
+                            ],
+                          ),
+                        ),
+                      )
+                    ),
                     Center(
                       child: new RaisedButton(
                         onPressed: () {
@@ -1807,7 +1882,7 @@ class _EditProfileState extends State<EditProfile> {
                   ],
                 ),
               ),
-              height: 150,
+              height: 180,
               width: 100,
             ),
           );

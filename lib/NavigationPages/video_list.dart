@@ -2103,12 +2103,12 @@ Future saveLike(String videoId,String status) async {
       );
     }
   } catch (e) {
-    Fluttertoast.showToast(
-      msg: e.toString(),
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.CENTER,
-//        timeInSecForIos: 1,
-    );
+//     Fluttertoast.showToast(
+//       msg: e.toString(),
+//       toastLength: Toast.LENGTH_SHORT,
+//       gravity: ToastGravity.CENTER,
+// //        timeInSecForIos: 1,
+//     );
     throw Exception(e);
   }
   // If the Response Message is Matched.

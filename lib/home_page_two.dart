@@ -234,20 +234,22 @@ class _HomePageTwoState extends State<HomePageTwo> {
 
     // Getting Server response into variable.
 
-    var body = await json.decode(response.body);
-    var message = jsonDecode(response.body);
 
-    print("ffff" + message.toString());
+
 
     try {
       if (response.statusCode == 200) {
+        var body = await json.decode(response.body);
+        var message = jsonDecode(response.body);
+        debugPrint("profile data" + message.toString());
+
         prefs.setString('first_name', body['data']['first_name']);
         prefs.setString('last_name', body['data']['last_name']);
         prefs.setString('email', body['data']['email']);
-        prefs.setString('emp_type', body['data']['emp_type']);
+        prefs.setString('emp_type', body['data']['emp_type']!=null?body['data']['emp_type']:"");
         prefs.setString('gender', body['data']['gender']);
         prefs.setString('mobile_number', body['data']['mobile_number']);
-        prefs.setString('slug', body['data']['slug']);
+        prefs.setString('slug', body['data']['slug']!=null?body['data']['slug']:"");
         prefs.setString('date_of_birth', body['data']['date_of_birth']);
         prefs.setString('otp', body['data']['otp']);
         prefs.setString('status', body['data']['status']);

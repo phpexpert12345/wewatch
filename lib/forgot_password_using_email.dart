@@ -1,14 +1,21 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:we_watch_app/API/WatchAPI.dart';
 import 'package:we_watch_app/size_config.dart';
+import 'package:we_watch_app/ui/forgot_password_otp.dart';
 import 'package:we_watch_app/ui/show_up.dart';
+import 'package:http/http.dart' as http;
 
-class ForgotPassword extends StatefulWidget {
+class ForgotPasswordUsinEmail extends StatefulWidget {
   @override
   _ForgotPasswordState createState() => new _ForgotPasswordState();
 }
 
-class _ForgotPasswordState extends State<ForgotPassword> {
+class _ForgotPasswordState extends State<ForgotPasswordUsinEmail> {
   int delayAmount = 400;
 
   GlobalKey<FormState> _key = new GlobalKey();
@@ -20,7 +27,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     RegExp regExp = new RegExp(pattern);
     if (value.length == 0) {
       return "Email is Required";
-    } else if(!regExp.hasMatch(value)){
+    } else if(!regExp.hasMatch(value.trim())){
       return "Invalid Email";
     }else {
       return null;
@@ -33,7 +40,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
       return null;
     }
   }
-  final TextEditingController _emailFilter = new TextEditingController();
+  final TextEditingController _emailController = new TextEditingController();
   final TextEditingController _passwordFilter = new TextEditingController();
   Widget _formLogin(BuildContext context) {
     return new Container(
@@ -42,7 +49,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
 
           new Container(
             child: new TextFormField(
-              controller: _emailFilter,
+              controller: _emailController,
               cursorColor: Color(0xFFb0bbc6),
               decoration: new InputDecoration(
                 labelText: 'Email',
@@ -96,41 +103,6 @@ class _ForgotPasswordState extends State<ForgotPassword> {
             color: Colors.white,),
         ),
       ),
-//      bottomSheet: Container(
-//        height: 80,
-//        child:new Align(
-//          child: GestureDetector(
-//            onTap: () {
-////                Navigator.push(
-////                  context,
-////                  MaterialPageRoute(builder: (context) => ForgotPasswordApp()),
-////                );
-//            },
-//            child: Padding(
-//                padding:
-//                const EdgeInsets.fromLTRB(30, 0, 30, 10),
-//                child: Row(
-//                  crossAxisAlignment:CrossAxisAlignment.center,
-//                  mainAxisAlignment: MainAxisAlignment.center,
-//                  children: <Widget>[
-//                    Expanded(
-//                      child: new Text(
-//                        "Click next means you accept Terms of Services and Privacy Policy ",
-//                        textAlign: TextAlign.center,
-//                        style: TextStyle(
-//                            fontWeight: FontWeight.w200,
-//                            fontSize: 13),
-//                      ),
-//                    ),
-//
-//
-//                  ],
-//                )
-//            ),
-//          ),
-//          alignment: Alignment.center,
-//        ),
-//      ),
       body: SafeArea(
         child: Stack(
           children: <Widget>[
@@ -195,25 +167,12 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                             child: Center(
                                 child: GestureDetector(
                                   onTap: () {
-//                                  FocusScope.of(context).requestFocus(FocusNode());
-//                                  if (_key.currentState.validate()) {
-//                                    // No any error in validation
-//                                    _key.currentState.save();
-//                                    // print("Name $name");
-//                                    print("Mobile $_password");
-//                                    print("Email $_email");
-//
-//                                    getToekn();
-//
-//                                  } else {
-//                                    // validation error
-//                                    setState(() {
-//                                      _validate = true;
-//                                      isResponse=false;
-//                                    });
-//
-//                                  }
-                                  },
+                                    if (_key.currentState.validate()) {
+                                      _key.currentState.save();
+                                      userLogin();
+
+                                    }
+                                    },
                                   child: Container(
                                     width: MediaQuery.of(context).size.width,
                                     padding: EdgeInsets.symmetric(vertical: 1.26 *  SizeConfig.heightMultiplier,),
@@ -248,22 +207,12 @@ class _ForgotPasswordState extends State<ForgotPassword> {
 
 
                         SizedBox(height:80,),
-
-
-
-
-
                       ],
                       shrinkWrap: true,
                     ),
 
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(15.0),
-                      image: DecorationImage(
-                        image: AssetImage("assets/images/card_background.png"),
-                        fit: BoxFit.fill,
-
-                      ),
                     ),
 
                   ),
@@ -277,4 +226,159 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     );
   }
 
+  bool visible=false;
+
+  Future userLogin() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    // Showing CircularProgressIndicator.
+    setState(() {
+      visible = true;
+    });
+
+    var url =
+        WatchAPI.FORGOT_PASSWORD;
+    Map data = {
+      'email':_emailController.text.toString(),
+    };
+    String formD = json.encode(data);
+
+    // Store all data with Param Name.
+
+
+    Map<String,String> headers = {'Content-type':'application/json','Accept': 'application/json',};
+
+
+    // Starting Web API Call.
+    var response = await http.post(url, body: formD,headers: headers);
+
+    // Getting Server response into variable.
+
+
+
+
+    try {
+      if (response.statusCode == 200) {
+        var body = await json.decode(response.body);
+        var message = jsonDecode(response.body);
+        print("ffff" + message.toString());
+
+        setState(() {
+          visible = false;
+        });
+        if(body['data']['message'].toString()=='Already registered!!') {
+          Fluttertoast.showToast(
+              msg: body['data']['message'],
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              backgroundColor: Color(0xff00adef),
+              textColor: Colors.white,
+              fontSize: 16.0
+          );
+
+        }
+        else{
+          Fluttertoast.showToast(
+              msg: body['data']['message'],
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              backgroundColor: Color(0xff00adef),
+              textColor: Colors.white,
+              fontSize: 16.0
+          );
+          Navigator.push(
+            context,
+            CupertinoPageRoute(builder: (context) => PasswordOTP(mobileNumber: _emailController.text.toString(),via: "email",)),
+          );
+        }
+
+      } else if(response.statusCode==422){
+        // If Email or Password did not Matched.
+        // Hiding the CircularProgressIndicator.
+        setState(() {
+          visible = false;
+        });
+        Fluttertoast.showToast(
+            msg: "Validation Failed",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+
+      }
+      else if(response.statusCode==400){
+        // If Email or Password did not Matched.
+        // Hiding the CircularProgressIndicator.
+        setState(() {
+          visible = false;
+        });
+        Fluttertoast.showToast(
+            msg: "Request Fail",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+
+      }else if(response.statusCode==401){
+        // If Email or Password did not Matched.
+        // Hiding the CircularProgressIndicator.
+        setState(() {
+          visible = false;
+        });
+
+        Fluttertoast.showToast(
+            msg: "Authorization Failure",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+
+      }else if(response.statusCode==500){
+        // If Email or Password did not Matched.
+        // Hiding the CircularProgressIndicator.
+        setState(() {
+          visible = false;
+        });
+        Fluttertoast.showToast(
+            msg: "Server Error",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+
+      }
+      else
+      {
+        Fluttertoast.showToast(
+            msg: "Something went wrong",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+      }
+    } catch (e) {
+      Fluttertoast.showToast(
+        msg: e.toString(),
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+//        timeInSecForIos: 1,
+      );
+      throw Exception(e);
+    }
+    // If the Response Message is Matched.
+  }
 }

@@ -12,6 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:we_watch_app/ui/forgot_password.dart';
 import 'package:we_watch_app/home_page_two.dart';
 import 'package:we_watch_app/size_config.dart';
+import 'package:we_watch_app/ui/forgot_password_select_option.dart';
 import 'package:we_watch_app/ui/location_access_page.dart';
 import 'package:we_watch_app/ui/show_up.dart';
 import 'package:we_watch_app/video_screen_two.dart';
@@ -64,7 +65,7 @@ class _LoginScreenProcessTwoState extends State<LoginScreenProcessTwo> {
     });
 
 
-    await _register();
+    _register();
 
     // Getting value from Controller
 
@@ -87,8 +88,8 @@ class _LoginScreenProcessTwoState extends State<LoginScreenProcessTwo> {
     }
     if (Platform.isAndroid) {
       formData = new FormData.from({
-        "email": _emailFilter.text.toString(),
-        "password": _passwordFilter.text.toString(),
+        "email": _emailFilter.text.toString().trim(),
+        "password": _passwordFilter.text.toString().trim(),
         "fcm_token": prefs.getString('fb_token'),
       });
     }
@@ -104,10 +105,10 @@ class _LoginScreenProcessTwoState extends State<LoginScreenProcessTwo> {
       // Getting Server response into variable.
 
 
-      print("ffff" + formData.toString());
+      //print("ffff" + formData.toString());
 
       if (response.statusCode==200) {
-        var message = jsonDecode(response.body);
+        //var message = jsonDecode(response.body);
         var body = await json.decode(response.body);
         prefs.setString('access_token',body['data']['access_token'] );
         prefs.setString('token_type',body['data']['token_type'] );
@@ -277,8 +278,8 @@ class _LoginScreenProcessTwoState extends State<LoginScreenProcessTwo> {
     }
   }
   int delayAmount = 400;
-  final TextEditingController _emailFilter = new TextEditingController();
-  final TextEditingController _passwordFilter = new TextEditingController();
+  final TextEditingController _emailFilter = new TextEditingController(text: '');
+  final TextEditingController _passwordFilter = new TextEditingController(text: '');
   Widget _formLogin(BuildContext context) {
     return new Container(
       child: new Column(
@@ -569,7 +570,7 @@ class _LoginScreenProcessTwoState extends State<LoginScreenProcessTwo> {
                                 onTap: (){
                                   Navigator.push(
                                     context,
-                                    CupertinoPageRoute(builder: (context) => ForgotPassword()),
+                                    CupertinoPageRoute(builder: (context) => ForgotPasswordSelectVia()),
                                   );
                                 },
                                 child: Text(

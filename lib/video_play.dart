@@ -328,12 +328,12 @@ class _VideoPlayState extends State<VideoPlay> {
             fontSize: 16.0);
       }
     } catch (e) {
-      Fluttertoast.showToast(
-        msg: e.toString(),
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-//        timeInSecForIos: 1,
-      );
+//       Fluttertoast.showToast(
+//         msg: e.toString(),
+//         toastLength: Toast.LENGTH_SHORT,
+//         gravity: ToastGravity.CENTER,
+// //        timeInSecForIos: 1,
+//       );
       throw Exception(e);
     }
     // If the Response Message is Matched.
@@ -453,12 +453,12 @@ class _VideoPlayState extends State<VideoPlay> {
             fontSize: 16.0);
       }
     } catch (e) {
-      Fluttertoast.showToast(
-        msg: e.toString(),
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-//        timeInSecForIos: 1,
-      );
+//       Fluttertoast.showToast(
+//         msg: e.toString(),
+//         toastLength: Toast.LENGTH_SHORT,
+//         gravity: ToastGravity.CENTER,
+// //        timeInSecForIos: 1,
+//       );
       throw Exception(e);
     }
   }
@@ -577,12 +577,12 @@ class _VideoPlayState extends State<VideoPlay> {
             fontSize: 16.0);
       }
     } catch (e) {
-      Fluttertoast.showToast(
-        msg: e.toString(),
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-//        timeInSecForIos: 1,
-      );
+//       Fluttertoast.showToast(
+//         msg: e.toString(),
+//         toastLength: Toast.LENGTH_SHORT,
+//         gravity: ToastGravity.CENTER,
+// //        timeInSecForIos: 1,
+//       );
       throw Exception(e);
     }
   }
@@ -678,11 +678,13 @@ class _VideoPlayState extends State<VideoPlay> {
 
     // Getting Server response into variable.
 
-    var body = await json.decode(response.body);
-    var message = jsonDecode(response.body);
 
     try {
+
+
       if (response.statusCode == 200) {
+        var body = json.decode(response.body);
+        var message = jsonDecode(response.body);
         _appNotifierClass.setChange(true);
         _appNotifierClass.notifyListeners();
 //        otp = body["otp"];
@@ -786,12 +788,12 @@ class _VideoPlayState extends State<VideoPlay> {
             fontSize: 16.0);
       }
     } catch (e) {
-      Fluttertoast.showToast(
-        msg: e.toString(),
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-//        timeInSecForIos: 1,
-      );
+//       Fluttertoast.showToast(
+//         msg: e.toString(),
+//         toastLength: Toast.LENGTH_SHORT,
+//         gravity: ToastGravity.CENTER,
+// //        timeInSecForIos: 1,
+//       );
       throw Exception(e);
     }
     // If the Response Message is Matched.
@@ -5098,12 +5100,12 @@ class _CommentsCellState extends State<CommentsCell> {
             fontSize: 16.0);
       }
     } catch (e) {
-      Fluttertoast.showToast(
-        msg: e.toString(),
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-//        timeInSecForIos: 1,
-      );
+//       Fluttertoast.showToast(
+//         msg: e.toString(),
+//         toastLength: Toast.LENGTH_SHORT,
+//         gravity: ToastGravity.CENTER,
+// //        timeInSecForIos: 1,
+//       );
       throw Exception(e);
     }
     // If the Response Message is Matched.
@@ -5231,12 +5233,12 @@ class _CommentsCellState extends State<CommentsCell> {
             fontSize: 16.0);
       }
     } catch (e) {
-      Fluttertoast.showToast(
-        msg: e.toString(),
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-//        timeInSecForIos: 1,
-      );
+//       Fluttertoast.showToast(
+//         msg: e.toString(),
+//         toastLength: Toast.LENGTH_SHORT,
+//         gravity: ToastGravity.CENTER,
+// //        timeInSecForIos: 1,
+//       );
       throw Exception(e);
     }
     // If the Response Message is Matched.

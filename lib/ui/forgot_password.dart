@@ -2,8 +2,10 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:we_watch_app/API/WatchAPI.dart';
 import 'package:we_watch_app/size_config.dart';
 import 'package:we_watch_app/ui/forgot_password_otp.dart';
 import 'package:we_watch_app/ui/show_up.dart';
@@ -54,7 +56,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
 
     // SERVER LOGIN API URL
     var url =
-        'https://wewatch.in/wewatch-up/api/v1/forgot-password';
+        WatchAPI.FORGOT_PASSWORD;
     Map data = {
 //      'API_KEY':"4762265654DFGDF00546FDG4FD654G6DF",
       'phone':_emailFilter.text.toString(),
@@ -123,7 +125,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
           );
           Navigator.push(
             context,
-            CupertinoPageRoute(builder: (context) => PasswordOTP(mobileNumber: _emailFilter.text.toString(),)),
+            CupertinoPageRoute(builder: (context) => PasswordOTP(mobileNumber: _emailFilter.text.toString(),via: "phone",)),
           );
         }
         // Navigate to Profile Screen & Sending Email to Next Screen.
@@ -260,6 +262,9 @@ class _ForgotPasswordState extends State<ForgotPassword> {
               onSaved: (String val) {
                 _email = val;
               },
+              inputFormatters: [
+                LengthLimitingTextInputFormatter(10),
+              ],
             ),
           ),
         ],
@@ -449,11 +454,11 @@ class _ForgotPasswordState extends State<ForgotPassword> {
 
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(15.0),
-                      image: DecorationImage(
-                        image: AssetImage("assets/images/card_background.png"),
-                        fit: BoxFit.fill,
-
-                      ),
+                      // image: DecorationImage(
+                      //   image: AssetImage("assets/images/card_background.png"),
+                      //   fit: BoxFit.fill,
+                      //
+                      // ),
                     ),
 
                   ),
