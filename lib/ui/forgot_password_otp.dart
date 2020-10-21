@@ -63,20 +63,20 @@ class _PasswordOTPState extends State<PasswordOTP> {
     var url =
         WatchAPI.FORGOT_PASSWORD_OTP_VERIFY;
     Map data;
-    if(!["",null].contains(widget.via) &&widget.via.toString().compareTo("email")==0) {
+    if(!["",null].contains(widget.via) && widget.via.toString().compareTo("email")==0) {
       data = {
-        'otp': _emailFilter.text.toString(),
-        'email': widget.mobileNumber,
-        'password': _passwordFilter.text.toString(),
-        'password_confirmation': _passwordFilter.text.toString(),
+        'otp': _emailFilter.text.toString().trim(),
+        'email': widget.mobileNumber.trim(),
+        'password': _passwordFilter.text.toString().trim(),
+        'password_confirmation': _passwordFilter.text.toString().trim(),
 
       };
-    }else {
+    } else {
       data = {
-        'otp': _emailFilter.text.toString(),
-        'phone': widget.mobileNumber,
-        'password': _passwordFilter.text.toString(),
-        'password_confirmation': _passwordFilter.text.toString(),
+        'otp': _emailFilter.text.toString().trim(),
+        'phone': widget.mobileNumber.trim(),
+        'password': _passwordFilter.text.toString().trim(),
+        'password_confirmation': _passwordFilter.text.toString().trim(),
 
       };
     }
@@ -91,9 +91,7 @@ class _PasswordOTPState extends State<PasswordOTP> {
 
     // Starting Web API Call.
     var response = await http.post(url, body: formD,headers: headers);
-
     // Getting Server response into variable.
-
 
     try {
       if (response.statusCode == 200) {
@@ -128,31 +126,6 @@ class _PasswordOTPState extends State<PasswordOTP> {
           gravity: ToastGravity.CENTER,
 //            timeInSecForIos: 1
         );
-//        Timer.run(() {
-//          showDialog(
-//            context: context,
-//            builder: (_) =>AlertDialog(
-//              shape: OutlineInputBorder(
-//                  borderRadius: BorderRadius.circular(16.0)),
-//              title: Text('Thank you!'),
-//              content: Wrap(
-//                children: <Widget>[
-//                  Row(
-//                    children: <Widget>[
-//                      Text('Registration Successful',
-//                        style: TextStyle(
-//                          color: Color(0xff00adef),
-//                        ),),
-//                      Spacer(),
-//                      Icon(Icons.check_circle,color: Color(0xff00adef),),
-//                    ],
-//                  ),
-//                ],
-//              ),
-//            ),
-//          );
-//        });
-
         Navigator.pushReplacement(
           context,
           CupertinoPageRoute(builder: (context) => LoginScreenProcessTwo()),
@@ -281,8 +254,8 @@ class _PasswordOTPState extends State<PasswordOTP> {
     super.initState();
 //    getMobile();
   }
-  final TextEditingController _emailFilter = new TextEditingController();
-  final TextEditingController _passwordFilter = new TextEditingController();
+  final TextEditingController _emailFilter = new TextEditingController(text: '');
+  final TextEditingController _passwordFilter = new TextEditingController(text: '');
   Widget _formLogin(BuildContext context) {
     return new Container(
       child: new Column(
@@ -405,6 +378,7 @@ class _PasswordOTPState extends State<PasswordOTP> {
             onTap: () {
 //              Navigator.push(context,
 //                  MaterialPageRoute(builder: (context) => LoginScreenProcessTwo()));
+            resendOtp();
             },
             child: Text(
               'Resend code',
@@ -788,4 +762,188 @@ class _PasswordOTPState extends State<PasswordOTP> {
   }
 
 
+  Future resendOtp() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    // Showing CircularProgressIndicator.
+    setState(() {
+      visible = true;
+    });
+
+    var url =
+        WatchAPI.FORGOT_PASSWORD;
+    Map data;
+    if(!["",null].contains(widget.via) && widget.via.toString().compareTo("email")==0){
+      data = {
+//      'API_KEY':"4762265654DFGDF00546FDG4FD654G6DF",
+        'email':widget.mobileNumber,
+      };
+    }else{
+      data = {
+//      'API_KEY':"4762265654DFGDF00546FDG4FD654G6DF",
+        'phone':widget.mobileNumber,
+      };
+    }
+    String formD = json.encode(data);
+
+    // Store all data with Param Name.
+
+
+    Map<String,String> headers = {'Content-type':'application/json','Accept': 'application/json',};
+
+
+    // Starting Web API Call.
+    var response = await http.post(url, body: formD,headers: headers);
+
+    // Getting Server response into variable.
+
+    try {
+      if (response.statusCode == 200) {
+
+        var body = await json.decode(response.body);
+        var message = jsonDecode(response.body);
+
+        print("ffff" + message.toString());
+
+//        otp = body["otp"];
+        //prefs.setString('user_token',body['user_token'] );
+//        prefs.setString('id', body['id']);
+//        prefs.setString('std_id', body['std_id']);
+//        prefs.setString('name', body['name']);
+//        prefs.setString('designation', body['designation']);
+//        prefs.setString('phone', body['phone']);
+//        prefs.setString('email', body['email']);
+//        prefs.setString('doj', body['doj']);
+//        prefs.setString('pincode', body['pincode']);
+//        prefs.setString('state', body['state']);
+//        prefs.setString('address', body['address']);
+//        prefs.setString('image', body['image']);
+//        prefs.setString('role', body['role']);
+        //  prefs.setString('image',body['image'] );
+        // prefs.setString('image',body['image'] );
+        // Hiding the CircularProgressIndicator.
+        setState(() {
+          visible = false;
+        });
+        if(body['data']['message'].toString()=='Already registered!!') {
+          Fluttertoast.showToast(
+              msg: body['data']['message'],
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+//                                          timeInSecForIosWeb: 1,
+              backgroundColor: Color(0xff00adef),
+              textColor: Colors.white,
+              fontSize: 16.0
+          );
+
+        }
+        else{
+          Fluttertoast.showToast(
+              msg: body['data']['message'],
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+//                                          timeInSecForIosWeb: 1,
+              backgroundColor: Color(0xff00adef),
+              textColor: Colors.white,
+              fontSize: 16.0
+          );
+          // Navigator.push(
+          //   context,
+          //   CupertinoPageRoute(builder: (context) => PasswordOTP(mobileNumber: _emailFilter.text.toString(),via: "phone",)),
+          // );
+        }
+        // Navigate to Profile Screen & Sending Email to Next Screen.
+//        print("Ankit"+mobile);
+//        mobile=_mobileFilter.text.toString();
+//        Navigator.push(
+//            context, MaterialPageRoute(builder: (context) => LoginPageMobile(mobile: mobile,otp: otp)));
+      } else if(response.statusCode==422){
+        // If Email or Password did not Matched.
+        // Hiding the CircularProgressIndicator.
+        setState(() {
+          visible = false;
+        });
+        Fluttertoast.showToast(
+            msg: "Validation Failed",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+
+      }
+      else if(response.statusCode==400){
+        // If Email or Password did not Matched.
+        // Hiding the CircularProgressIndicator.
+        setState(() {
+          visible = false;
+        });
+        Fluttertoast.showToast(
+            msg: "Request Fail",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+
+      }else if(response.statusCode==401){
+        // If Email or Password did not Matched.
+        // Hiding the CircularProgressIndicator.
+        setState(() {
+          visible = false;
+        });
+
+        Fluttertoast.showToast(
+            msg: "Authorization Failure",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+
+      }else if(response.statusCode==500){
+        // If Email or Password did not Matched.
+        // Hiding the CircularProgressIndicator.
+        setState(() {
+          visible = false;
+        });
+        Fluttertoast.showToast(
+            msg: "Server Error",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+
+      }
+      else
+      {
+        Fluttertoast.showToast(
+            msg: "Something went wrong",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+      }
+    } catch (e) {
+      Fluttertoast.showToast(
+        msg: e.toString(),
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+//        timeInSecForIos: 1,
+      );
+      throw Exception(e);
+    }
+    // If the Response Message is Matched.
+  }
 }

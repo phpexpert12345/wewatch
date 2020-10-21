@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:we_watch_app/API/WatchAPI.dart';
 import 'package:we_watch_app/LoginScreenProcessTwo.dart';
 import 'package:we_watch_app/create_an_account.dart';
+import 'package:we_watch_app/size_config.dart';
 import 'package:we_watch_app/ui/show_up.dart';
 import 'package:we_watch_app/video_screen_two.dart';
 import 'package:http/http.dart' as http;
@@ -25,6 +26,7 @@ class _VerifyOTPState extends State<VerifyOTP> {
   int delayAmount = 400;
   bool visible = false;
   String mobileNo;
+  bool checkBoxValue2 = false;
 
   Future getMobile() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
@@ -557,7 +559,37 @@ class _VerifyOTPState extends State<VerifyOTP> {
                         ),
 
 
-                        SizedBox(height:100,),
+                        SizedBox(height:50,),
+                        ShowUp(
+                          child: Container(
+                            padding: EdgeInsets.all(0.0),
+                            child: Row(
+                              children: <Widget>[
+                                new Checkbox(
+                                    value: checkBoxValue2,
+                                    hoverColor: Color(0xff00adef),
+                                    checkColor: Colors.white,
+                                    focusColor: Colors.white,
+                                    activeColor: Color(0xff01bbf4),
+                                    onChanged: (bool newValue) {
+                                      setState(() {
+                                        checkBoxValue2 = newValue;
+                                      });
+                                    }),
+                                Expanded(
+                                  child: Text(
+                                    'Terms And Condition',
+                                    style: TextStyle(
+                                      fontSize: 2.27 *  SizeConfig.textMultiplier,
+                                      color: Color(0xFFb0bbc6),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          delay: delayAmount+200,
+                        ),
                         ShowUp(
                           child: Padding(
                             padding: const EdgeInsets.fromLTRB(10.0, 20, 10.0, 0.0),
@@ -613,10 +645,6 @@ class _VerifyOTPState extends State<VerifyOTP> {
                                           fontSize: 16.0
                                       );
                                     }
-
-
-
-
 //                                  FocusScope.of(context).requestFocus(FocusNode());
 //                                  if (_key.currentState.validate()) {
 //                                    // No any error in validation

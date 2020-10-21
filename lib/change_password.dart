@@ -79,22 +79,17 @@ class _ChangePasswordState extends State<ChangePassword> {
       });
     }
 
-
     // Starting Web API Call.
     var response = await http.post(url, body: formData,headers: headers);
-
     // Getting Server response into variable.
-
-    var body = await json.decode(response.body);
-    var message = jsonDecode(response.body);
-
-    print("ffff" + message.toString());
-
-
     try {
 
       if (response.statusCode==200) {
         // Hiding the CircularProgressIndicator.
+        var body = await json.decode(response.body);
+        var message = jsonDecode(response.body);
+
+        print("ffff" + message.toString());
         setState(() {
           visible = false;
         });

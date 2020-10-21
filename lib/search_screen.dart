@@ -81,14 +81,15 @@ class _SearchScreenState extends State<SearchScreen> {
    // print(response.body);
 
     //Simulate a service call
-    print('submitting to backend...');
-    Map<String, dynamic> decodedMap = jsonDecode(response.body);
-    Map<String, dynamic> decodedMapAttachment = jsonDecode(response.body);
-    var body = await json.decode(response.body);
+
 
     try {
       if (response.statusCode == 200) {
         //print("Ankit" + body.toString());
+        print('submitting to backend...');
+        Map<String, dynamic> decodedMap = jsonDecode(response.body);
+        Map<String, dynamic> decodedMapAttachment = jsonDecode(response.body);
+        //var body = await json.decode(response.body);
         pageCount++;
         searchApiCalled=true;
         List<dynamic> dynamicList = decodedMap['data']['results'];
@@ -120,9 +121,7 @@ class _SearchScreenState extends State<SearchScreen> {
     super.initState();
     moreDataLoading=true;
     pageCount=1;
-    flickManagerSearch = FlickManager(
-        videoPlayerController: VideoPlayerController.network('  '),
-        autoPlay: false);
+
     checkFirstSeen();
     scrollController.addListener(() {
       if (scrollController.position.pixels ==
@@ -155,21 +154,22 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   Future<List<Category>> getVehical(String type) async {
+
     prefs = await SharedPreferences.getInstance();
 
     var response = await http
         .get('https://wewatch.in/wewatch-up/api/v1/categories', headers: {
       'Content-Type': 'application/json',
     });
-    print(response.body);
 
-    var body = await json.decode(response.body);
     //Simulate a service call
     print('submitting to backend...');
-    Map<String, dynamic> decodedMap = jsonDecode(response.body);
 
     try {
       if (response.statusCode == 200) {
+        print(response.body);
+        Map<String, dynamic> decodedMap = jsonDecode(response.body);
+        var body =  json.decode(response.body);
         List<dynamic> dynamicList = decodedMap['data']['results'];
         List<Category> students1 = new List<Category>();
         dynamicList.forEach((f) {
@@ -812,16 +812,9 @@ class _SearchScreenState extends State<SearchScreen> {
                                                             //   countValue1=true;
                                                             // }
                                                             if (!countValue) {
-                                                              countValue =
-                                                              true;
-                                                              countValue1 =
-                                                              false;
-                                                              saveLike(
-                                                                  students[
-                                                                  index]
-                                                                      .id
-                                                                      .toString(),
-                                                                  "1");
+                                                              countValue =true;
+                                                              countValue1 =false;
+                                                              saveLike( students[ index].id.toString(),"1");
                                                               students[index]
                                                                   .total_likes = students[
                                                               index]
@@ -917,15 +910,12 @@ class _SearchScreenState extends State<SearchScreen> {
                                                               child: Align(
                                                                 child:
                                                                 new Text(
-                                                                  [
-                                                                    "",
-                                                                    null
-                                                                  ].contains(students[
-                                                                  index]
+                                                                  !["",null
+                                                                  ].contains(students[index]
                                                                       .total_likes
                                                                       .toString())
                                                                       ? students[index].total_likes.toString() +
-                                                                      'Likes'
+                                                                      ' Likes'
                                                                       : '0 Likes',
                                                                   style:
                                                                   TextStyle(
@@ -1065,7 +1055,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                                               child: Align(
                                                                 child:
                                                                 new Text(
-                                                                  [
+                                                                  ![
                                                                     "",
                                                                     null
                                                                   ].contains(students[
@@ -1073,7 +1063,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                       .total_dislikes
                                                                       .toString())
                                                                       ? students[index].total_dislikes.toString() +
-                                                                      'Dislikes'
+                                                                      ' Dislikes'
                                                                       : '0 Dislike',
                                                                   style:
                                                                   TextStyle(
@@ -2415,13 +2405,13 @@ Future saveLike(String videoId, String status) async {
 
   // Getting Server response into variable.
 
-  var body = await json.decode(response.body);
-  var message = jsonDecode(response.body);
 
-  print("ffff" + message.toString());
 
   try {
     if (response.statusCode == 200) {
+      var body = json.decode(response.body);
+      var message = jsonDecode(response.body);
+      print("ffff" + message.toString());
 //        otp = body["otp"];
       //prefs.setString('user_token',body['user_token'] );
 //        prefs.setString('id', body['id']);
@@ -2507,12 +2497,12 @@ Future saveLike(String videoId, String status) async {
           fontSize: 16.0);
     }
   } catch (e) {
-    Fluttertoast.showToast(
-      msg: e.toString(),
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.CENTER,
-//        timeInSecForIos: 1,
-    );
+//     Fluttertoast.showToast(
+//       msg: e.toString(),
+//       toastLength: Toast.LENGTH_SHORT,
+//       gravity: ToastGravity.CENTER,
+// //        timeInSecForIos: 1,
+//     );
     throw Exception(e);
   }
   // If the Response Message is Matched.
