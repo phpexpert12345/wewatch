@@ -11,6 +11,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:we_watch_app/update_mobile_number.dart';
+import 'package:we_watch_app/util/UtilityClass.dart';
 
 import 'home_page_two.dart';
 
@@ -73,7 +75,7 @@ class _EditProfileState extends State<EditProfile> {
       date_of_birth,
       status,
       user_type,
-      address,
+//      address,
       city_id,
       state_id,
       country_id,
@@ -213,7 +215,7 @@ class _EditProfileState extends State<EditProfile> {
   final TextEditingController _dobController = new TextEditingController();
   final TextEditingController _cityController = new TextEditingController();
   final TextEditingController _stateController = new TextEditingController();
-  final TextEditingController _addressController = new TextEditingController();
+  final TextEditingController _mobileController = new TextEditingController();
   final TextEditingController _zipcodeController = new TextEditingController();
 
   void getInfoDetails(String type) async {
@@ -230,7 +232,7 @@ class _EditProfileState extends State<EditProfile> {
       _dobController.text = sharedPreferences.getString('date_of_birth');
       status = sharedPreferences.getString('status');
       user_type = sharedPreferences.getString('user_type');
-      _addressController.text = sharedPreferences.getString('address');
+      _mobileController.text = sharedPreferences.getString('mobile_number');
       _cityController.text = sharedPreferences.getString('city');
       _stateController.text = sharedPreferences.getString('state');
       country_id = sharedPreferences.getString('country_id');
@@ -252,7 +254,7 @@ class _EditProfileState extends State<EditProfile> {
       gender = sharedPreferences.getString('gender');
       status = sharedPreferences.getString('status');
       user_type = sharedPreferences.getString('user_type');
-      address = sharedPreferences.getString('address');
+      //mobile_number = sharedPreferences.getString('mobile_number');
       city_id = sharedPreferences.getString('city_id');
       state_id = sharedPreferences.getString('state_id');
       country_id = sharedPreferences.getString('country_id');
@@ -282,7 +284,7 @@ class _EditProfileState extends State<EditProfile> {
     print(date_of_birth);
     print(status);
     print(user_type);
-    print(address);
+    print(mobile_number);
     print(city_id);
     print(state_id);
     print(country_id);
@@ -320,7 +322,7 @@ class _EditProfileState extends State<EditProfile> {
         'POST', Uri.parse('https://wewatch.in/wewatch-up/api/v1/profile'));
     request.fields["first_name"] = _firstnameController.text;
     request.fields["last_name"] = _lastnameController.text;
-    request.fields["address"] = _addressController.text;
+    request.fields["mobile_number"] = _mobileController.text;
     request.fields["state_id"] = _myselection2;
     request.fields["city_id"] = _mySelection;
     request.fields["zipcode"] = _zipcodeController.text;
@@ -359,7 +361,7 @@ class _EditProfileState extends State<EditProfile> {
       visible = true;
     });
     Map<String, String> headers = {'Authorization': 'Bearer $access_token'};
-    var stream = new http.ByteStream(_imageFile.openRead());
+    var stream = await new http.ByteStream(_imageFile.openRead());
     // get file length
 
     var length = await _imageFile.length();
@@ -367,9 +369,9 @@ class _EditProfileState extends State<EditProfile> {
         'POST', Uri.parse('https://wewatch.in/wewatch-up/api/v1/profile'));
     request.fields["first_name"] = _firstnameController.text;
     request.fields["last_name"] = _lastnameController.text;
-    request.fields["address"] = _addressController.text;
     request.fields["state_id"] = _myselection2;
     request.fields["city_id"] = _mySelection;
+    request.fields["mobile_number"] = _mobileController.text;
     request.fields["zipcode"] = _zipcodeController.text;
     request.fields["gender"] = gender;
     request.fields["dob"] = dob;
@@ -377,7 +379,7 @@ class _EditProfileState extends State<EditProfile> {
         await http.MultipartFile('image', stream, length, filename: fileName));
     request.headers.addAll(headers);
     var response = await request.send();
-
+    print(response);
     if (response.statusCode == 200) {
       setState(() {
         visible = false;
@@ -431,7 +433,7 @@ class _EditProfileState extends State<EditProfile> {
       formData = new FormData.from({
         "first_name": _firstnameController.text,
         "last_name": _lastnameController.text,
-        "address": _addressController.text,
+        "mobile_number": _mobileController.text,
         "state_id": _myselection2,
         "city_id": _mySelection,
         "zipcode": _zipcodeController.text,
@@ -443,7 +445,7 @@ class _EditProfileState extends State<EditProfile> {
       formData = new FormData.from({
         "first_name": _firstnameController.text,
         "last_name": _lastnameController.text,
-        "address": _addressController.text,
+        "mobile_number": _mobileController.text,
         "state_id": _myselection2,
         "city_id": _mySelection,
         "zipcode": _zipcodeController.text,
@@ -547,7 +549,7 @@ class _EditProfileState extends State<EditProfile> {
     }
     // If the Response Message is Matched.
   }
-
+  GlobalKey<FormState> _key = new GlobalKey();
   @override
   void initState() {
     super.initState();
@@ -683,10 +685,10 @@ class _EditProfileState extends State<EditProfile> {
       }
     });
   }
-
+  Size size;
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
+    size = MediaQuery.of(context).size;
     setState(() {
       if (["male"].contains(response_gender)) {
         _radioValue1 = 0;
@@ -698,6 +700,7 @@ class _EditProfileState extends State<EditProfile> {
 //    pr = new ProgressDialog(context);
 //    pr.style(message: 'Please wait...');
     return Scaffold(
+      key: _key,
         appBar: AppBar(
           leading: GestureDetector(
             onTap: () {
@@ -1001,8 +1004,8 @@ class _EditProfileState extends State<EditProfile> {
                                       new TextFormField(
                                         controller: _dobController,
                                         decoration: new InputDecoration(
-                                          hintText: (date_of_birth != null)
-                                              ? date_of_birth
+                                          hintText: (_dobController != null)
+                                              ? _dobController.text
                                               : dob,
                                           hintStyle: style1,
                                           suffixIcon: Container(
@@ -1039,7 +1042,7 @@ class _EditProfileState extends State<EditProfile> {
                                                 monthString =
                                                     "0" + date.month.toString();
                                               } else {
-                                                dayString =
+                                                monthString =
                                                     date.month.toString();
                                               }
                                               dob = dayString +
@@ -1047,6 +1050,8 @@ class _EditProfileState extends State<EditProfile> {
                                                   monthString +
                                                   '-' +
                                                   date.year.toString();
+                                              _dobController.text=dob;
+
 //                                              print(dob);
                                             });
                                             print('change $date');
@@ -1064,7 +1069,7 @@ class _EditProfileState extends State<EditProfile> {
                                                 monthString =
                                                     "0" + date.month.toString();
                                               } else {
-                                                dayString =
+                                                monthString =
                                                     date.month.toString();
                                               }
                                               dob = dayString +
@@ -1072,6 +1077,7 @@ class _EditProfileState extends State<EditProfile> {
                                                   monthString +
                                                   '-' +
                                                   date.year.toString();
+                                              _dobController.text=dob;
 //                                              print(dob);
                                             });
                                           },
@@ -1451,51 +1457,68 @@ class _EditProfileState extends State<EditProfile> {
                                         padding: const EdgeInsets.fromLTRB(
                                             0.0, 8, 0, 0),
                                         child: Text(
-                                          'Address',
+                                          'Mobile Number',
                                           style: TextStyle(
                                               fontWeight: FontWeight.w400,
                                               fontSize: 15,
-//                                        fontWeight: FontWeight.bold,
                                               color: Color(0xff444b69),
                                               letterSpacing: 1),
                                         ),
                                       ),
-                                      new TextFormField(
-                                        controller: _addressController,
-                                        textInputAction: TextInputAction.done,
-                                        decoration: new InputDecoration(
-                                          fillColor: Color(0xff444b69),
-                                          hintText: (address != null)
-                                              ? address
-                                              : 'Address',
-                                          hintStyle: TextStyle(
-//                                            fontWeight: FontWeight.w400,
-                                            fontSize: 15,
-//                                        fontWeight: FontWeight.bold,
-                                            color: Color(0xff444b69),
-//                                            letterSpacing: 1
-                                          ),
-                                          suffixIcon: Container(
-                                            padding: EdgeInsets.symmetric(
-                                                vertical: 15),
-                                            child: SvgPicture.asset(
-                                              "assets/images/location.svg",
-//                                              color: Colors.red,
-//                                              semanticsLabel: 'A red up arrow'
-                                              height: 15,
-                                              width: 15,
+                                      Container(
+                                          width: size.width,
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.end,
+                                          crossAxisAlignment: CrossAxisAlignment.end,
+                                          children: [
+                                            Container(
+                                              width: size.width*.4,
+                                              child: new TextFormField(
+                                                controller: _mobileController,
+                                                textInputAction: TextInputAction.done,
+                                                enabled: false,
+                                                decoration: new InputDecoration(
+                                                  fillColor: Color(0xff444b69),
+                                                  hintText: (mobile_number != null)
+                                                      ? mobile_number
+                                                      : 'mobile no',
+                                                  hintStyle: TextStyle(
+                                                    fontSize: 15,
+                                                    color: Color(0xff444b69),
+                                                  ),
+                                                ),
+                                                style: TextStyle(
+                                                  fontSize: 15,
+                                                  color: Color(0xff444b69),
+                                                ),
+                                                maxLines: 1,
+                                                autofocus: false,
+                                              ),
                                             ),
-                                          ),
+                                            Expanded(
+                                              child: InkWell(
+                                                onTap: () async{
+                                                  //UtilityClass.showMsg("hello");
+                                                var newNum=  await Navigator.push(
+                                                    context,
+                                                    CupertinoPageRoute(
+                                                        builder: (context) => UpdateMobileNumber()),
+                                                  );
+                                                if(!["",null].contains(newNum) && newNum.toString().length==10){
+                                                  setState(() {
+                                                    _mobileController.text=newNum.toString();
+                                                  });
+                                                  UtilityClass.showMsg("Mobile number changed.");
+                                                }
+                                                },
+                                                child: Container(
+                                                  padding: const EdgeInsets.only(left:2.0,right: 2,bottom: 5),
+                                                  child: Text("Click To Change",style: new TextStyle(decoration: TextDecoration.underline,color: Colors.blue,fontSize: 15,fontWeight: FontWeight.bold),),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
                                         ),
-                                        style: TextStyle(
-//                                            fontWeight: FontWeight.w400,
-                                          fontSize: 15,
-//                                        fontWeight: FontWeight.bold,
-                                          color: Color(0xff444b69),
-//                                            letterSpacing: 1
-                                        ),
-                                        maxLines: 1,
-                                        autofocus: false,
                                       ),
                                     ],
                                   ),
@@ -1628,7 +1651,7 @@ class _EditProfileState extends State<EditProfile> {
                                           null,
                                           false,
                                           0,
-                                        ].contains(_addressController.text)) {
+                                        ].contains(_mobileController.text)) {
                                           if (![
                                             "",
                                             null,
@@ -1661,7 +1684,7 @@ class _EditProfileState extends State<EditProfile> {
                                           }
                                         } else {
                                           Fluttertoast.showToast(
-                                              msg: "Please Enter Address",
+                                              msg: "Please Enter Mobile Number",
                                               toastLength: Toast.LENGTH_SHORT,
                                               gravity: ToastGravity.CENTER,
                                               timeInSecForIosWeb: 10,
@@ -1804,6 +1827,8 @@ class _EditProfileState extends State<EditProfile> {
         ),
         resizeToAvoidBottomPadding: true);
   }
+
+
 
   _displayDialog(BuildContext context) async {
     return showDialog(
