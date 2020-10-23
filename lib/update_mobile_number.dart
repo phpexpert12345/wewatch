@@ -286,6 +286,7 @@ class _UpdateMobileNumberState extends State<UpdateMobileNumber> {
         setState(() {
           visible = false;
           otpSent = true;
+          newNumberDisable=false;
         });
         Fluttertoast.showToast(
             msg: body['data']['message'],
@@ -298,9 +299,9 @@ class _UpdateMobileNumberState extends State<UpdateMobileNumber> {
       }else if (response.statusCode == 422) {
         // If Email or Password did not Matched.
         // Hiding the CircularProgressIndicator.
-          setState(() {
-            newNumberDisable=false;
-          });
+        setState(() {
+          newNumberDisable=true;
+        });
         Fluttertoast.showToast(
           msg: "The new number and old number must be different",
           toastLength: Toast.LENGTH_SHORT,
@@ -312,7 +313,7 @@ class _UpdateMobileNumberState extends State<UpdateMobileNumber> {
       } else {
         setState(() {
           visible = false;
-          newNumberDisable=false;
+          newNumberDisable=true;
         });
         Fluttertoast.showToast(
             msg: body['data']['message'],
@@ -326,7 +327,7 @@ class _UpdateMobileNumberState extends State<UpdateMobileNumber> {
     }catch(ex){
       setState(() {
         visible = false;
-        newNumberDisable=false;
+        newNumberDisable=true;
       });
     }
   }

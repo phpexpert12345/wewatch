@@ -11,6 +11,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:we_watch_app/API/WatchAPI.dart';
 import 'package:we_watch_app/update_mobile_number.dart';
 import 'package:we_watch_app/util/UtilityClass.dart';
 
@@ -424,7 +425,7 @@ class _EditProfileState extends State<EditProfile> {
     });
 
     String access_token = prefs.getString('access_token');
-    var url = 'https://wewatch.in/wewatch-up/api/v1/profile';
+    var url = WatchAPI.PROFILE;
 
     // Store all data with Param Name.
     FormData formData;
@@ -461,10 +462,10 @@ class _EditProfileState extends State<EditProfile> {
 
     // Getting Server response into variable.
 
-    var body = await json.decode(response.body);
+    var body = json.decode(response.body);
     var message = jsonDecode(response.body);
 
-    print("ffff" + message.toString());
+    debugPrint("ffff" + message.toString());
     SharedPreferences prefss = await SharedPreferences.getInstance();
     regender = prefss.getString('gender');
     try {
@@ -1498,18 +1499,18 @@ class _EditProfileState extends State<EditProfile> {
                                             Expanded(
                                               child: InkWell(
                                                 onTap: () async{
-                                                  //UtilityClass.showMsg("hello");
-                                                var newNum=  await Navigator.push(
-                                                    context,
-                                                    CupertinoPageRoute(
-                                                        builder: (context) => UpdateMobileNumber()),
-                                                  );
-                                                if(!["",null].contains(newNum) && newNum.toString().length==10){
-                                                  setState(() {
-                                                    _mobileController.text=newNum.toString();
-                                                  });
-                                                  UtilityClass.showMsg("Mobile number changed.");
-                                                }
+                                                    //UtilityClass.showMsg("hello");
+                                                  var newNum=  await Navigator.push(
+                                                      context,
+                                                      CupertinoPageRoute(
+                                                          builder: (context) => UpdateMobileNumber()),
+                                                    );
+                                                  if(!["",null].contains(newNum) && newNum.toString().length==10){
+                                                    setState(() {
+                                                      _mobileController.text=newNum.toString();
+                                                    });
+                                                    UtilityClass.showMsg("Mobile number changed.");
+                                                  }
                                                 },
                                                 child: Container(
                                                   padding: const EdgeInsets.only(left:2.0,right: 2,bottom: 5),

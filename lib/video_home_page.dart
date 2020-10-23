@@ -12,7 +12,7 @@ import 'package:we_watch_app/terms_policy.dart';
 import 'package:we_watch_app/ui/show_up.dart';
 import 'package:we_watch_app/upload_screen.dart';
 import 'package:we_watch_app/video_history.dart';
-import 'package:we_watch_app/video_play.dart';
+import 'package:we_watch_app/video_play_detail.dart';
 import 'package:we_watch_app/watch_later_three.dart';
 
 import 'change_password.dart';

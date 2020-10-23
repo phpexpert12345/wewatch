@@ -248,11 +248,30 @@ class _PasswordOTPState extends State<PasswordOTP> {
       return null;
     }
   }
+  int otpCounter;
+  bool resendCode;
   @override
   void initState() {
-    // TODO: implement initState
+    otpCounter=30;
+    resendCode=false;
     super.initState();
-//    getMobile();
+    counterFun();
+   //getMobile();
+  }
+  counterFun(){
+    Future.delayed(Duration(seconds: 1)).whenComplete(() {
+      setState(() {
+        if(otpCounter>0) {
+          otpCounter=otpCounter-1;
+          counterFun();
+        }else{
+          resendCode=true;
+          otpCounter=30;
+        }
+      });
+
+    });
+
   }
   final TextEditingController _emailFilter = new TextEditingController(text: '');
   final TextEditingController _passwordFilter = new TextEditingController(text: '');
@@ -309,9 +328,7 @@ class _PasswordOTPState extends State<PasswordOTP> {
           new Container(
             child: Row(
               children: <Widget>[
-
                 Expanded(
-
                   child: new TextFormField(
                     enableInteractiveSelection: false,
                     controller: _passwordFilter,
@@ -360,13 +377,12 @@ class _PasswordOTPState extends State<PasswordOTP> {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 20),
       alignment: Alignment.bottomCenter,
-      child: Row(
+      child:resendCode? Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           Text(
-            'I didn\'t receive the code -' ,
+            'I didn\'t receive the code -',
             style: TextStyle(
-
                 fontSize: 13.0,
                 color: Color(0xff5a6381),
                 fontWeight: FontWeight.w600),
@@ -378,7 +394,12 @@ class _PasswordOTPState extends State<PasswordOTP> {
             onTap: () {
 //              Navigator.push(context,
 //                  MaterialPageRoute(builder: (context) => LoginScreenProcessTwo()));
-            resendOtp();
+            setState(() {
+              resendCode=false;
+            });
+            counterFun();
+
+              resendOtp();
             },
             child: Text(
               'Resend code',
@@ -390,7 +411,8 @@ class _PasswordOTPState extends State<PasswordOTP> {
             ),
           )
         ],
-      ),
+      ):
+      Text("Please wait for "+otpCounter.toString()+" seconds"),
     );
   }
 

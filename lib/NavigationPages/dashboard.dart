@@ -26,7 +26,7 @@ import 'package:http/http.dart' as http;
 import 'package:we_watch_app/util/AppNotifierClass.dart';
 
 import '../video_home_page.dart';
-import '../video_play.dart';
+import '../video_play_detail.dart';
 
 class Dashboard extends StatefulWidget {
   @override

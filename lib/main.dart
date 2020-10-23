@@ -29,7 +29,7 @@ import 'package:we_watch_app/util/AppNotifierClass.dart';
 import 'package:we_watch_app/verify_otp.dart';
 import 'package:we_watch_app/verify_phone.dart';
 import 'package:we_watch_app/video_home_page.dart';
-import 'package:we_watch_app/video_play.dart';
+import 'package:we_watch_app/video_play_detail.dart';
 
 import 'package:we_watch_app/video_screen_two.dart';
 import 'package:we_watch_app/watch_later_three.dart';

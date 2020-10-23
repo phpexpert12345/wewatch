@@ -87,7 +87,7 @@ class _VerifyOTPState extends State<VerifyOTP> {
     try {
       // Getting Server response into variable.
 
-      var body = await json.decode(response.body);
+      var body = json.decode(response.body);
       var message = jsonDecode(response.body);
 
       print("ffff" + message.toString());

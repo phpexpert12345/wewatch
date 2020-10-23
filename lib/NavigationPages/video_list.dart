@@ -12,7 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 import 'package:we_watch_app/conts/config.dart';
 
-import '../video_play.dart';
+import '../video_play_detail.dart';
 
 class VideoList extends StatefulWidget {
   @override

@@ -19,7 +19,7 @@ import 'package:we_watch_app/size_config.dart';
 import 'package:we_watch_app/ui/chewie_list_item.dart';
 import 'package:we_watch_app/ui/show_up.dart';
 import 'package:http/http.dart' as http;
-import 'package:we_watch_app/video_play.dart';
+import 'package:we_watch_app/video_play_detail.dart';
 
 class Community extends StatefulWidget {
   String name;

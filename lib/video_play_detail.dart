@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:slide_popup_dialog/slide_popup_dialog.dart' as slideDialog;
 
@@ -16,6 +17,7 @@ import 'package:share/share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 import 'package:http/http.dart' as http;
+import 'package:we_watch_app/API/WatchAPI.dart';
 import 'package:we_watch_app/util/AppNotifierClass.dart';
 
 import 'conts/config.dart';
@@ -98,10 +100,7 @@ class VideoPlay extends StatefulWidget {
       );
 }
 
-String _radioValue; //Initial definition of radio button value
-String choice;
-int val = 0;
-String reportcomment = '';
+
 
 class _VideoPlayState extends State<VideoPlay> {
   String id,
@@ -473,30 +472,36 @@ class _VideoPlayState extends State<VideoPlay> {
     if (Platform.isIOS) {
       formData = new FormData.from({
         "video_id": type,
-        "comment": "hey",
+        "comment": text,
       });
     }
     if (Platform.isAndroid) {
       formData = new FormData.from({
         "video_id": type,
-        "comment": "hey",
+        "comment": text,
       });
     }
 
-    String login_url = "https://wewatch.in/wewatch-up/api/v1/video-report";
-    var response = await http.post(login_url, body: formData, headers: {
+    String report_url = WatchAPI.VIDEO_REPORT;
+    var response = await http.post(report_url, body: formData, headers: {
       // 'Content-type': 'application/json',
       'Authorization': 'Bearer $access_token',
     });
 
     //Simulate a service call
     print(response.statusCode);
-    Map<String, dynamic> decodedMap = jsonDecode(response.body);
-    Map<String, dynamic> decodedMapAttachment = jsonDecode(response.body);
-    var body = await json.decode(response.body);
+    // Map<String, dynamic> decodedMap = jsonDecode(response.body);
+    // Map<String, dynamic> decodedMapAttachment = jsonDecode(response.body);
     try {
       if (response.statusCode == 200) {
         // Hiding the CircularProgressIndicator.
+        var body = await json.decode(response.body);
+        setState(() {
+          otherTextController.text="";
+          choice=null;
+          val=0;
+        });
+        //reportcomment = "";
 
         Fluttertoast.showToast(
             msg: body['data']['message'],
@@ -612,10 +617,15 @@ class _VideoPlayState extends State<VideoPlay> {
       doLogin = 0;
     }
   }
-
+  String reportcomment;
+  String _radioValue; //Initial definition of radio button value
+  String choice;
+  int val ;
   @override
   void initState() {
     // TODO: implement initState
+    reportcomment = "";
+    val = 0;
     super.initState();
 
     print(video_file);
@@ -856,7 +866,7 @@ class _VideoPlayState extends State<VideoPlay> {
       }
     });
   }
-
+  var otherTextController=TextEditingController(text: '');
   // bool pressAttention = is_sub ? true : false;
   @override
   Widget build(BuildContext context) {
@@ -2220,223 +2230,258 @@ class _VideoPlayState extends State<VideoPlay> {
                                                               .height *
                                                           0.8,
                                                   width: 300,
-                                                  child: Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
+                                                  child: ListView(
+                                                    shrinkWrap: true,
                                                     children: [
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                    .only(
-                                                                bottom: 5.0),
-                                                        child: new Text(
-                                                          'Report Video',
-                                                          style: TextStyle(
-                                                              fontFamily:
-                                                                  'Montserrat',
-                                                              fontSize: 16,
-                                                              color:
-                                                                  Colors.black),
-                                                        ),
-                                                      ),
-                                                      Row(
-                                                        children: <Widget>[
-                                                          Radio(
-                                                            value:
-                                                                'Sexual content',
-                                                            groupValue:
-                                                                _radioValue,
-                                                            onChanged: (value) {
-                                                              setState(() {
-                                                                radioButtonChanges(
-                                                                    value);
-                                                              });
-                                                            },
-                                                          ),
-                                                          Text(
-                                                            "Sexual content",
-                                                            style: TextStyle(
-                                                                fontSize: 14,
-                                                                color: Colors
-                                                                    .black),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      Row(
-                                                        children: <Widget>[
-                                                          Radio(
-                                                            value:
-                                                                'Violent or repulsive content',
-                                                            groupValue:
-                                                                _radioValue,
-                                                            onChanged: (value) {
-                                                              setState(() {
-                                                                radioButtonChanges(
-                                                                    value);
-                                                              });
-                                                            },
-                                                          ),
-                                                          Flexible(
-                                                            child: Text(
-                                                              "Violent or repulsive content",
+                                                      Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .only(
+                                                                    bottom: 5.0),
+                                                            child: new Text(
+                                                              'Report Video',
                                                               style: TextStyle(
-                                                                  fontSize: 14,
-                                                                  color: Colors
-                                                                      .black),
-                                                              maxLines: 2,
-                                                              textWidthBasis:
-                                                                  TextWidthBasis
-                                                                      .longestLine,
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
+                                                                  fontFamily:
+                                                                      'Montserrat',
+                                                                  fontSize: 16,
+                                                                  color:
+                                                                      Colors.black),
                                                             ),
                                                           ),
-                                                        ],
-                                                      ),
-                                                      Row(
-                                                        children: <Widget>[
-                                                          Radio(
-                                                            value:
-                                                                'Hateful or abusive content',
-                                                            groupValue:
-                                                                _radioValue,
-                                                            onChanged: (value) {
-                                                              setState(() {
-                                                                radioButtonChanges(
-                                                                    value);
-                                                              });
-                                                            },
+                                                          Row(
+                                                            children: <Widget>[
+                                                              Radio(
+                                                                value:
+                                                                    'Sexual content',
+                                                                groupValue:
+                                                                    _radioValue,
+                                                                onChanged: (value) {
+                                                                  setState(() {
+                                                                    radioButtonChanges(
+                                                                        value);
+                                                                  });
+                                                                },
+                                                              ),
+                                                              Text(
+                                                                "Sexual content",
+                                                                style: TextStyle(
+                                                                    fontSize: 14,
+                                                                    color: Colors
+                                                                        .black),
+                                                              ),
+                                                            ],
                                                           ),
-                                                          Flexible(
-                                                            child: Text(
-                                                              "Hateful or abusive content",
-                                                              style: TextStyle(
-                                                                  fontSize: 14,
-                                                                  color: Colors
-                                                                      .black),
+                                                          Row(
+                                                            children: <Widget>[
+                                                              Radio(
+                                                                value:
+                                                                    'Violent or repulsive content',
+                                                                groupValue:
+                                                                    _radioValue,
+                                                                onChanged: (value) {
+                                                                  setState(() {
+                                                                    radioButtonChanges(
+                                                                        value);
+                                                                  });
+                                                                },
+                                                              ),
+                                                              Flexible(
+                                                                child: Text(
+                                                                  "Violent or repulsive content",
+                                                                  style: TextStyle(
+                                                                      fontSize: 14,
+                                                                      color: Colors
+                                                                          .black),
+                                                                  maxLines: 2,
+                                                                  textWidthBasis:
+                                                                      TextWidthBasis
+                                                                          .longestLine,
+                                                                  overflow:
+                                                                      TextOverflow
+                                                                          .ellipsis,
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          Row(
+                                                            children: <Widget>[
+                                                              Radio(
+                                                                value:
+                                                                    'Hateful or abusive content',
+                                                                groupValue:
+                                                                    _radioValue,
+                                                                onChanged: (value) {
+                                                                  setState(() {
+                                                                    radioButtonChanges(
+                                                                        value);
+                                                                  });
+                                                                },
+                                                              ),
+                                                              Flexible(
+                                                                child: Text(
+                                                                  "Hateful or abusive content",
+                                                                  style: TextStyle(
+                                                                      fontSize: 14,
+                                                                      color: Colors
+                                                                          .black),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          Row(
+                                                            children: <Widget>[
+                                                              Radio(
+                                                                value:
+                                                                    'Harmful or dangerous acts',
+                                                                groupValue:
+                                                                    _radioValue,
+                                                                onChanged: (value) {
+                                                                  setState(() {
+                                                                    radioButtonChanges(
+                                                                        value);
+                                                                  });
+                                                                },
+                                                              ),
+                                                              Flexible(
+                                                                child: Text(
+                                                                  "Harmful or dangerous acts",
+                                                                  style: TextStyle(
+                                                                      fontSize: 14,
+                                                                      color: Colors
+                                                                          .black),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          Row(
+                                                            children: <Widget>[
+                                                              Radio(
+                                                                value:
+                                                                    'Child abuse',
+                                                                groupValue:
+                                                                    _radioValue,
+                                                                onChanged: (value) {
+                                                                  setState(() {
+                                                                    radioButtonChanges(
+                                                                        value);
+                                                                  });
+                                                                },
+                                                              ),
+                                                              Text(
+                                                                "Child abuse",
+                                                                style: TextStyle(
+                                                                    fontSize: 14,
+                                                                    color: Colors
+                                                                        .black),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          Row(
+                                                            children: <Widget>[
+                                                              Radio(
+                                                                value:
+                                                                    'Infringes my rights',
+                                                                groupValue:
+                                                                    _radioValue,
+                                                                onChanged: (value) {
+                                                                  setState(() {
+                                                                    radioButtonChanges(
+                                                                        value);
+                                                                  });
+                                                                },
+                                                              ),
+                                                              Text(
+                                                                "Infringes my rights",
+                                                                style: TextStyle(
+                                                                    fontSize: 14,
+                                                                    color: Colors
+                                                                        .black),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          Row(
+                                                            children: <Widget>[
+                                                              Radio(
+                                                                value:
+                                                                    'Promotes terrorism',
+                                                                groupValue:
+                                                                    _radioValue,
+                                                                onChanged: (value) {
+                                                                  setState(() {
+                                                                    radioButtonChanges(
+                                                                        value);
+                                                                  });
+                                                                },
+                                                              ),
+                                                              Text(
+                                                                "Promotes terrorism",
+                                                                style: TextStyle(
+                                                                    fontSize: 14,
+                                                                    color: Colors
+                                                                        .black),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          Row(
+                                                            children: <Widget>[
+                                                              Radio(
+                                                                value:
+                                                                    'Spam or misleading',
+                                                                groupValue:
+                                                                    _radioValue,
+                                                                onChanged: (value) {
+                                                                  setState(() {
+                                                                    radioButtonChanges(
+                                                                        value);
+                                                                  });
+                                                                },
+                                                              ),
+                                                              Text(
+                                                                "Spam or misleading",
+                                                                style: TextStyle(
+                                                                    fontSize: 14,
+                                                                    color: Colors
+                                                                        .black),
+                                                              ),
+                                                            ],
+                                                          ),
+
+                                                          Container(
+                                                            margin: EdgeInsets.only(left: 5.0,right: 5.0),
+                                                            decoration: BoxDecoration(
+                                                                border: Border(top: BorderSide(color: COLORS.CONTAINER_BORDER_COLOR),
+                                                                    left: BorderSide(color: COLORS.CONTAINER_BORDER_COLOR),
+                                                                    right: BorderSide(color: COLORS.CONTAINER_BORDER_COLOR),
+                                                                    bottom: BorderSide(color: COLORS.CONTAINER_BORDER_COLOR)
+                                                                ),
+                                                                borderRadius: BorderRadius.all(Radius.circular(8.0))
                                                             ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      Row(
-                                                        children: <Widget>[
-                                                          Radio(
-                                                            value:
-                                                                'Harmful or dangerous acts',
-                                                            groupValue:
-                                                                _radioValue,
-                                                            onChanged: (value) {
-                                                              setState(() {
-                                                                radioButtonChanges(
-                                                                    value);
-                                                              });
-                                                            },
-                                                          ),
-                                                          Flexible(
-                                                            child: Text(
-                                                              "Harmful or dangerous acts",
-                                                              style: TextStyle(
-                                                                  fontSize: 14,
-                                                                  color: Colors
-                                                                      .black),
+                                                            child: TextFormField(
+                                                              maxLines: 3,
+                                                              cursorColor: Colors.black,
+                                                              controller: otherTextController,
+                                                              decoration: new InputDecoration(
+                                                                  border: InputBorder.none,
+                                                                  focusedBorder: InputBorder.none,
+                                                                  enabledBorder: InputBorder.none,
+                                                                  errorBorder: InputBorder.none,
+                                                                  disabledBorder: InputBorder.none,
+                                                                  contentPadding: EdgeInsets.only(
+                                                                      left: 15, bottom: 11, top: 11, right: 15),
+                                                                  hintText: 'comments here -',
+                                                                  hintStyle: new TextStyle(color: Colors.black45)),
+                                                              inputFormatters: [
+                                                                LengthLimitingTextInputFormatter(100),
+                                                              ],
                                                             ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      Row(
-                                                        children: <Widget>[
-                                                          Radio(
-                                                            value:
-                                                                'Child abuse',
-                                                            groupValue:
-                                                                _radioValue,
-                                                            onChanged: (value) {
-                                                              setState(() {
-                                                                radioButtonChanges(
-                                                                    value);
-                                                              });
-                                                            },
-                                                          ),
-                                                          Text(
-                                                            "Child abuse",
-                                                            style: TextStyle(
-                                                                fontSize: 14,
-                                                                color: Colors
-                                                                    .black),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      Row(
-                                                        children: <Widget>[
-                                                          Radio(
-                                                            value:
-                                                                'Infringes my rights',
-                                                            groupValue:
-                                                                _radioValue,
-                                                            onChanged: (value) {
-                                                              setState(() {
-                                                                radioButtonChanges(
-                                                                    value);
-                                                              });
-                                                            },
-                                                          ),
-                                                          Text(
-                                                            "Infringes my rights",
-                                                            style: TextStyle(
-                                                                fontSize: 14,
-                                                                color: Colors
-                                                                    .black),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      Row(
-                                                        children: <Widget>[
-                                                          Radio(
-                                                            value:
-                                                                'Promotes terrorism',
-                                                            groupValue:
-                                                                _radioValue,
-                                                            onChanged: (value) {
-                                                              setState(() {
-                                                                radioButtonChanges(
-                                                                    value);
-                                                              });
-                                                            },
-                                                          ),
-                                                          Text(
-                                                            "Promotes terrorism",
-                                                            style: TextStyle(
-                                                                fontSize: 14,
-                                                                color: Colors
-                                                                    .black),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      Row(
-                                                        children: <Widget>[
-                                                          Radio(
-                                                            value:
-                                                                'Spam or misleading',
-                                                            groupValue:
-                                                                _radioValue,
-                                                            onChanged: (value) {
-                                                              setState(() {
-                                                                radioButtonChanges(
-                                                                    value);
-                                                              });
-                                                            },
-                                                          ),
-                                                          Text(
-                                                            "Spam or misleading",
-                                                            style: TextStyle(
-                                                                fontSize: 14,
-                                                                color: Colors
-                                                                    .black),
                                                           ),
                                                         ],
                                                       ),
@@ -2453,8 +2498,15 @@ class _VideoPlayState extends State<VideoPlay> {
                                                   child: Text('Cancel')),
                                               FlatButton(
                                                   onPressed: () {
-                                                    report(id, reportcomment);
-                                                    reportcomment = ' ';
+                                                    if(otherTextController.text.isNotEmpty && reportcomment==""){
+                                                      report(id, otherTextController.text);
+                                                    }else if (reportcomment!="" && otherTextController.text.isEmpty){
+                                                      report(id, reportcomment);
+                                                    }else if(otherTextController.text.isNotEmpty && !["",null].contains(reportcomment)){
+                                                      String comment=reportcomment+" "+otherTextController.text;
+                                                      report(id, comment);
+                                                    }
+                                                    //report(id, reportcomment);
                                                     Navigator.of(context).pop();
                                                   },
                                                   child: Text('Report'))

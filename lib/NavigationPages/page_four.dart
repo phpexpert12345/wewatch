@@ -11,7 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:we_watch_app/conts/config.dart';
 import 'package:we_watch_app/size_config.dart';
 
-import '../video_play.dart';
+import '../video_play_detail.dart';
 
 class ChannelList extends StatefulWidget {
   @override

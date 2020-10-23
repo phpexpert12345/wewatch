@@ -32,7 +32,7 @@ import 'package:we_watch_app/ui/watch_later.dart';
 import 'package:we_watch_app/upload_screen.dart';
 import 'package:we_watch_app/video_history.dart';
 import 'package:we_watch_app/video_home_page.dart';
-import 'package:we_watch_app/video_play.dart';
+import 'package:we_watch_app/video_play_detail.dart';
 import 'package:we_watch_app/watch_later_three.dart';
 import 'package:http/http.dart' as http;
 

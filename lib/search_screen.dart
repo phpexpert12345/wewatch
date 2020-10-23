@@ -10,7 +10,7 @@ import 'package:http/http.dart' as http;
 import 'package:share/share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
-import 'package:we_watch_app/video_play.dart';
+import 'package:we_watch_app/video_play_detail.dart';
 
 import 'conts/config.dart';
 
