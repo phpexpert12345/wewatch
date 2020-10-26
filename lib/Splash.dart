@@ -36,7 +36,7 @@ class SplashScreenState1 extends  State<SplashScreen1>  {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     _firebaseMessaging.getToken().then((token) {
-      print("fbtoken"+token.toString());
+      print("fbtoken "+token.toString());
       prefs.setString("fb_token", token.toString());
     } );
   }

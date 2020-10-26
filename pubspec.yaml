@@ -62,6 +62,7 @@ dependencies:
   geocoder: 0.2.1
   video_thumbnail : 0.2.2
 #  google_maps_webservice: 0.0.18
+  flutter_local_notifications: 2.0.0+1
 
   flutter_places_autocomplete: 0.2.0
 

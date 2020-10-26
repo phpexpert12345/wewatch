@@ -14,7 +14,7 @@
         android:required="true" />
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="we_watch_app"
+        android:label="We Watch App"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

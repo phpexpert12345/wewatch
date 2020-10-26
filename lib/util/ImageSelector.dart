@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:we_watch_app/size_config.dart';
 import 'package:we_watch_app/ui/show_up.dart';
 import 'package:we_watch_app/your_birthday.dart';
@@ -215,6 +216,10 @@ class _ImageSelectorState extends State<ImageSelector> {
         base64 = base64Encode(imageFile.readAsBytesSync());
         fileName = imageFile.path.split('/').last;
         print(fileName + '------' + base64);
+        SharedPreferences.getInstance().then((value) {
+          value.setString("filename_profile", fileName);
+          value.setString("filePath_profile", _imageFile.path);
+        });
       });
     } catch (e) {
       print(e);

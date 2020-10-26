@@ -6,4 +6,5 @@ class WatchAPI {
   static const String UPDATE_NUMBER_VERIFY="https://wewatch.in/wewatch-up/api/v1/update-number-otp-verify";
   static const String VIDEO_REPORT="https://wewatch.in/wewatch-up/api/v1/video-report";
   static const String PROFILE= "https://wewatch.in/wewatch-up/api/v1/profile";
+  static const String CATEGORIES="https://wewatch.in/wewatch-up/api/v1/categories";
 }

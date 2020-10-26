@@ -37,6 +37,10 @@ class _VerifyOTPState extends State<VerifyOTP> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     print(_email.toString());
 
+    File imgFile=new File(prefs.getString("filePath_profile") ?? '');
+    String fileName=prefs.getString("filename_profile") ?? '';
+    var stream = await new http.ByteStream(imgFile.openRead());
+
     print(prefs.getString('mobile'));
     print(prefs.getString('type'));
     print(prefs.getString('first_name'));
@@ -57,31 +61,57 @@ class _VerifyOTPState extends State<VerifyOTP> {
 
     // SERVER LOGIN API URL
     var url =WatchAPI.USER_OTP_VERIFY;
-    Map data = {
 
-      'otp':_emailFilter.text.toString(),
-      'phone':prefs.getString('mobile'),
-      'user_type':prefs.getString('type'),
-      'first_name':prefs.getString('first_name'),
-      'last_name':prefs.getString('last_name'),
-      'email':prefs.getString('email'),
-      'password':prefs.getString('password'),
-      'password_confirmation':prefs.getString('password'),
-      'date_of_birth':prefs.getString('dob'),
-      'gender':prefs.getString('gender'),
 
-    };
-    String formD = json.encode(data);
 
     // Store all data with Param Name.
     FormData formData;
 
-
     Map<String,String> headers = {'Content-type':'application/json','Accept': 'application/json',};
 
+    var response;
+    if(!["",null].contains(imgFile)){
+      var stream = await new http.ByteStream(imgFile.openRead());
+      // get file length
+
+      var length = await imgFile.length();
+      var request = http.MultipartRequest(
+          'POST', Uri.parse(url));
+      request.fields["otp"] = _emailFilter.text;
+      request.fields["phone"] = prefs.getString('mobile');
+      request.fields["user_type"] = prefs.getString('type');
+      request.fields["first_name"] = prefs.getString('first_name');
+      request.fields["last_name"] = prefs.getString('last_name');
+      request.fields["email"] = prefs.getString('email');
+      request.fields["password"] = prefs.getString('password');
+      request.fields["password_confirmation"] = prefs.getString('password');
+      request.fields["date_of_birth"] = prefs.getString('dob');
+      request.fields["gender"] =prefs.getString('gender');
+
+      request.files.add(
+          await http.MultipartFile('image', stream, length, filename: fileName));
+      request.headers.addAll(headers);
+      response = await request.send();
+    }else {
+      Map data = {
+
+        'otp':_emailFilter.text.toString(),
+        'phone':prefs.getString('mobile'),
+        'user_type':prefs.getString('type'),
+        'first_name':prefs.getString('first_name'),
+        'last_name':prefs.getString('last_name'),
+        'email':prefs.getString('email'),
+        'password':prefs.getString('password'),
+        'password_confirmation':prefs.getString('password'),
+        'date_of_birth':prefs.getString('dob'),
+        'gender':prefs.getString('gender'),
+
+      };
+      String formD = json.encode(data);
+      response = await http.post(url, body: formD,headers: headers);
+    }
 
     // Starting Web API Call.
-    var response = await http.post(url, body: formD,headers: headers);
 
 
     try {
@@ -93,6 +123,7 @@ class _VerifyOTPState extends State<VerifyOTP> {
       print("ffff" + message.toString());
 
       if (response.statusCode == 200) {
+        prefs.setString("filePath_profile", "");
 //        otp = body["otp"];
         //prefs.setString('user_token',body['user_token'] );
 //        prefs.setString('id', body['id']);
@@ -159,6 +190,7 @@ class _VerifyOTPState extends State<VerifyOTP> {
         setState(() {
           visible = false;
         });
+
         Fluttertoast.showToast(
             msg: "Validation Failed",
             toastLength: Toast.LENGTH_SHORT,
@@ -232,9 +264,13 @@ class _VerifyOTPState extends State<VerifyOTP> {
             fontSize: 16.0
         );
       }
+      response.stream.transform(utf8.decoder).listen((value) {
+        print(value);
+      });
     } catch (e) {
+      prefs.setString("filePath_profile", "");
       Fluttertoast.showToast(
-        msg: e.toString(),
+        msg: "Something went wrong please try again later",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.CENTER,
 //        timeInSecForIos: 1,

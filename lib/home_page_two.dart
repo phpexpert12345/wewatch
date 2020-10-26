@@ -3,7 +3,12 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:dio/dio.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart' as pr;
+
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -35,7 +40,6 @@ import 'package:we_watch_app/video_home_page.dart';
 import 'package:we_watch_app/video_play_detail.dart';
 import 'package:we_watch_app/watch_later_three.dart';
 import 'package:http/http.dart' as http;
-
 import 'NavigationPages/dashboard.dart';
 import 'community.dart';
 
@@ -389,13 +393,31 @@ class _HomePageTwoState extends State<HomePageTwo> {
   void initState() {
     super.initState();
     checkFirstSeen();
-
+    getMessage();
     loadList();
     loadListTwo();
     loadListSecond();
     getProfile();
   }
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
+  String _message;
+  void getMessage(){       //it will handle firebase messaging
+    _firebaseMessaging.configure(
+        onMessage: (Map<String, dynamic> message) async {
+          print('on message $message');
+          setState(() => _message = message["notification"]["title"]);
+      print('on resume $message');
+      setState(() => _message = message["notification"]["title"]);
+          var androidPlatformChannelSpecifics = AndroidNotificationDetails('watch.we.we_watch_app', 'watch.we.we_watch_app', 'watch.we.we_watch_app',importance: Importance.high, priority: pr.Priority.high, ticker: 'ticker');
+          var iOSPlatformChannelSpecifics = IOSNotificationDetails();
+          var platformChannelSpecifics = NotificationDetails(android:androidPlatformChannelSpecifics,iOS: iOSPlatformChannelSpecifics);
+          await new FlutterLocalNotificationsPlugin().show(0, message['notification']['title'], message['notification']['body'], platformChannelSpecifics, payload: 'msg:');
+    }, onLaunch: (Map<String, dynamic> message) async {
+      print('on launch $message');
+      setState(() => _message = message["notification"]["title"]);
+    });
+  }
   int _selectedIndex = 0;
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);

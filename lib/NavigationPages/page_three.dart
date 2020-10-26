@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:we_watch_app/API/WatchAPI.dart';
 import 'package:we_watch_app/ui/show_up.dart';
 import 'package:http/http.dart' as http;
 import '../community.dart';
@@ -78,26 +79,25 @@ class _PageThreeState extends State<PageThree> {
 //    String password = _mobileFilter.text.toString();
 
     // SERVER LOGIN API URL
-    var url = 'https://wewatch.in/wewatch-up/api/v1/categories';
+   // var url = 'https://wewatch.in/wewatch-up/api/v1/categories';
 
     // Store all data with Param Name.
 
     // Starting Web API Call.
 
-    var response = await http.get(url, headers: {
+    var response = await http.get(WatchAPI.CATEGORIES, headers: {     // API is not working
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $access_token',
     });
 
     Map<String, dynamic> decodedMap = jsonDecode(response.body);
     Map<String, dynamic> decodedMapAttachment = jsonDecode(response.body);
-    var body = await json.decode(response.body);
     try {
       if (response.statusCode == 200) {
+        var body = json.decode(response.body);
+
         print("Ankit" + body.toString());
-
         List<dynamic> dynamicList = decodedMap['data']['results'];
-
         List<Quotes> tempList = new List<Quotes>();
         dynamicList.forEach((f) {
           Quotes s = Quotes.fromJson(f);
