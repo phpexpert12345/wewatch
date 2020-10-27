@@ -366,13 +366,12 @@ class _VideoPlayState extends State<VideoPlay> {
 
     //Simulate a service call
     print(response.statusCode);
-    Map<String, dynamic> decodedMap = jsonDecode(response.body);
-    Map<String, dynamic> decodedMapAttachment = jsonDecode(response.body);
-    var body = await json.decode(response.body);
+    //Map<String, dynamic> decodedMap = jsonDecode(response.body);
+    //Map<String, dynamic> decodedMapAttachment = jsonDecode(response.body);
     try {
       if (response.statusCode == 200) {
         // Hiding the CircularProgressIndicator.
-
+        var body = json.decode(response.body);
         Fluttertoast.showToast(
             msg: body['data']['message'],
             toastLength: Toast.LENGTH_SHORT,
@@ -882,8 +881,10 @@ class _VideoPlayState extends State<VideoPlay> {
         right: false,
         left: false,
         child: Scaffold(
-          body: Stack(
-            children: <Widget>[
+          body: Container(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            child:
 //            Container(
 //              width: double.infinity,
 //              height: double.infinity,
@@ -1526,1023 +1527,1058 @@ class _VideoPlayState extends State<VideoPlay> {
 //                ],
 //              ),
 
-              SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Container(
-                      child: Stack(
-                        alignment: AlignmentDirectional.center,
-                        children: <Widget>[
-                          Padding(
-                            padding: EdgeInsets.fromLTRB(2, 5, 2, 0),
-                            child: Container(
-                              height: 300,
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  Container(
+                    child: Stack(
+                      alignment: AlignmentDirectional.topStart,
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                          child: Container(
+                            height: 250,
 //                width: 100,
-                              child: Container(
-                                  child: VisibilityDetector(
-                                key: ObjectKey(flickManager),
-                                onVisibilityChanged: (visibility) {
-                                  if (visibility.visibleFraction == 0 &&
-                                      this.mounted) {
-                                    flickManager.flickControlManager
-                                        .autoPause();
-                                  } else if (visibility.visibleFraction == 1) {
-                                    flickManager.flickControlManager
-                                        .autoResume();
-                                  }
-                                },
-                                child: Container(
-                                  child: FlickVideoPlayer(
-                                    flickManager: flickManager,
-                                    flickVideoWithControls:
-                                        FlickVideoWithControls(
-                                      controls: FlickPortraitControls(),
-
-                                    ),
-                                    flickVideoWithControlsFullscreen:
-                                        FlickVideoWithControls(
-                                      controls: FlickLandscapeControls(),
-                                    ),
-                                  ),
-                                ),
-                              )),
-                            ),
-                          ),
-                        ],
-                      ),
-                      height: 300,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(30, 30, 0, 20),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          ListTile(
-                            leading: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[
-                                Text(total_views.toString()),
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 8.0),
-                                  child: Text('views'),
-                                )
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                Padding(
-                                  padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                  child: Center(
-                                    child: Container(
-                                        width: 50.0,
-                                        height: 50.0,
-                                        decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            image: DecorationImage(
-                                              fit: BoxFit.fill,
-                                              image: (![
-                                                "",
-                                                null,
-                                                false,
-                                                0,
-                                              ].contains(
-                                                      widget.video_thumb_image))
-                                                  ? NetworkImage(
-                                                      widget.video_thumb_image,
-                                                    )
-                                                  : AssetImage(
-                                                      "assets/images/logo_splash.png",
-                                                    ),
-                                            ))),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.fromLTRB(
-                                      5.0, 0.0, 0.0, 0.0),
-                                  child: Align(
-                                    child: new Text(
-                                      widget.video_title,
-                                      style: TextStyle(
-                                        color: Color(0xff444b69),
-                                        fontSize: 15,
-                                        letterSpacing: 0,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                      textAlign: TextAlign.left,
-                                      textDirection: TextDirection.ltr,
-                                    ),
-                                    alignment: Alignment.centerLeft,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.fromLTRB(5.0, 0.0, 0.0, 0.0),
-                            child: Align(
-                              child: new Text(
-                                (![
-                                  "",
-                                  null,
-                                  false,
-                                  0,
-                                ].contains(video_description))
-                                    ? video_description
-                                    : "NA",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 15,
-                                  letterSpacing: 0,
-                                ),
-                                textAlign: TextAlign.left,
-//                                              textDirection:
-//                                              TextDirection.ltr,
-                              ),
-                              alignment: Alignment.centerLeft,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(5.0, 5, 0, 0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Padding(
-                                  padding: const EdgeInsets.fromLTRB(
-                                      0.0, 0.0, 0.0, 0.0),
-                                  child: Align(
-                                    child: new Text(
-                                      (![
-                                        "",
-                                        null,
-                                        false,
-                                        0,
-                                      ].contains(reporter_name))
-                                          ? reporter_name + " | "
-                                          : "NA  | ",
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 13,
-                                        letterSpacing: 0,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                      textAlign: TextAlign.left,
-//                                              textDirection:
-//                                              TextDirection.ltr,
-                                    ),
-                                    alignment: Alignment.centerLeft,
-                                  ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.fromLTRB(
-                                      5.0, 0.0, 0.0, 0.0),
-                                  child: Align(
-                                    child: FittedBox(
-                                      fit: BoxFit.fitWidth,
-                                      child: new Text(
-                                        (![
-                                          "",
-                                          null,
-                                          false,
-                                          0,
-                                        ].contains(video_locality))
-                                            ? video_locality + ", "
-                                            : "NA, ",
-                                        style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 13,
-                                          letterSpacing: 0,
-                                        ),
-                                        textAlign: TextAlign.left,
-//                                              textDirection:
-//                                              TextDirection.ltr,
-                                      ),
-                                    ),
-                                    alignment: Alignment.centerLeft,
-                                  ),
-                                ),
-
-//                                       Padding(
-//                                         padding: const EdgeInsets.fromLTRB(
-//                                             0.0, 5.0, 0.0, 0.0),
-//                                         child: Align(
-//                                           child: new Text(
-//                                             (!["", null, false, 0,].contains(cellModel.video_description)) ? cellModel.video_description +"| New Delhi | 15th Sep 2020 | Posted at 12:05 pm" : "Video title",
-//                                             style: TextStyle(
-//
-//                                               color: Colors.black,
-//                                               fontSize: 11,
-//                                               letterSpacing: 0,
-//                                               fontWeight: FontWeight.bold,
-//                                             ),
-//                                             textAlign: TextAlign.left,
-// //                                              textDirection:
-// //                                              TextDirection.ltr,
-//                                           ),
-//                                           alignment: Alignment.centerLeft,
-//                                         ),
-//                                       ),
-                              ],
-                            ),
-                          ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.fromLTRB(5.0, 0.0, 0.0, 0.0),
-                            child: Align(
-                              child: new Text(
-                                (![
-                                  "",
-                                  null,
-                                  false,
-                                  0,
-                                ].contains(time))
-                                    ? date + " | " + "Posted at " + time
-                                    : "NA",
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontSize: 13,
-                                  letterSpacing: 0,
-                                ),
-                                textAlign: TextAlign.left,
-//                                              textDirection:
-//                                              TextDirection.ltr,
-                              ),
-                              alignment: Alignment.centerLeft,
-                            ),
-                          ),
-//                                       Padding(
-//                                         padding: const EdgeInsets.fromLTRB(
-//                                             0.0, 5.0, 0.0, 0.0),
-//                                         child: Align(
-//                                           child: new Text(
-//                                             (!["", null, false, 0,].contains(cellModel.video_description)) ? cellModel.video_description +"| New Delhi | 15th Sep 2020 | Posted at 12:05 pm" : "Video title",
-//                                             style: TextStyle(
-//
-//                                               color: Colors.black,
-//                                               fontSize: 11,
-//                                               letterSpacing: 0,
-//                                               fontWeight: FontWeight.bold,
-//                                             ),
-//                                             textAlign: TextAlign.left,
-// //                                              textDirection:
-// //                                              TextDirection.ltr,
-//                                           ),
-//                                           alignment: Alignment.centerLeft,
-//                                         ),
-//                                       ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Expanded(
-                            child: Padding(
-                                padding: const EdgeInsets.all(10),
-                                child: GestureDetector(
-                                  onTap: () {
-                                    if (doLogin == 1) {
-                                      setState(() {
-                                        if (!countValue) {
-                                          saveLike(id, "1");
-                                          countValue = true;
-                                          countValue1 = false;
-                                        }
-                                      });
-                                    }
-                                  },
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      Padding(
-                                        padding:
-                                            EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                        child: Center(
-                                          child: Container(
-                                            height: 30,
-                                            width: 30,
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(30)),
-//                                            border: Border.all(
-//                                                                   width: 0,
-//                                                                   color: Colors
-//                                                                       .lightBlue,
-//                                                                   style:
-//                                                                   BorderStyle
-//                                                                       .solid)
-                                            ),
-                                            child: Center(
-                                              child: Padding(
-                                                padding: EdgeInsets.all(0),
-                                                child: Image.asset(
-                                                  "assets/images/like_grey.png",
-
-//                                              height: 150.0,
-//                                              width: 50.0,
-                                                  fit: BoxFit.fill,
-                                                  color: countValue
-                                                      ? Color(0xff00adef)
-                                                      : Colors.grey,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: const EdgeInsets.fromLTRB(
-                                            0.0, 0.0, 0.0, 0.0),
-                                        child: Align(
-                                          child: new Text(
-                                            !["", null].contains(like_count)
-                                                ? like_count.toString() +
-                                                    " Likes"
-                                                : '0 Likes',
-                                            style: TextStyle(
-                                              color: Color(0xff444b69),
-                                              fontSize: 13,
-                                              letterSpacing: 0,
-                                              fontWeight: FontWeight.w400,
-                                            ),
-                                            textAlign: TextAlign.center,
-                                            textDirection: TextDirection.ltr,
-                                          ),
-                                          alignment: Alignment.center,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                )),
-                          ),
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.all(10),
-                              child: GestureDetector(
-                                onTap: () {
-                                  if (doLogin == 1) {
-                                    setState(() {
-                                      if (!countValue1) {
-                                        countValue1 = true;
-                                        countValue = false;
-                                        saveLike(id, "0");
-                                      }
-                                    });
-                                  }
-                                },
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Padding(
-                                      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                      child: Center(
-                                        child: Container(
-                                          height: 30,
-                                          width: 30,
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(30)),
-//                                            border: Border.all(
-//                                                                   width: 0,
-//                                                                   color: Colors
-//                                                                       .lightBlue,
-//                                                                   style:
-//                                                                   BorderStyle
-//                                                                       .solid)
-                                          ),
-                                          child: Center(
-                                            child: Padding(
-                                              padding: EdgeInsets.all(0),
-                                              child: Image.asset(
-                                                "assets/images/dislike_grey.png",
-//                                              height: 150.0,
-//                                              width: 50.0,
-                                                fit: BoxFit.fill,
-                                                color: countValue1
-                                                    ? Color(0xff00adef)
-                                                    : Colors.grey,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.fromLTRB(
-                                          0.0, 0.0, 0.0, 0.0),
-                                      child: Align(
-                                        child: new Text(
-                                          !["", null].contains(dislike_count)
-                                              ? dislike_count.toString() +
-                                                  " Dislikes"
-                                              : '0 Dislikes',
-                                          style: TextStyle(
-                                            color: Color(0xff444b69),
-                                            fontSize: 13,
-                                            letterSpacing: 0,
-                                            fontWeight: FontWeight.w400,
-                                          ),
-                                          textAlign: TextAlign.center,
-                                          textDirection: TextDirection.ltr,
-                                        ),
-                                        alignment: Alignment.center,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: GestureDetector(
-                              onTap: () {
-                                Share.share(
-                                  state_id,
-                                  subject: video_title,
-                                );
+                            child: Container(
+                                child: VisibilityDetector(
+                              key: ObjectKey(flickManager),
+                              onVisibilityChanged: (visibility) {
+                                if (visibility.visibleFraction == 0 &&
+                                    this.mounted) {
+                                  flickManager.flickControlManager
+                                      .autoPause();
+                                } else if (visibility.visibleFraction == 1) {
+                                  flickManager.flickControlManager
+                                      .autoResume();
+                                }
                               },
-                              child: Padding(
-                                padding: const EdgeInsets.all(10),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Padding(
-                                      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                      child: Center(
-                                        child: Container(
-                                          height: 30,
-                                          width: 30,
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(30)),
-//                                            border: Border.all(
-//                                                                   width: 0,
-//                                                                   color: Colors
-//                                                                       .lightBlue,
-//                                                                   style:
-//                                                                   BorderStyle
-//                                                                       .solid)
-                                          ),
-                                          child: Center(
-                                            child: Padding(
-                                              padding: EdgeInsets.all(0),
-                                              child: Image.asset(
-                                                "assets/images/share_grey.png",
-//                                              height: 150.0,
-//                                              width: 50.0,
-                                                fit: BoxFit.fill,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.fromLTRB(
-                                          0.0, 0.0, 0.0, 0.0),
-                                      child: Align(
-                                        child: new Text(
-                                          'Share',
-                                          style: TextStyle(
-                                            color: Color(0xff444b69),
-                                            fontSize: 13,
-                                            letterSpacing: 0,
-                                            fontWeight: FontWeight.w400,
-                                          ),
-                                          textAlign: TextAlign.center,
-                                          textDirection: TextDirection.ltr,
-                                        ),
-                                        alignment: Alignment.center,
-                                      ),
-                                    ),
-                                  ],
+                              child: Container(
+                                child: FlickVideoPlayer(
+                                  flickManager: flickManager,
+                                  flickVideoWithControls:
+                                      FlickVideoWithControls(
+                                    controls: FlickPortraitControls(),
+
+                                  ),
+                                  flickVideoWithControlsFullscreen:
+                                      FlickVideoWithControls(
+                                    controls: FlickLandscapeControls(),
+                                  ),
                                 ),
                               ),
-                            ),
+                            )),
                           ),
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.fromLTRB(5, 10, 5, 10),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Padding(
-                                    padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                    child: Center(
-                                      child: Container(
-                                        height: 30,
-                                        width: 30,
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(30)),
-//                                            border: Border.all(
-//                                                                   width: 0,
-//                                                                   color: Colors
-//                                                                       .lightBlue,
-//                                                                   style:
-//                                                                   BorderStyle
-//                                                                       .solid)
-                                        ),
-                                        child: Center(
-                                          child: Padding(
-                                            padding: EdgeInsets.all(0),
-                                            child: Icon(
-                                              Icons.file_download,
-                                              color: Color(0xff757998),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.fromLTRB(
-                                        0.0, 0.0, 0.0, 0.0),
-                                    child: Align(
-                                      child: new Text(
-                                        'Download',
-                                        style: TextStyle(
-                                          color: Color(0xff444b69),
-                                          fontSize: 13,
-                                          letterSpacing: 0,
-                                          fontWeight: FontWeight.w400,
-                                        ),
-                                        textAlign: TextAlign.center,
-                                        textDirection: TextDirection.ltr,
-                                      ),
-                                      alignment: Alignment.center,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.fromLTRB(5, 10, 5, 10),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Padding(
-                                    padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                    child: Center(
-                                      child: Container(
-                                        height: 30,
-                                        width: 30,
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(30)),
-//                                            border: Border.all(
-//                                                                   width: 0,
-//                                                                   color: Colors
-//                                                                       .lightBlue,
-//                                                                   style:
-//                                                                   BorderStyle
-//                                                                       .solid)
-                                        ),
-                                        child: Center(
-                                          child: Padding(
-                                            padding: EdgeInsets.all(0),
-                                            child: Image.asset(
-                                              "assets/images/watch_list_grey.png",
-//                                              height: 150.0,
-//                                              width: 50.0,
-                                              fit: BoxFit.fill,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.fromLTRB(
-                                        0.0, 0.0, 0.0, 0.0),
-                                    child: Align(
-                                      child: new Text(
-                                        'Watchlist',
-                                        style: TextStyle(
-                                          color: Color(0xff444b69),
-                                          fontSize: 13,
-                                          letterSpacing: 0,
-                                          fontWeight: FontWeight.w400,
-                                        ),
-                                        textAlign: TextAlign.center,
-                                        textDirection: TextDirection.ltr,
-                                      ),
-                                      alignment: Alignment.center,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                    Divider(
-                      color: Colors.black,
-                      thickness: 0.4,
-                    ),
-                    ListTile(
-                      leading: CircleAvatar(),
-                      title: Text(channel_name.toString()),
-                      subtitle: Text(subscriber_count.toString()),
-                      trailing: Container(
-                          height: 100,
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              new RaisedButton(
-                                  child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: <Widget>[
-                                        Icon(
-                                          Icons.play_circle_outline,
-                                          color: Colors.white,
-                                        ),
-                                        Text(
-                                          'Subscribe',
-                                          style: TextStyle(color: Colors.white),
-                                        ),
-                                      ]),
-                                  textColor: Colors.white,
-                                  shape: new RoundedRectangleBorder(
-                                    borderRadius:
-                                        new BorderRadius.circular(18.0),
-                                  ),
-                                  color: is_sub ? Colors.grey : Colors.blue,
-                                  onPressed: () {
-                                    subscribed(channel_id.toString(),
-                                        is_sub ? '0' : '1');
-                                    setState(() => is_sub = !is_sub);
-                                  }),
-                              Padding(
-                                  padding: const EdgeInsets.only(left: 8.0),
-                                  child: IconButton(
-                                      enableFeedback: true,
-                                      icon: Icon(Icons.report),
-                                      onPressed: () {
-                                        showGeneralDialog(
-                                          transitionDuration:
-                                              Duration(milliseconds: 500),
-                                          barrierColor: Colors.black87,
-                                          barrierLabel: '',
-                                          barrierDismissible: true,
-                                          context: context,
-                                          pageBuilder: (ctx, anim1, anim2) =>
-                                              AlertDialog(
-                                            content: StatefulBuilder(
-                                              builder: (BuildContext context,
-                                                  StateSetter setState) {
-                                                return Container(
-                                                  height: MediaQuery.of(context)
-                                                              .size
-                                                              .height >
-                                                          667
-                                                      ? MediaQuery.of(context)
-                                                              .size
-                                                              .height *
-                                                          0.6
-                                                      : MediaQuery.of(context)
-                                                              .size
-                                                              .height *
-                                                          0.8,
-                                                  width: 300,
-                                                  child: ListView(
-                                                    shrinkWrap: true,
-                                                    children: [
-                                                      Column(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                        .only(
-                                                                    bottom: 5.0),
-                                                            child: new Text(
-                                                              'Report Video',
-                                                              style: TextStyle(
-                                                                  fontFamily:
-                                                                      'Montserrat',
-                                                                  fontSize: 16,
-                                                                  color:
-                                                                      Colors.black),
-                                                            ),
-                                                          ),
-                                                          Row(
-                                                            children: <Widget>[
-                                                              Radio(
-                                                                value:
-                                                                    'Sexual content',
-                                                                groupValue:
-                                                                    _radioValue,
-                                                                onChanged: (value) {
-                                                                  setState(() {
-                                                                    radioButtonChanges(
-                                                                        value);
-                                                                  });
-                                                                },
-                                                              ),
-                                                              Text(
-                                                                "Sexual content",
-                                                                style: TextStyle(
-                                                                    fontSize: 14,
-                                                                    color: Colors
-                                                                        .black),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          Row(
-                                                            children: <Widget>[
-                                                              Radio(
-                                                                value:
-                                                                    'Violent or repulsive content',
-                                                                groupValue:
-                                                                    _radioValue,
-                                                                onChanged: (value) {
-                                                                  setState(() {
-                                                                    radioButtonChanges(
-                                                                        value);
-                                                                  });
-                                                                },
-                                                              ),
-                                                              Flexible(
-                                                                child: Text(
-                                                                  "Violent or repulsive content",
-                                                                  style: TextStyle(
-                                                                      fontSize: 14,
-                                                                      color: Colors
-                                                                          .black),
-                                                                  maxLines: 2,
-                                                                  textWidthBasis:
-                                                                      TextWidthBasis
-                                                                          .longestLine,
-                                                                  overflow:
-                                                                      TextOverflow
-                                                                          .ellipsis,
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          Row(
-                                                            children: <Widget>[
-                                                              Radio(
-                                                                value:
-                                                                    'Hateful or abusive content',
-                                                                groupValue:
-                                                                    _radioValue,
-                                                                onChanged: (value) {
-                                                                  setState(() {
-                                                                    radioButtonChanges(
-                                                                        value);
-                                                                  });
-                                                                },
-                                                              ),
-                                                              Flexible(
-                                                                child: Text(
-                                                                  "Hateful or abusive content",
-                                                                  style: TextStyle(
-                                                                      fontSize: 14,
-                                                                      color: Colors
-                                                                          .black),
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          Row(
-                                                            children: <Widget>[
-                                                              Radio(
-                                                                value:
-                                                                    'Harmful or dangerous acts',
-                                                                groupValue:
-                                                                    _radioValue,
-                                                                onChanged: (value) {
-                                                                  setState(() {
-                                                                    radioButtonChanges(
-                                                                        value);
-                                                                  });
-                                                                },
-                                                              ),
-                                                              Flexible(
-                                                                child: Text(
-                                                                  "Harmful or dangerous acts",
-                                                                  style: TextStyle(
-                                                                      fontSize: 14,
-                                                                      color: Colors
-                                                                          .black),
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          Row(
-                                                            children: <Widget>[
-                                                              Radio(
-                                                                value:
-                                                                    'Child abuse',
-                                                                groupValue:
-                                                                    _radioValue,
-                                                                onChanged: (value) {
-                                                                  setState(() {
-                                                                    radioButtonChanges(
-                                                                        value);
-                                                                  });
-                                                                },
-                                                              ),
-                                                              Text(
-                                                                "Child abuse",
-                                                                style: TextStyle(
-                                                                    fontSize: 14,
-                                                                    color: Colors
-                                                                        .black),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          Row(
-                                                            children: <Widget>[
-                                                              Radio(
-                                                                value:
-                                                                    'Infringes my rights',
-                                                                groupValue:
-                                                                    _radioValue,
-                                                                onChanged: (value) {
-                                                                  setState(() {
-                                                                    radioButtonChanges(
-                                                                        value);
-                                                                  });
-                                                                },
-                                                              ),
-                                                              Text(
-                                                                "Infringes my rights",
-                                                                style: TextStyle(
-                                                                    fontSize: 14,
-                                                                    color: Colors
-                                                                        .black),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          Row(
-                                                            children: <Widget>[
-                                                              Radio(
-                                                                value:
-                                                                    'Promotes terrorism',
-                                                                groupValue:
-                                                                    _radioValue,
-                                                                onChanged: (value) {
-                                                                  setState(() {
-                                                                    radioButtonChanges(
-                                                                        value);
-                                                                  });
-                                                                },
-                                                              ),
-                                                              Text(
-                                                                "Promotes terrorism",
-                                                                style: TextStyle(
-                                                                    fontSize: 14,
-                                                                    color: Colors
-                                                                        .black),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          Row(
-                                                            children: <Widget>[
-                                                              Radio(
-                                                                value:
-                                                                    'Spam or misleading',
-                                                                groupValue:
-                                                                    _radioValue,
-                                                                onChanged: (value) {
-                                                                  setState(() {
-                                                                    radioButtonChanges(
-                                                                        value);
-                                                                  });
-                                                                },
-                                                              ),
-                                                              Text(
-                                                                "Spam or misleading",
-                                                                style: TextStyle(
-                                                                    fontSize: 14,
-                                                                    color: Colors
-                                                                        .black),
-                                                              ),
-                                                            ],
-                                                          ),
-
-                                                          Container(
-                                                            margin: EdgeInsets.only(left: 5.0,right: 5.0),
-                                                            decoration: BoxDecoration(
-                                                                border: Border(top: BorderSide(color: COLORS.CONTAINER_BORDER_COLOR),
-                                                                    left: BorderSide(color: COLORS.CONTAINER_BORDER_COLOR),
-                                                                    right: BorderSide(color: COLORS.CONTAINER_BORDER_COLOR),
-                                                                    bottom: BorderSide(color: COLORS.CONTAINER_BORDER_COLOR)
-                                                                ),
-                                                                borderRadius: BorderRadius.all(Radius.circular(8.0))
-                                                            ),
-                                                            child: TextFormField(
-                                                              maxLines: 3,
-                                                              cursorColor: Colors.black,
-                                                              controller: otherTextController,
-                                                              decoration: new InputDecoration(
-                                                                  border: InputBorder.none,
-                                                                  focusedBorder: InputBorder.none,
-                                                                  enabledBorder: InputBorder.none,
-                                                                  errorBorder: InputBorder.none,
-                                                                  disabledBorder: InputBorder.none,
-                                                                  contentPadding: EdgeInsets.only(
-                                                                      left: 15, bottom: 11, top: 11, right: 15),
-                                                                  hintText: 'comments here -',
-                                                                  hintStyle: new TextStyle(color: Colors.black45)),
-                                                              inputFormatters: [
-                                                                LengthLimitingTextInputFormatter(100),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ],
-                                                  ),
-                                                );
-                                              },
-                                            ),
-                                            actions: <Widget>[
-                                              FlatButton(
-                                                  onPressed: () {
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                  child: Text('Cancel')),
-                                              FlatButton(
-                                                  onPressed: () {
-                                                    if(otherTextController.text.isNotEmpty && reportcomment==""){
-                                                      report(id, otherTextController.text);
-                                                    }else if (reportcomment!="" && otherTextController.text.isEmpty){
-                                                      report(id, reportcomment);
-                                                    }else if(otherTextController.text.isNotEmpty && !["",null].contains(reportcomment)){
-                                                      String comment=reportcomment+" "+otherTextController.text;
-                                                      report(id, comment);
-                                                    }
-                                                    //report(id, reportcomment);
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                  child: Text('Report'))
-                                            ],
-                                          ),
-                                          transitionBuilder:
-                                              (ctx, anim1, anim2, child) =>
-                                                  BackdropFilter(
-                                            filter: ImageFilter.blur(
-                                                sigmaX: 4 * anim1.value,
-                                                sigmaY: 4 * anim1.value),
-                                            child: FadeTransition(
-                                              child: child,
-                                              opacity: anim1,
-                                            ),
-                                          ),
-                                        );
-                                      })),
-                            ],
-                          )),
-                    ),
-
-                    Divider(
-                      color: Colors.black,
-                      thickness: 0.4,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-                      child: Form(
-                        key: _key,
-                        autovalidate: _validate,
-                        child: new Container(
-                          child: Row(
+                    height: 250,
+                  ),
+                  Expanded(
+                    child: ListView(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(10, 1, 10, 20),
+                          child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
+                              ListTile(
+                                leading: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    Text(video_title.toString(),style: new TextStyle(fontSize: 18,color: Colors.black,),),
+                                    Text((![
+                                      "",
+                                      null,
+                                      false,
+                                      0,
+                                    ].contains(video_description))
+                                        ? " || "+video_description
+                                        : "",style: new TextStyle(fontSize: 18,color: Colors.black,),)
+
+                                  ],
+                                ),
+                              ),
+                              ListTile(
+                                leading: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    Text(total_views.toString()),
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 8.0),
+                                      child: Text('views'),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Expanded(
+                                      child: Padding(
+                                          padding: const EdgeInsets.all(10),
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              if (doLogin == 1) {
+                                                setState(() {
+                                                  if (!countValue) {
+                                                    saveLike(id, "1");
+                                                    countValue = true;
+                                                    countValue1 = false;
+                                                  }
+                                                });
+                                              }
+                                            },
+                                            child: Column(
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                              children: <Widget>[
+                                                Padding(
+                                                  padding:
+                                                  EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                                  child: Center(
+                                                    child: Container(
+                                                      height: 30,
+                                                      width: 30,
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.white,
+                                                        borderRadius: BorderRadius.all(
+                                                            Radius.circular(30)),
+//                                            border: Border.all(
+//                                                                   width: 0,
+//                                                                   color: Colors
+//                                                                       .lightBlue,
+//                                                                   style:
+//                                                                   BorderStyle
+//                                                                       .solid)
+                                                      ),
+                                                      child: Center(
+                                                        child: Padding(
+                                                          padding: EdgeInsets.all(0),
+                                                          child: Image.asset(
+                                                            "assets/images/like_grey.png",
+
+//                                              height: 150.0,
+//                                              width: 50.0,
+                                                            fit: BoxFit.fill,
+                                                            color: countValue
+                                                                ? Color(0xff00adef)
+                                                                : Colors.grey,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding: const EdgeInsets.fromLTRB(
+                                                      0.0, 0.0, 0.0, 0.0),
+                                                  child: Align(
+                                                    child: new Text(
+                                                      !["", null].contains(like_count)
+                                                          ? like_count.toString() +
+                                                          " Likes"
+                                                          : '0 Likes',
+                                                      style: TextStyle(
+                                                        color: Color(0xff444b69),
+                                                        fontSize: 12,
+                                                        letterSpacing: 0,
+                                                        fontWeight: FontWeight.w400,
+                                                      ),
+                                                      textAlign: TextAlign.center,
+                                                      textDirection: TextDirection.ltr,
+                                                    ),
+                                                    alignment: Alignment.center,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          )),
+                                    ),
+                                    Expanded(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(10),
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            if (doLogin == 1) {
+                                              setState(() {
+                                                if (!countValue1) {
+                                                  countValue1 = true;
+                                                  countValue = false;
+                                                  saveLike(id, "0");
+                                                }
+                                              });
+                                            }
+                                          },
+                                          child: Column(
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: <Widget>[
+                                              Padding(
+                                                padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                                child: Center(
+                                                  child: Container(
+                                                    height: 30,
+                                                    width: 30,
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      borderRadius: BorderRadius.all(
+                                                          Radius.circular(30)),
+//                                            border: Border.all(
+//                                                                   width: 0,
+//                                                                   color: Colors
+//                                                                       .lightBlue,
+//                                                                   style:
+//                                                                   BorderStyle
+//                                                                       .solid)
+                                                    ),
+                                                    child: Center(
+                                                      child: Padding(
+                                                        padding: EdgeInsets.all(0),
+                                                        child: Image.asset(
+                                                          "assets/images/dislike_grey.png",
+//                                              height: 150.0,
+//                                              width: 50.0,
+                                                          fit: BoxFit.fill,
+                                                          color: countValue1
+                                                              ? Color(0xff00adef)
+                                                              : Colors.grey,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.fromLTRB(
+                                                    0.0, 0.0, 0.0, 0.0),
+                                                child: Align(
+                                                  child: new Text(
+                                                    !["", null].contains(dislike_count)
+                                                        ? dislike_count.toString() +
+                                                        " Dislikes"
+                                                        : '0 Dislikes',
+                                                    style: TextStyle(
+                                                      color: Color(0xff444b69),
+                                                      fontSize: 12,
+                                                      letterSpacing: 0,
+                                                      fontWeight: FontWeight.w400,
+                                                    ),
+                                                    textAlign: TextAlign.center,
+                                                    textDirection: TextDirection.ltr,
+                                                  ),
+                                                  alignment: Alignment.center,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          Share.share(
+                                            state_id,
+                                            subject: video_title,
+                                          );
+                                        },
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(10),
+                                          child: Column(
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: <Widget>[
+                                              Padding(
+                                                padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                                child: Center(
+                                                  child: Container(
+                                                    height: 30,
+                                                    width: 30,
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      borderRadius: BorderRadius.all(
+                                                          Radius.circular(30)),
+//                                            border: Border.all(
+//                                                                   width: 0,
+//                                                                   color: Colors
+//                                                                       .lightBlue,
+//                                                                   style:
+//                                                                   BorderStyle
+//                                                                       .solid)
+                                                    ),
+                                                    child: Center(
+                                                      child: Padding(
+                                                        padding: EdgeInsets.all(0),
+                                                        child: Image.asset(
+                                                          "assets/images/share_grey.png",
+//                                              height: 150.0,
+//                                              width: 50.0,
+                                                          fit: BoxFit.fill,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.fromLTRB(
+                                                    0.0, 0.0, 0.0, 0.0),
+                                                child: Align(
+                                                  child: new Text(
+                                                    'Share',
+                                                    style: TextStyle(
+                                                      color: Color(0xff444b69),
+                                                      fontSize: 12,
+                                                      letterSpacing: 0,
+                                                      fontWeight: FontWeight.w400,
+                                                    ),
+                                                    textAlign: TextAlign.center,
+                                                    textDirection: TextDirection.ltr,
+                                                  ),
+                                                  alignment: Alignment.center,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Padding(
+                                        padding: const EdgeInsets.fromLTRB(5, 10, 5, 10),
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: <Widget>[
+                                            Padding(
+                                              padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                              child: Center(
+                                                child: Container(
+                                                  height: 30,
+                                                  width: 30,
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius: BorderRadius.all(
+                                                        Radius.circular(30)),
+//                                            border: Border.all(
+//                                                                   width: 0,
+//                                                                   color: Colors
+//                                                                       .lightBlue,
+//                                                                   style:
+//                                                                   BorderStyle
+//                                                                       .solid)
+                                                  ),
+                                                  child: Center(
+                                                    child: Padding(
+                                                      padding: EdgeInsets.all(0),
+                                                      child: Icon(
+                                                        Icons.file_download,
+                                                        color: Color(0xff757998),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.fromLTRB(
+                                                  0.0, 0.0, 0.0, 0.0),
+                                              child: Align(
+                                                child: new Text(
+                                                  'Download',
+                                                  style: TextStyle(
+                                                    color: Color(0xff444b69),
+                                                    fontSize: 12,
+                                                    letterSpacing: 0,
+                                                    fontWeight: FontWeight.w400,
+                                                  ),
+                                                  textAlign: TextAlign.center,
+                                                  textDirection: TextDirection.ltr,
+                                                ),
+                                                alignment: Alignment.center,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Padding(
+                                        padding: const EdgeInsets.fromLTRB(5, 10, 5, 10),
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: <Widget>[
+                                            Padding(
+                                              padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                              child: Center(
+                                                child: Container(
+                                                  height: 30,
+                                                  width: 30,
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius: BorderRadius.all(
+                                                        Radius.circular(30)),
+//                                            border: Border.all(
+//                                                                   width: 0,
+//                                                                   color: Colors
+//                                                                       .lightBlue,
+//                                                                   style:
+//                                                                   BorderStyle
+//                                                                       .solid)
+                                                  ),
+                                                  child: Center(
+                                                    child: Padding(
+                                                      padding: EdgeInsets.all(0),
+                                                      child: Image.asset(
+                                                        "assets/images/watch_list_grey.png",
+//                                              height: 150.0,
+//                                              width: 50.0,
+                                                        fit: BoxFit.fill,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.fromLTRB(
+                                                  0.0, 0.0, 0.0, 0.0),
+                                              child: Align(
+                                                child: new Text(
+                                                  'Watchlist',
+                                                  style: TextStyle(
+                                                    color: Color(0xff444b69),
+                                                    fontSize: 12,
+                                                    letterSpacing: 0,
+                                                    fontWeight: FontWeight.w400,
+                                                  ),
+                                                  textAlign: TextAlign.center,
+                                                  textDirection: TextDirection.ltr,
+                                                ),
+                                                alignment: Alignment.center,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: <Widget>[
+                                    Padding(
+                                      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                      child: Center(
+                                        child: Container(
+                                            width: 50.0,
+                                            height: 50.0,
+                                            decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                image: DecorationImage(
+                                                  fit: BoxFit.fill,
+                                                  image: (![
+                                                    "",
+                                                    null,
+                                                    false,
+                                                    0,
+                                                  ].contains(
+                                                      widget.video_thumb_image))
+                                                      ? NetworkImage(
+                                                    widget.video_thumb_image,
+                                                  )
+                                                      : AssetImage(
+                                                    "assets/images/logo_splash.png",
+                                                  ),
+                                                ))),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                          5.0, 0.0, 0.0, 0.0),
+                                      child: Align(
+                                        child: new Text(
+                                          widget.video_title,
+                                          style: TextStyle(
+                                            color: Color(0xff444b69),
+                                            fontSize: 15,
+                                            letterSpacing: 0,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                          textAlign: TextAlign.left,
+                                          textDirection: TextDirection.ltr,
+                                        ),
+                                        alignment: Alignment.centerLeft,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Padding(
+                                padding:
+                                const EdgeInsets.fromLTRB(5.0, 0.0, 0.0, 0.0),
+                                child: Align(
+                                  child: new Text(
+                                    (![
+                                      "",
+                                      null,
+                                      false,
+                                      0,
+                                    ].contains(video_description))
+                                        ? video_description
+                                        : "NA",
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 15,
+                                      letterSpacing: 0,
+                                    ),
+                                    textAlign: TextAlign.left,
+//                                              textDirection:
+//                                              TextDirection.ltr,
+                                  ),
+                                  alignment: Alignment.centerLeft,
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(5.0, 5, 0, 0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                          0.0, 0.0, 0.0, 0.0),
+                                      child: Align(
+                                        child: new Text(
+                                          (![
+                                            "",
+                                            null,
+                                            false,
+                                            0,
+                                          ].contains(reporter_name))
+                                              ? reporter_name + " | "
+                                              : "NA  | ",
+                                          style: TextStyle(
+                                            color: Colors.black,
+                                            fontSize: 13,
+                                            letterSpacing: 0,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                          textAlign: TextAlign.left,
+//                                              textDirection:
+//                                              TextDirection.ltr,
+                                        ),
+                                        alignment: Alignment.centerLeft,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                          5.0, 0.0, 0.0, 0.0),
+                                      child: Align(
+                                        child: FittedBox(
+                                          fit: BoxFit.fitWidth,
+                                          child: new Text(
+                                            (![
+                                              "",
+                                              null,
+                                              false,
+                                              0,
+                                            ].contains(video_locality))
+                                                ? video_locality + ", "
+                                                : "NA, ",
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                              fontSize: 13,
+                                              letterSpacing: 0,
+                                            ),
+                                            textAlign: TextAlign.left,
+//                                              textDirection:
+//                                              TextDirection.ltr,
+                                          ),
+                                        ),
+                                        alignment: Alignment.centerLeft,
+                                      ),
+                                    ),
+
+//                                       Padding(
+//                                         padding: const EdgeInsets.fromLTRB(
+//                                             0.0, 5.0, 0.0, 0.0),
+//                                         child: Align(
+//                                           child: new Text(
+//                                             (!["", null, false, 0,].contains(cellModel.video_description)) ? cellModel.video_description +"| New Delhi | 15th Sep 2020 | Posted at 12:05 pm" : "Video title",
+//                                             style: TextStyle(
+//
+//                                               color: Colors.black,
+//                                               fontSize: 11,
+//                                               letterSpacing: 0,
+//                                               fontWeight: FontWeight.bold,
+//                                             ),
+//                                             textAlign: TextAlign.left,
+// //                                              textDirection:
+// //                                              TextDirection.ltr,
+//                                           ),
+//                                           alignment: Alignment.centerLeft,
+//                                         ),
+//                                       ),
+                                  ],
+                                ),
+                              ),
+                              Padding(
+                                padding:
+                                const EdgeInsets.fromLTRB(5.0, 0.0, 0.0, 0.0),
+                                child: Align(
+                                  child: new Text(
+                                    (![
+                                      "",
+                                      null,
+                                      false,
+                                      0,
+                                    ].contains(time))
+                                        ? date + " | " + "Posted at " + time
+                                        : "NA",
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 13,
+                                      letterSpacing: 0,
+                                    ),
+                                    textAlign: TextAlign.left,
+//                                              textDirection:
+//                                              TextDirection.ltr,
+                                  ),
+                                  alignment: Alignment.centerLeft,
+                                ),
+                              ),
+//                                       Padding(
+//                                         padding: const EdgeInsets.fromLTRB(
+//                                             0.0, 5.0, 0.0, 0.0),
+//                                         child: Align(
+//                                           child: new Text(
+//                                             (!["", null, false, 0,].contains(cellModel.video_description)) ? cellModel.video_description +"| New Delhi | 15th Sep 2020 | Posted at 12:05 pm" : "Video title",
+//                                             style: TextStyle(
+//
+//                                               color: Colors.black,
+//                                               fontSize: 11,
+//                                               letterSpacing: 0,
+//                                               fontWeight: FontWeight.bold,
+//                                             ),
+//                                             textAlign: TextAlign.left,
+// //                                              textDirection:
+// //                                              TextDirection.ltr,
+//                                           ),
+//                                           alignment: Alignment.centerLeft,
+//                                         ),
+//                                       ),
+                            ],
+                          ),
+                        ),
+                        Divider(
+                          color: Colors.black,
+                          thickness: 0.4,
+                        ),
+                        ListTile(
+                          leading: CircleAvatar(),
+                          title: Text(channel_name.toString()),
+                          subtitle: Text(widget.subscriber_count.toString()),
+
+                          trailing: Container(
+                              height: 100,
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  new RaisedButton(
+                                      child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: <Widget>[
+                                            Icon(
+                                              Icons.play_circle_outline,
+                                              color: Colors.white,
+                                            ),
+                                            Text(
+                                              'Subscribe',
+                                              style: TextStyle(color: Colors.white),
+                                            ),
+                                          ]),
+                                      textColor: Colors.white,
+                                      shape: new RoundedRectangleBorder(
+                                        borderRadius:
+                                        new BorderRadius.circular(18.0),
+                                      ),
+                                      color: is_sub ? Colors.grey : Colors.blue,
+                                      onPressed: () {
+                                        subscribed(channel_id.toString(),
+                                            is_sub ? '0' : '1');
+                                        setState(() => is_sub = !is_sub);
+                                      }),
+                                  Padding(
+                                      padding: const EdgeInsets.only(left: 8.0),
+                                      child: Material(
+                                        color: Colors.transparent,
+                                        child: InkWell(
+                                            enableFeedback: true,
+                                            splashColor: Colors.grey.shade200,
+                                            child: Container(
+                                              padding:EdgeInsets.all(6.0),
+                                              decoration: BoxDecoration(
+                                                  color: Colors.blue,
+                                                  borderRadius: BorderRadius.circular(18)
+                                              ),
+                                              child: Row(
+                                                children: [
+                                                  Text("Report ",style: new TextStyle(color: Colors.white),),
+                                                  Icon(Icons.flag,color: Colors.white,),
+                                                ],
+                                              ),
+                                            ),
+                                            onTap: () {
+                                              showGeneralDialog(
+                                                transitionDuration:
+                                                Duration(milliseconds: 500),
+                                                barrierColor: Colors.black87,
+                                                barrierLabel: '',
+                                                barrierDismissible: true,
+                                                context: context,
+                                                pageBuilder: (ctx, anim1, anim2) =>
+                                                    AlertDialog(
+                                                      content: StatefulBuilder(
+                                                        builder: (BuildContext context,
+                                                            StateSetter setState) {
+                                                          return Container(
+                                                            height: MediaQuery.of(context)
+                                                                .size
+                                                                .height >
+                                                                667
+                                                                ? MediaQuery.of(context)
+                                                                .size
+                                                                .height *
+                                                                0.6
+                                                                : MediaQuery.of(context)
+                                                                .size
+                                                                .height *
+                                                                0.8,
+                                                            width: 300,
+                                                            child: ListView(
+                                                              shrinkWrap: true,
+                                                              children: [
+                                                                Column(
+                                                                  mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                                  crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                                  children: [
+                                                                    Padding(
+                                                                      padding:
+                                                                      const EdgeInsets
+                                                                          .only(
+                                                                          bottom: 5.0),
+                                                                      child: new Text(
+                                                                        'Report Video',
+                                                                        style: TextStyle(
+                                                                            fontFamily:
+                                                                            'Montserrat',
+                                                                            fontSize: 16,
+                                                                            color:
+                                                                            Colors.black),
+                                                                      ),
+                                                                    ),
+                                                                    Row(
+                                                                      children: <Widget>[
+                                                                        Radio(
+                                                                          value:
+                                                                          'Sexual content',
+                                                                          groupValue:
+                                                                          _radioValue,
+                                                                          onChanged: (value) {
+                                                                            setState(() {
+                                                                              radioButtonChanges(
+                                                                                  value);
+                                                                            });
+                                                                          },
+                                                                        ),
+                                                                        Text(
+                                                                          "Sexual content",
+                                                                          style: TextStyle(
+                                                                              fontSize: 14,
+                                                                              color: Colors
+                                                                                  .black),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                    Row(
+                                                                      children: <Widget>[
+                                                                        Radio(
+                                                                          value:
+                                                                          'Violent or repulsive content',
+                                                                          groupValue:
+                                                                          _radioValue,
+                                                                          onChanged: (value) {
+                                                                            setState(() {
+                                                                              radioButtonChanges(
+                                                                                  value);
+                                                                            });
+                                                                          },
+                                                                        ),
+                                                                        Flexible(
+                                                                          child: Text(
+                                                                            "Violent or repulsive content",
+                                                                            style: TextStyle(
+                                                                                fontSize: 14,
+                                                                                color: Colors
+                                                                                    .black),
+                                                                            maxLines: 2,
+                                                                            textWidthBasis:
+                                                                            TextWidthBasis
+                                                                                .longestLine,
+                                                                            overflow:
+                                                                            TextOverflow
+                                                                                .ellipsis,
+                                                                          ),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                    Row(
+                                                                      children: <Widget>[
+                                                                        Radio(
+                                                                          value:
+                                                                          'Hateful or abusive content',
+                                                                          groupValue:
+                                                                          _radioValue,
+                                                                          onChanged: (value) {
+                                                                            setState(() {
+                                                                              radioButtonChanges(
+                                                                                  value);
+                                                                            });
+                                                                          },
+                                                                        ),
+                                                                        Flexible(
+                                                                          child: Text(
+                                                                            "Hateful or abusive content",
+                                                                            style: TextStyle(
+                                                                                fontSize: 14,
+                                                                                color: Colors
+                                                                                    .black),
+                                                                          ),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                    Row(
+                                                                      children: <Widget>[
+                                                                        Radio(
+                                                                          value:
+                                                                          'Harmful or dangerous acts',
+                                                                          groupValue:
+                                                                          _radioValue,
+                                                                          onChanged: (value) {
+                                                                            setState(() {
+                                                                              radioButtonChanges(
+                                                                                  value);
+                                                                            });
+                                                                          },
+                                                                        ),
+                                                                        Flexible(
+                                                                          child: Text(
+                                                                            "Harmful or dangerous acts",
+                                                                            style: TextStyle(
+                                                                                fontSize: 14,
+                                                                                color: Colors
+                                                                                    .black),
+                                                                          ),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                    Row(
+                                                                      children: <Widget>[
+                                                                        Radio(
+                                                                          value:
+                                                                          'Child abuse',
+                                                                          groupValue:
+                                                                          _radioValue,
+                                                                          onChanged: (value) {
+                                                                            setState(() {
+                                                                              radioButtonChanges(
+                                                                                  value);
+                                                                            });
+                                                                          },
+                                                                        ),
+                                                                        Text(
+                                                                          "Child abuse",
+                                                                          style: TextStyle(
+                                                                              fontSize: 14,
+                                                                              color: Colors
+                                                                                  .black),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                    Row(
+                                                                      children: <Widget>[
+                                                                        Radio(
+                                                                          value:
+                                                                          'Infringes my rights',
+                                                                          groupValue:
+                                                                          _radioValue,
+                                                                          onChanged: (value) {
+                                                                            setState(() {
+                                                                              radioButtonChanges(
+                                                                                  value);
+                                                                            });
+                                                                          },
+                                                                        ),
+                                                                        Text(
+                                                                          "Infringes my rights",
+                                                                          style: TextStyle(
+                                                                              fontSize: 14,
+                                                                              color: Colors
+                                                                                  .black),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                    Row(
+                                                                      children: <Widget>[
+                                                                        Radio(
+                                                                          value:
+                                                                          'Promotes terrorism',
+                                                                          groupValue:
+                                                                          _radioValue,
+                                                                          onChanged: (value) {
+                                                                            setState(() {
+                                                                              radioButtonChanges(
+                                                                                  value);
+                                                                            });
+                                                                          },
+                                                                        ),
+                                                                        Text(
+                                                                          "Promotes terrorism",
+                                                                          style: TextStyle(
+                                                                              fontSize: 14,
+                                                                              color: Colors
+                                                                                  .black),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                    Row(
+                                                                      children: <Widget>[
+                                                                        Radio(
+                                                                          value:
+                                                                          'Spam or misleading',
+                                                                          groupValue:
+                                                                          _radioValue,
+                                                                          onChanged: (value) {
+                                                                            setState(() {
+                                                                              radioButtonChanges(
+                                                                                  value);
+                                                                            });
+                                                                          },
+                                                                        ),
+                                                                        Text(
+                                                                          "Spam or misleading",
+                                                                          style: TextStyle(
+                                                                              fontSize: 14,
+                                                                              color: Colors
+                                                                                  .black),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+
+                                                                    Container(
+                                                                      margin: EdgeInsets.only(left: 5.0,right: 5.0),
+                                                                      decoration: BoxDecoration(
+                                                                          border: Border(top: BorderSide(color: COLORS.CONTAINER_BORDER_COLOR),
+                                                                              left: BorderSide(color: COLORS.CONTAINER_BORDER_COLOR),
+                                                                              right: BorderSide(color: COLORS.CONTAINER_BORDER_COLOR),
+                                                                              bottom: BorderSide(color: COLORS.CONTAINER_BORDER_COLOR)
+                                                                          ),
+                                                                          borderRadius: BorderRadius.all(Radius.circular(8.0))
+                                                                      ),
+                                                                      child: TextFormField(
+                                                                        maxLines: 3,
+                                                                        cursorColor: Colors.black,
+                                                                        controller: otherTextController,
+                                                                        decoration: new InputDecoration(
+                                                                            border: InputBorder.none,
+                                                                            focusedBorder: InputBorder.none,
+                                                                            enabledBorder: InputBorder.none,
+                                                                            errorBorder: InputBorder.none,
+                                                                            disabledBorder: InputBorder.none,
+                                                                            contentPadding: EdgeInsets.only(
+                                                                                left: 15, bottom: 11, top: 11, right: 15),
+                                                                            hintText: 'comments here -',
+                                                                            hintStyle: new TextStyle(color: Colors.black45)),
+                                                                        inputFormatters: [
+                                                                          LengthLimitingTextInputFormatter(100),
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          );
+                                                        },
+                                                      ),
+                                                      actions: <Widget>[
+                                                        FlatButton(
+                                                            onPressed: () {
+                                                              Navigator.of(context).pop();
+                                                            },
+                                                            child: Text('Cancel')),
+                                                        FlatButton(
+                                                            onPressed: () {
+                                                              if(otherTextController.text.isNotEmpty && reportcomment==""){
+                                                                report(id, otherTextController.text);
+                                                              }else if (reportcomment!="" && otherTextController.text.isEmpty){
+                                                                report(id, reportcomment);
+                                                              }else if(otherTextController.text.isNotEmpty && !["",null].contains(reportcomment)){
+                                                                String comment=reportcomment+" "+otherTextController.text;
+                                                                report(id, comment);
+                                                              }
+                                                              //report(id, reportcomment);
+                                                              Navigator.of(context).pop();
+                                                            },
+                                                            child: Text('Report'))
+                                                      ],
+                                                    ),
+                                                transitionBuilder:
+                                                    (ctx, anim1, anim2, child) =>
+                                                    BackdropFilter(
+                                                      filter: ImageFilter.blur(
+                                                          sigmaX: 4 * anim1.value,
+                                                          sigmaY: 4 * anim1.value),
+                                                      child: FadeTransition(
+                                                        child: child,
+                                                        opacity: anim1,
+                                                      ),
+                                                    ),
+                                              );
+                                            }),
+                                      )),
+                                ],
+                              )),
+                        ),
+                        Divider(
+                          color: Colors.black,
+                          thickness: 0.4,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                          child: Form(
+                            key: _key,
+                            autovalidate: _validate,
+                            child: new Container(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
 //                                      Padding(
 //                                        padding:
 //                                        const EdgeInsets.fromLTRB(0.0, 8, 0, 0),
@@ -2554,115 +2590,115 @@ class _VideoPlayState extends State<VideoPlay> {
 //                                            color: Color(0xFF5a6381),),
 //                                        ),
 //                                      ),
-                              Expanded(
-                                flex: 2,
-                                child: Padding(
-                                  padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
-                                  child: Center(
-                                    child: Container(
-                                        width: 50.0,
-                                        height: 50.0,
-                                        decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            image: DecorationImage(
-                                              fit: BoxFit.fill,
-                                              image: (![
-                                                "",
-                                                null,
-                                                false,
-                                                0,
-                                              ].contains(image))
-                                                  ? NetworkImage(
-                                                      image,
-                                                    )
-                                                  : AssetImage(
-                                                      "assets/images/logo_splash.png",
-                                                    ),
-                                            ))),
-                                  ),
-                                ),
-                              ),
-
-                              Expanded(
-                                flex: 8,
-                                child: new TextFormField(
-                                  controller: _commentController,
-                                  textInputAction: TextInputAction.done,
-                                  keyboardType: TextInputType.visiblePassword,
-                                  decoration: new InputDecoration(
-                                    hintText: 'Add comment',
-                                    hintStyle: TextStyle(
-                                      fontSize: 16.0,
-                                      color: Color(0xFF5a6381),
+                                  Expanded(
+                                    flex: 2,
+                                    child: Padding(
+                                      padding: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                                      child: Center(
+                                        child: Container(
+                                            width: 50.0,
+                                            height: 50.0,
+                                            decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                image: DecorationImage(
+                                                  fit: BoxFit.fill,
+                                                  image: (![
+                                                    "",
+                                                    null,
+                                                    false,
+                                                    0,
+                                                  ].contains(image))
+                                                      ? NetworkImage(
+                                                    image,
+                                                  )
+                                                      : AssetImage(
+                                                    "assets/images/logo_splash.png",
+                                                  ),
+                                                ))),
+                                      ),
                                     ),
-                                    suffixIcon: Container(
-                                        padding:
-                                            EdgeInsets.symmetric(vertical: 15),
-                                        child: IconButton(
-                                          icon: Icon(Icons.send),
-                                          onPressed: () {
-                                            if (doLogin == 1) {
-                                              addComment();
-                                            } else {
-                                              Fluttertoast.showToast(
-                                                  msg: "Login first",
-                                                  toastLength:
-                                                      Toast.LENGTH_SHORT,
-                                                  gravity: ToastGravity.CENTER,
-                                                  timeInSecForIosWeb: 1,
-                                                  backgroundColor:
-                                                      Colors.redAccent,
-                                                  textColor: Colors.white,
-                                                  fontSize: 16.0);
-                                            }
-                                          },
-                                        )),
                                   ),
-                                  maxLines: 1,
-                                  autofocus: false,
-//                                    validator: validatePassword,
-                                  onFieldSubmitted: (String val) {
-                                    if (doLogin == 1) {
-                                      _comment = val;
 
-                                      addComment();
-                                    } else {
-                                      Fluttertoast.showToast(
-                                          msg: "Login first",
-                                          toastLength: Toast.LENGTH_SHORT,
-                                          gravity: ToastGravity.CENTER,
-                                          timeInSecForIosWeb: 1,
-                                          backgroundColor: Colors.redAccent,
-                                          textColor: Colors.white,
-                                          fontSize: 16.0);
-                                    }
-                                  },
-                                ),
+                                  Expanded(
+                                    flex: 8,
+                                    child: new TextFormField(
+                                      controller: _commentController,
+                                      textInputAction: TextInputAction.done,
+                                      keyboardType: TextInputType.visiblePassword,
+                                      decoration: new InputDecoration(
+                                        hintText: 'Add comment',
+                                        hintStyle: TextStyle(
+                                          fontSize: 16.0,
+                                          color: Color(0xFF5a6381),
+                                        ),
+                                        suffixIcon: Container(
+                                            padding:
+                                            EdgeInsets.symmetric(vertical: 15),
+                                            child: IconButton(
+                                              icon: Icon(Icons.send),
+                                              onPressed: () {
+                                                if (doLogin == 1) {
+                                                  addComment();
+                                                } else {
+                                                  Fluttertoast.showToast(
+                                                      msg: "Login first",
+                                                      toastLength:
+                                                      Toast.LENGTH_SHORT,
+                                                      gravity: ToastGravity.CENTER,
+                                                      timeInSecForIosWeb: 1,
+                                                      backgroundColor:
+                                                      Colors.redAccent,
+                                                      textColor: Colors.white,
+                                                      fontSize: 16.0);
+                                                }
+                                              },
+                                            )),
+                                      ),
+                                      maxLines: 1,
+                                      autofocus: false,
+//                                    validator: validatePassword,
+                                      onFieldSubmitted: (String val) {
+                                        if (doLogin == 1) {
+                                          _comment = val;
+
+                                          addComment();
+                                        } else {
+                                          Fluttertoast.showToast(
+                                              msg: "Login first",
+                                              toastLength: Toast.LENGTH_SHORT,
+                                              gravity: ToastGravity.CENTER,
+                                              timeInSecForIosWeb: 1,
+                                              backgroundColor: Colors.redAccent,
+                                              textColor: Colors.white,
+                                              fontSize: 16.0);
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(0),
-                      child: SizedBox(
+                        Padding(
+                          padding: EdgeInsets.all(0),
+                          child: SizedBox(
 //                  height: MediaQuery.of(context).size.height/3,
 //                  width: MediaQuery.of(context).size.width,
-                        child: FutureBuilder<List<Comments>>(
-                          future: getComments("", ""),
-                          builder: (context, snapshot) {
-                            return snapshot.connectionState ==
+                            child: FutureBuilder<List<Comments>>(
+                              future: getComments("", ""),
+                              builder: (context, snapshot) {
+                                return snapshot.connectionState ==
                                     ConnectionState.done
-                                ? snapshot.hasData
+                                    ? snapshot.hasData
                                     ? _CommentsCellState.homeGrid(
-                                        snapshot, context)
+                                    snapshot, context)
                                     : _CommentsCellState.retryButton(fetch)
-                                : _CommentsCellState.circularProgress();
-                          },
+                                    : _CommentsCellState.circularProgress();
+                              },
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
 //                    Padding(
 //                      padding: const EdgeInsets.fromLTRB(0.0, 0, 0, 10),
 //                      child: GestureDetector(
@@ -4716,10 +4752,12 @@ class _VideoPlayState extends State<VideoPlay> {
 //                      )
 //                    ],
 //                  )
-                  ],
-                ),
+                      ],
+                    ),
+                  )
+                ],
               ),
-            ],
+
           ),
           appBar: AppBar(
             leading: GestureDetector(

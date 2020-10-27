@@ -829,12 +829,7 @@ class _DashboardState extends State<Dashboard> {
                                     child: Center(
                                       child: Padding(
                                         padding: EdgeInsets.all(0),
-                                        child: Image.asset(
-                                          "assets/images/latest_video_two.png",
-//                                              height: 150.0,
-//                                              width: 50.0,
-                                          fit: BoxFit.fill,
-                                        ),
+                                        child: Icon(Icons.play_circle_fill_sharp,size: 50,),
                                       ),
                                     ),
                                   ),
@@ -907,7 +902,7 @@ class _DashboardState extends State<Dashboard> {
                                     0.0, 5.0, 0.0, 0.0),
                                 child: Align(
                                   child: new Text(
-                                    'Social Workers',
+                                    'Social',
                                     style: TextStyle(
                                       color: Color(0xff444b69),
                                       fontSize: 10,

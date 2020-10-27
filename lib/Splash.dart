@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -73,6 +74,7 @@ class SplashScreenState1 extends  State<SplashScreen1>  {
       if (_isLogin) {
 
         if(![null,"",''].contains(prefs.getString('city'))){
+          await Future.delayed(Duration(seconds: 2));
 
           Navigator.of(context).pushReplacement(
               new MaterialPageRoute(builder: (context) => new HomePageTwo()));
@@ -109,16 +111,27 @@ class SplashScreenState1 extends  State<SplashScreen1>  {
         children: <Widget>[
 
           // Adobe XD layer: 'BNMM' (shape)
-          Image.asset('assets/images/splash.png',width: double.infinity,height: double.infinity,fit: BoxFit.fill,),
+          //Image.asset('assets/images/splash.png',width: double.infinity,height: double.infinity,fit: BoxFit.fill,),
 
           Align(
-            alignment: Alignment.topCenter,
+            alignment: Alignment.center,
             child:Padding(padding: EdgeInsets.fromLTRB(0, 70, 0, 0),
-              child:Container(
-                height: 100,
-                width: 100,
-                child: Image.asset('assets/images/logo_splash.png',
-                  fit: BoxFit.fill,),),
+              child:Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    height: 100,
+                    width: 100,
+                    child: Image.asset('assets/images/logo_splash.png',
+                      fit: BoxFit.fill,),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  CupertinoActivityIndicator(radius: 20,animating: true,),
+                ],
+              ),
             ),),
 
         ],

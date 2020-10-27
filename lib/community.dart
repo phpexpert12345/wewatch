@@ -314,24 +314,24 @@ class _CommunityState extends State<Community> {
       print(widget.name.toString());
       String access_token = prefs.getString('access_token');
       String login_url =
-          "https://wewatch.in/wewatch-up/api/v1/video-search?search=" +
+          "https://wewatch.in/wewatch-up/api/v1/video-search?filter_by_video_category=" +
               widget.name.toString();
       var response = await http.get(login_url, headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $access_token',
       });
 
-      print(response.body);
+      //print(response.body);
 
       //Simulate a service call
       print('submitting to backend...');
       Map<String, dynamic> decodedMap = jsonDecode(response.body);
       Map<String, dynamic> decodedMapAttachment = jsonDecode(response.body);
-      var body = await json.decode(response.body);
 
       try {
         if (response.statusCode == 200) {
-          print("Ankit" + body.toString());
+          var body = json.decode(response.body);
+          debugPrint("sunny" + body.toString());
 
           List<dynamic> dynamicList = decodedMap['data']['results'];
 

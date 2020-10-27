@@ -5465,8 +5465,8 @@ class _HomePageTwoState extends State<HomePageTwo> {
     ];
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        iconTheme: IconThemeData(color: Colors.black87),
+        backgroundColor: COLORS.APP_BAR_COLOR,
+        iconTheme: IconThemeData(color: Colors.white),
         actions: <Widget>[
           Padding(
             padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
@@ -5510,7 +5510,7 @@ class _HomePageTwoState extends State<HomePageTwo> {
                           ),
                           Icon(
                             Icons.location_on,
-                            color: Colors.black87,
+                            color: Colors.blue,
                           )
                         ],
                       ),
@@ -5536,7 +5536,7 @@ class _HomePageTwoState extends State<HomePageTwo> {
             child: GestureDetector(
               child: Icon(
                 Icons.search,
-                color: Colors.black87,
+                color: Colors.white,
               ),
               onTap: () {
                 Navigator.push(
@@ -5551,7 +5551,7 @@ class _HomePageTwoState extends State<HomePageTwo> {
             child: GestureDetector(
               child: Icon(
                 Icons.message,
-                color: Colors.black87,
+                color: Colors.white,
               ),
             ),
           ),
@@ -5560,7 +5560,7 @@ class _HomePageTwoState extends State<HomePageTwo> {
             child: GestureDetector(
               child: Icon(
                 Icons.person,
-                color: Colors.black87,
+                color: Colors.white,
               ),
               onTap: () {
                 if (doLogin == 0) {
