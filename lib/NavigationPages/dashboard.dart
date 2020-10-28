@@ -2288,12 +2288,12 @@ class _QuotesCellState extends State<QuotesCell> {
                                             0.0, 0.0, 0.0, 0.0),
                                         child: Align(
                                           child: new Text(
-                                            ["", null].contains(cellModel
+                                            !["", null].contains(cellModel
                                                     .total_comments
                                                     .toString())
                                                 ? cellModel.total_comments
                                                         .toString() +
-                                                    'Comment'
+                                                    ' Comment'
                                                 : '0 Comment',
                                             style: TextStyle(
                                               color: Color(0xff444b69),

@@ -18,6 +18,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 import 'package:http/http.dart' as http;
 import 'package:we_watch_app/API/WatchAPI.dart';
+import 'package:we_watch_app/ui/to_subscribe_detail.dart';
 import 'package:we_watch_app/util/AppNotifierClass.dart';
 
 import 'conts/config.dart';
@@ -1973,55 +1974,60 @@ class _VideoPlayState extends State<VideoPlay> {
                               ),
                               Padding(
                                 padding: const EdgeInsets.all(0),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: <Widget>[
-                                    Padding(
-                                      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                      child: Center(
-                                        child: Container(
-                                            width: 50.0,
-                                            height: 50.0,
-                                            decoration: BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                image: DecorationImage(
-                                                  fit: BoxFit.fill,
-                                                  image: (![
-                                                    "",
-                                                    null,
-                                                    false,
-                                                    0,
-                                                  ].contains(
-                                                      widget.video_thumb_image))
-                                                      ? NetworkImage(
-                                                    widget.video_thumb_image,
-                                                  )
-                                                      : AssetImage(
-                                                    "assets/images/logo_splash.png",
-                                                  ),
-                                                ))),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.fromLTRB(
-                                          5.0, 0.0, 0.0, 0.0),
-                                      child: Align(
-                                        child: new Text(
-                                          widget.video_title,
-                                          style: TextStyle(
-                                            color: Color(0xff444b69),
-                                            fontSize: 15,
-                                            letterSpacing: 0,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                          textAlign: TextAlign.left,
-                                          textDirection: TextDirection.ltr,
+                                child: InkWell(
+                                  onTap: (){
+                                    Navigator.push(context, new MaterialPageRoute(builder: (context)=> SubscribeDetail(userId: user_id,)));
+                                  },
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: <Widget>[
+                                      Padding(
+                                        padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                        child: Center(
+                                          child: Container(
+                                              width: 50.0,
+                                              height: 50.0,
+                                              decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  image: DecorationImage(
+                                                    fit: BoxFit.fill,
+                                                    image: (![
+                                                      "",
+                                                      null,
+                                                      false,
+                                                      0,
+                                                    ].contains(
+                                                        widget.video_thumb_image))
+                                                        ? NetworkImage(
+                                                      widget.video_thumb_image,
+                                                    )
+                                                        : AssetImage(
+                                                      "assets/images/logo_splash.png",
+                                                    ),
+                                                  ))),
                                         ),
-                                        alignment: Alignment.centerLeft,
                                       ),
-                                    ),
-                                  ],
+                                      Padding(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            5.0, 0.0, 0.0, 0.0),
+                                        child: Align(
+                                          child: new Text(
+                                            widget.video_title,
+                                            style: TextStyle(
+                                              color: Color(0xff444b69),
+                                              fontSize: 15,
+                                              letterSpacing: 0,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                            textAlign: TextAlign.left,
+                                            textDirection: TextDirection.ltr,
+                                          ),
+                                          alignment: Alignment.centerLeft,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                               Padding(
@@ -2187,7 +2193,11 @@ class _VideoPlayState extends State<VideoPlay> {
                         ),
                         ListTile(
                           leading: CircleAvatar(),
-                          title: Text(channel_name.toString()),
+                          title: InkWell(
+                            onTap: (){
+                              Navigator.push(context, new MaterialPageRoute(builder: (context)=> SubscribeDetail(userId: user_id,)));
+                            },
+                              child: Text(channel_name.toString())),
                           subtitle: Text(widget.subscriber_count.toString()),
 
                           trailing: Container(

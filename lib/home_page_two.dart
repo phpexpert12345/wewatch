@@ -243,10 +243,11 @@ class _HomePageTwoState extends State<HomePageTwo> {
 
     try {
       if (response.statusCode == 200) {
-        var body = await json.decode(response.body);
+        var body = json.decode(response.body);
         var message = jsonDecode(response.body);
         debugPrint("profile data" + message.toString());
-
+        //print("iid"+body['data']['id'].toString());
+        prefs.setString("user_id", body['data']['id'].toString());
         prefs.setString('first_name', body['data']['first_name']);
         prefs.setString('last_name', body['data']['last_name']);
         prefs.setString('email', body['data']['email']);

@@ -1,7 +1,6 @@
 import 'dart:convert';
-
+import 'package:http/http.dart' as http;
 import 'package:flick_video_player/flick_video_player.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widgets/flutter_widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -9,52 +8,137 @@ import 'package:share/share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 import 'package:we_watch_app/conts/config.dart';
-import 'package:http/http.dart' as http;
 import 'package:we_watch_app/video_play_detail.dart';
-class VideoHistory extends StatefulWidget {
+
+class SubscribeDetail extends StatefulWidget {
+  final userId;
+  SubscribeDetail({this.userId});
   @override
-  _VideoHistoryState createState() => new _VideoHistoryState();
+  _SubscribeDetailState createState() => _SubscribeDetailState();
 }
 
-class _VideoHistoryState extends State<VideoHistory> {
-  Size deviceSize;
-  var scrollController =ScrollController();
-  List<Quotes> videoList = new List<Quotes>();
+class _SubscribeDetailState extends State<SubscribeDetail> {
 
+ @override
+ void initState(){
+   getSubscribData();
+   print("id"+widget.userId);
+   dataLoaded=false;
+   super.initState();
+ }
+
+  List<SubscriveQuotes> videoList = new List<SubscriveQuotes>();
+
+  Size deviceSize;
+  var scrollController=ScrollController();
+  String profileName;
+  String profileImage;
+  String gender;
+  String type;
   bool dataLoaded;
-  @override
-  void initState() {
-    dataLoaded=false;
-    getMyVideos();
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
     deviceSize=MediaQuery.of(context).size;
     return Scaffold(
       appBar: new AppBar(
-        backgroundColor: COLORS.APP_BAR_COLOR,
-        title: Text("History"),
+        title: Text(!["",null].contains(profileName)?profileName:""),
       ),
       body: SafeArea(
         //controller: scrollController,
         child: Container(
           height: deviceSize.height,
           width: deviceSize.width,
-          child:dataLoaded? ListView.builder(
-            physics: ClampingScrollPhysics(),
-            shrinkWrap: true,
+          child:dataLoaded? ListView(
             controller: scrollController,
-            scrollDirection: Axis.vertical,
-            padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-            itemCount: videoList.length,
-            itemBuilder: (BuildContext context, int index) {
-              return QuotesCell(
-                videoList[index],
-              );
-            },
-          ):Center(
+            children: [
+              Padding(
+                padding: EdgeInsets.all(15.0),
+                child: Container(
+                  height: 150,
+                  color: Colors.transparent,
+                  child: Stack(
+                    children: [
+                      Positioned(
+                        child: Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Card(
+                            elevation: 16,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16)
+                            ),
+                            child: Container(
+                              height: 120,
+                              color: Colors.transparent,
+                              child: Stack(
+                                children: [
+                                  Positioned(
+                                    child: Align(
+                                      alignment: Alignment.bottomCenter,
+                                      child: Container(
+                                        //height: 1,
+                                        padding: EdgeInsets.only(bottom: 5.0),
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.end,
+                                          children: [
+                                            Text(!["",null].contains(profileName)?profileName:"",style: new TextStyle(
+                                              color: Colors.black87,
+                                              fontSize: 20
+                                            ),),
+                                            Text(!["",null].contains(gender)?gender:"NA",style: new TextStyle(
+                                                color: Colors.black54,
+                                                fontSize: 16
+                                            ),),
+                                            Text(!["",null].contains(type)?type:"",style: new TextStyle(
+                                                color: Colors.black54,
+                                                fontSize: 16
+                                            ),),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        child: Align(
+                          alignment: Alignment.topCenter,
+                          child: CircleAvatar(
+                            maxRadius: 40,
+                              backgroundColor: Colors.blue.shade200,
+                              child:CircleAvatar(
+                              child: !["",null].contains(profileImage)?
+                              Image.network(profileImage): Image.asset("assets/images/logo_splash.png",),
+                                maxRadius: 37,
+                            )
+
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                ),
+              ),
+              ListView.builder(
+                physics: ClampingScrollPhysics(),
+                shrinkWrap: true,
+                controller: scrollController,
+                scrollDirection: Axis.vertical,
+                padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                itemCount: videoList.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return QuotesCell(
+                    videoList[index],
+                  );
+                },
+              ),
+            ],
+          ):
+          Center(
             child: CircularProgressIndicator(),
           ),
         ),
@@ -62,59 +146,68 @@ class _VideoHistoryState extends State<VideoHistory> {
     );
   }
 
-
-  void getMyVideos() async {
+  void getSubscribData() async {
     //if (!isLoading) {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String access_token = prefs.getString('access_token');
-    print("token: "+access_token);
-    String userID=prefs.getString("user_id");
-    print("user id=="+userID);
-    String url =
-        "https://wewatch.in/wewatch-up/api/v1/videobyUserProfile";
-    var response = await http.post(url, headers: {
-      //'Content-Type': 'application/json',
-      'Authorization': 'Bearer $access_token',
-    },
-        body: <String ,dynamic>{
-          "userid" :userID
-        });
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String access_token = prefs.getString('access_token');
+      print("token: "+access_token);
+      String url =
+          "https://wewatch.in/wewatch-up/api/v1/videobyUserProfile";
+      var response = await http.post(url, headers: {
+                //'Content-Type': 'application/json',
+                'Authorization': 'Bearer $access_token',
+              },
+              body: <String ,dynamic>{
+                "userid" :widget.userId
+              });
 
-    //print(response.body);
+      //print(response.body);
 
-    //Simulate a service call
-    print('submitting to backend...');
+      //Simulate a service call
+      print('submitting to backend...');
 
-    //apiCalled=true;
-    try {
-      if (response.statusCode == 200) {
-        //print("Ankit" + body.toString());
-        Map<String, dynamic> decodedMap = jsonDecode(response.body);
-        if(decodedMap['data']['video-list']['results']!=null) {
-          List<dynamic> dynamicList = decodedMap['data']['video-list']['results'];
+      //apiCalled=true;
+      try {
+        if (response.statusCode == 200) {
+          //print("Ankit" + body.toString());
+          Map<String, dynamic> decodedMap = jsonDecode(response.body);
 
-          List<Quotes> tempList = new List<Quotes>();
-          dynamicList.forEach((f) {
-            Quotes s = Quotes.fromJson(f);
-            tempList.add(s);
-          });
-          setState(() {
-            videoList.addAll(tempList);
-            dataLoaded=true;
-          });
-        }else{
-          print("no more data available");
+          if(decodedMap['data']['video-list']['results']!=null) {
+            List<dynamic> dynamicList = decodedMap['data']['video-list']['results'];
+
+            List<SubscriveQuotes> tempList = new List<SubscriveQuotes>();
+            dynamicList.forEach((f) {
+              SubscriveQuotes s = SubscriveQuotes.fromJson(f);
+              tempList.add(s);
+            });
+            setState(() {
+            //   moreDataLoading = false;
+            //   isLoading = false;
+              profileName=decodedMap['data']['first_name']+" "+decodedMap['data']['last_name'];
+              profileImage= decodedMap['data']['image'];
+              gender=decodedMap['data']['gender'];
+              type=decodedMap['data']['user_type'];
+              videoList.addAll(tempList);
+              dataLoaded=true;
+            });
+          }else{
+            print("no more data available");
+          }
+        } else {
+          throw Exception(MESSAGES.INTERNET_ERROR);
         }
-      } else {
-        throw Exception(MESSAGES.INTERNET_ERROR);
+      } catch (e) {
+        throw Exception(e);
       }
-    } catch (e) {
-      throw Exception(e);
     }
-  }
+
+//    prefs.setString('main_token',body['token'] );
+//    print(body['token']);
+ // }
+
 }
 
-class Quotes {
+class SubscriveQuotes {
   var id;
   var user_id;
   var video_thumb_image;
@@ -137,7 +230,7 @@ class Quotes {
   var channel_name;
   int total_views;
 
-  Quotes({
+  SubscriveQuotes({
     this.id,
     this.user_id,
     this.video_thumb_image,
@@ -163,8 +256,8 @@ class Quotes {
     this.total_views,
   });
 
-  factory Quotes.fromJson(Map<String, dynamic> json) {
-    return Quotes(
+  factory SubscriveQuotes.fromJson(Map<String, dynamic> json) {
+    return SubscriveQuotes(
       id: json['id'],
       user_id: json['user_id'],
       video_thumb_image: json['video_thumb_image'],
@@ -192,13 +285,12 @@ class Quotes {
   }
 }
 
-
 class QuotesCell extends StatefulWidget {
   int countValue = 0;
 
   QuotesCell(this.cellModel);
   @required
-  final Quotes cellModel;
+  final SubscriveQuotes cellModel;
 
   @override
   _QuotesCellState createState() => _QuotesCellState(this.cellModel);
@@ -209,7 +301,7 @@ class _QuotesCellState extends State<QuotesCell> {
   int doLogin;
   _QuotesCellState(this.cellModel);
   @required
-  final Quotes cellModel;
+  final SubscriveQuotes cellModel;
   FlickManager flickManager;
   VideoPlayerController _controller;
 
@@ -235,7 +327,7 @@ class _QuotesCellState extends State<QuotesCell> {
     super.dispose();
   }
 
-  static Container homeGrid(AsyncSnapshot<List<Quotes>> snapshot, context) {
+  static Container homeGrid(AsyncSnapshot<List<SubscriveQuotes>> snapshot, context) {
     Size size = MediaQuery.of(context).size;
 
     return Container(
@@ -299,15 +391,6 @@ class _QuotesCellState extends State<QuotesCell> {
 
   @override
   Widget build(BuildContext context) {
-    // Color color2 = HexColor(cellModel.color);
-//    bool _visible = false;
-//    if(!["", null].contains(cellModel.doc))
-//    {
-//      _visible=true;
-//    }
-//    else
-//      _visible=false;
-//    colorFlag = !colorFlag;
 
     return GestureDetector(
       child: Padding(
@@ -389,6 +472,8 @@ class _QuotesCellState extends State<QuotesCell> {
                                               fontWeight: FontWeight.bold,
                                             ),
                                             textAlign: TextAlign.left,
+//                                              textDirection:
+//                                              TextDirection.ltr,
                                           ),
                                           alignment: Alignment.centerLeft,
                                         ),
@@ -401,6 +486,10 @@ class _QuotesCellState extends State<QuotesCell> {
                                           padding: const EdgeInsets.all(4.0),
                                           child: Row(
                                             mainAxisSize: MainAxisSize.min,
+                                            // mainAxisAlignment:
+                                            //     MainAxisAlignment.start,
+                                            // crossAxisAlignment:
+                                            //     CrossAxisAlignment.start,
                                             children: <Widget>[
                                               Padding(
                                                 padding:
@@ -427,6 +516,8 @@ class _QuotesCellState extends State<QuotesCell> {
                                                       FontWeight.bold,
                                                     ),
                                                     textAlign: TextAlign.left,
+//                                              textDirection:
+//                                              TextDirection.ltr,
                                                   ),
                                                   alignment:
                                                   Alignment.centerLeft,
@@ -591,6 +682,11 @@ class _QuotesCellState extends State<QuotesCell> {
                           ),
                         ),
 
+//                          ChewieListItem(
+//                            videoPlayerController: VideoPlayerController.network(
+//                              cellModel.video_file,
+//                            ),
+//                          ),
                         Padding(
                           padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
                           child: Row(
@@ -731,12 +827,21 @@ class _QuotesCellState extends State<QuotesCell> {
                                                   color: Colors.white,
                                                   borderRadius: BorderRadius.all(
                                                       Radius.circular(30)),
+//                                            border: Border.all(
+//                                                                   width: 0,
+//                                                                   color: Colors
+//                                                                       .lightBlue,
+//                                                                   style:
+//                                                                   BorderStyle
+//                                                                       .solid)
                                                 ),
                                                 child: Center(
                                                   child: Padding(
                                                     padding: EdgeInsets.all(0),
                                                     child: Image.asset(
                                                         "assets/images/dislike_grey.png",
+//                                              height: 150.0,
+//                                              width: 50.0,
                                                         fit: BoxFit.fill,
                                                         color: countValue1
                                                             ? Color(0xff00adef)
@@ -793,6 +898,13 @@ class _QuotesCellState extends State<QuotesCell> {
                                               color: Colors.white,
                                               borderRadius: BorderRadius.all(
                                                   Radius.circular(30)),
+//                                            border: Border.all(
+//                                                                   width: 0,
+//                                                                   color: Colors
+//                                                                       .lightBlue,
+//                                                                   style:
+//                                                                   BorderStyle
+//                                                                       .solid)
                                             ),
                                             child: Center(
                                               child: Padding(
@@ -911,6 +1023,14 @@ class _QuotesCellState extends State<QuotesCell> {
                         ),
                       ],
                     ),
+//                        decoration: BoxDecoration(
+//                          image: DecorationImage(
+//                            image: AssetImage(
+//                                "assets/images/background.png"),
+//                            fit: BoxFit.fill,
+//                          ),
+//                          borderRadius: BorderRadius.circular(10.0),
+//                        ),
                   ),
                   elevation: 5,
                   shape: RoundedRectangleBorder(
@@ -923,6 +1043,49 @@ class _QuotesCellState extends State<QuotesCell> {
                   ),
                 ),
               ),
+//              Center(
+////                                        heightFactor: 5,
+//                child: InkWell(
+//                  onTap: () {
+//
+//
+//                  },
+//                  child: Container(
+//
+//                    margin: EdgeInsets.all(10.0),
+//                    child: ClipRRect(
+//                        borderRadius: BorderRadius.all(Radius.circular(20)),
+//                        child: Stack(
+//                          alignment: Alignment.center,
+//                          children: <Widget>[
+//                            Center(
+//                              child: Align(
+//                                alignment: FractionalOffset.center,
+//                                child: Container(
+//                                  height: MediaQuery.of(context).size.height/3,
+//                                  width: MediaQuery.of(context).size.width,
+////                                  width: SizeConfig.heightMultiplier * 30,
+////                                  height: SizeConfig.heightMultiplier * 50,
+//                                  decoration: BoxDecoration(
+//                                    image: DecorationImage(
+//                                      image: NetworkImage(
+//                                        cellModel.video_thumb_image,
+//                                      ),
+//                                      fit: BoxFit.fill,
+//                                    ),
+//                                    borderRadius: BorderRadius.circular(20.0),
+//                                  ),
+//
+//                                ),
+//                              ),
+//                            ),
+//
+//
+//                          ],
+//                        )),
+//                  ),
+//                ),
+//              ),
             ],
           )),
       onTap: () {
@@ -967,7 +1130,12 @@ Future saveLike(String videoId, String status) async {
   // Showing CircularProgressIndicator.
 
   String access_token = prefs.getString('access_token');
-    // SERVER LOGIN API URL
+
+  // Getting value from Controller
+//    String email = _emailFilter.text.toString();
+//    String password = _mobileFilter.text.toString();
+
+  // SERVER LOGIN API URL
   var url = 'https://wewatch.in/wewatch-up/api/v1/likes';
   Map data = {
 //      'API_KEY':"4762265654DFGDF00546FDG4FD654G6DF",
@@ -999,6 +1167,24 @@ Future saveLike(String videoId, String status) async {
 
   try {
     if (response.statusCode == 200) {
+//        otp = body["otp"];
+      //prefs.setString('user_token',body['user_token'] );
+//        prefs.setString('id', body['id']);
+//        prefs.setString('std_id', body['std_id']);
+//        prefs.setString('name', body['name']);
+//        prefs.setString('designation', body['designation']);
+//        prefs.setString('phone', body['phone']);
+//        prefs.setString('email', body['email']);
+//        prefs.setString('doj', body['doj']);
+//        prefs.setString('pincode', body['pincode']);
+//        prefs.setString('state', body['state']);
+//        prefs.setString('address', body['address']);
+//        prefs.setString('image', body['image']);
+//        prefs.setString('role', body['role']);
+      //  prefs.setString('image',body['image'] );
+      // prefs.setString('image',body['image'] );
+      // Hiding the CircularProgressIndicator.
+
       Fluttertoast.showToast(
           msg: body['data']['message'],
           toastLength: Toast.LENGTH_SHORT,
