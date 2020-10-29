@@ -155,11 +155,16 @@ class _LoginScreenProcessTwoState extends State<LoginScreenProcessTwo> {
 //                ),
 //          );
 //        });
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) =>
-              HomePageTwo()),
-        );
+        Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(
+                builder: (BuildContext context) =>
+                    HomePageTwo()),
+                (Route<dynamic> route) => false);
+        // Navigator.pushReplacement(
+        //   context,
+        //   MaterialPageRoute(builder: (context) =>
+        //       HomePageTwo()),
+        // );
       } else if(response.statusCode==422){
         // If Email or Password did not Matched.
         // Hiding the CircularProgressIndicator.

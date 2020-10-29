@@ -347,23 +347,29 @@ class _VideoPlayState extends State<VideoPlay> {
     image = prefs.getString('image');
     FormData formData;
 
-    if (Platform.isIOS) {
-      formData = new FormData.from({
-        "channel_id": type,
-        "is_subscribed": text,
-      });
-    }
-    if (Platform.isAndroid) {
-      formData = new FormData.from({
-        "channel_id": type,
-        "is_subscribed": text,
-      });
-    }
+    // if (Platform.isIOS) {
+    //   formData = new FormData.from({
+    //     "channel_id": type,
+    //     "is_subscribed": text,
+    //   });
+    // }
+    // if (Platform.isAndroid) {
+    //   formData = new FormData.from({
+    //     "channel_id": type,
+    //     "is_subscribed": text,
+    //   });
+    // }
     String login_url =
         "https://wewatch.in/wewatch-up/api/v1/channel-subscribers";
-    var response = await http.post(login_url, body: formData, headers: {
+    var response = await http.post(login_url, headers: {
       'Authorization': 'Bearer $access_token',
-    });
+    },
+      body: <String,dynamic>{
+        "channel_id": type,
+        "is_subscribed": text
+      }
+
+    );
 
     //Simulate a service call
     print(response.statusCode);

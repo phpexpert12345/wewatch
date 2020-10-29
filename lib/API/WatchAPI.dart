@@ -7,4 +7,5 @@ class WatchAPI {
   static const String VIDEO_REPORT="https://wewatch.in/wewatch-up/api/v1/video-report";
   static const String PROFILE= "https://wewatch.in/wewatch-up/api/v1/profile";
   static const String CATEGORIES="https://wewatch.in/wewatch-up/api/v1/categories";
+  static const String ON_OFF_NOTIFICATION="https://wewatch.in/wewatch-up/api/v1/onoffNotification";
 }

@@ -26,9 +26,11 @@ class _VideoHistoryState extends State<VideoHistory> {
   void initState() {
     dataLoaded=false;
     getMyVideos();
+    count=1;
     super.initState();
   }
 
+  bool noDataAvail=false;
   @override
   Widget build(BuildContext context) {
     deviceSize=MediaQuery.of(context).size;
@@ -42,7 +44,7 @@ class _VideoHistoryState extends State<VideoHistory> {
         child: Container(
           height: deviceSize.height,
           width: deviceSize.width,
-          child:dataLoaded? ListView.builder(
+          child:!noDataAvail?(dataLoaded? ListView.builder(
             physics: ClampingScrollPhysics(),
             shrinkWrap: true,
             controller: scrollController,
@@ -56,6 +58,8 @@ class _VideoHistoryState extends State<VideoHistory> {
             },
           ):Center(
             child: CircularProgressIndicator(),
+          )):Center(
+            child: Text("No videos available"),
           ),
         ),
       ),
@@ -63,6 +67,7 @@ class _VideoHistoryState extends State<VideoHistory> {
   }
 
 
+  static int count;
   void getMyVideos() async {
     //if (!isLoading) {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -90,9 +95,8 @@ class _VideoHistoryState extends State<VideoHistory> {
       if (response.statusCode == 200) {
         //print("Ankit" + body.toString());
         Map<String, dynamic> decodedMap = jsonDecode(response.body);
-        if(decodedMap['data']['video-list']['results']!=null) {
+        if(decodedMap['data']['video-list']['results']!=null && decodedMap['data']['video-list']['results'].length>0) {
           List<dynamic> dynamicList = decodedMap['data']['video-list']['results'];
-
           List<Quotes> tempList = new List<Quotes>();
           dynamicList.forEach((f) {
             Quotes s = Quotes.fromJson(f);
@@ -103,8 +107,17 @@ class _VideoHistoryState extends State<VideoHistory> {
             dataLoaded=true;
           });
         }else{
+          //if(count==1 && decodedMap['data']['video-list']['results']==null){
+          if(count==1) {
+            setState(() {
+              noDataAvail = true;
+            });
+          }
+          //}
           print("no more data available");
         }
+        count=count+1;
+
       } else {
         throw Exception(MESSAGES.INTERNET_ERROR);
       }

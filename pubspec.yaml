@@ -65,7 +65,8 @@ dependencies:
   flutter_local_notifications: 2.0.0+1
 
   flutter_places_autocomplete: 0.2.0
-
+  toggle_switch : 0.1.8
+  font_awesome_flutter: 8.10.0
 
 
 

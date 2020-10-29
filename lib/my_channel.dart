@@ -47,15 +47,10 @@ class _MyChannelState extends State<MyChannel> {
       'Authorization': 'Bearer $access_token',
     });
 
-    // Getting Server response into variable.
-
-    var body = await json.decode(response.body);
-    var message = jsonDecode(response.body);
-
-    print("ffff" + message.toString());
-
     try {
+      //var message = jsonDecode(response.body);
       if (response.statusCode == 200) {
+        var body = json.decode(response.body);
         channel_name=body['data']['results']['channel_name'];
         channel_logo=body['data']['results']['channel_logo'];
         channel_cover=body['data']['results']['channel_cover'];
@@ -167,12 +162,12 @@ class _MyChannelState extends State<MyChannel> {
             fontSize: 16.0);
       }
     } catch (e) {
-      Fluttertoast.showToast(
-        msg: e.toString(),
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-//        timeInSecForIosWeb: 1,
-      );
+//       Fluttertoast.showToast(
+//         msg: e.toString(),
+//         toastLength: Toast.LENGTH_SHORT,
+//         gravity: ToastGravity.CENTER,
+// //        timeInSecForIosWeb: 1,
+//       );
       throw Exception(e);
     }
     // If the Response Message is Matched.
@@ -1329,11 +1324,11 @@ class _MyChannelState extends State<MyChannel> {
           ],
         ),
         appBar: AppBar(
-          leading: GestureDetector(
-            onTap: () {
+          leading: IconButton(
+            onPressed: () {
               Navigator.pop(context);
             },
-            child: Icon(
+            icon: Icon(
               Icons.arrow_back,
               color: Colors.white,
             ),
@@ -1371,14 +1366,14 @@ class _MyChannelState extends State<MyChannel> {
               visible: (channel_name==null),
               child: Padding(
                 padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                child: GestureDetector(
-                  onTap: () {
+                child: IconButton(
+                  onPressed: () {
                     Navigator.pushReplacement(
                       context,
                       CupertinoPageRoute(builder: (context) => AddChannel()),
                     );
                   },
-                  child: Icon(
+                  icon: Icon(
                     Icons.add_circle_outline,
                     color: Colors.white,
                   ),

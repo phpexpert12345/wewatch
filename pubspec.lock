@@ -337,7 +337,7 @@ packages:
     source: hosted
     version: "7.1.1"
   font_awesome_flutter:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: font_awesome_flutter
       url: "https://pub.dartlang.org"
@@ -824,6 +824,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.1.5"
+  toggle_switch:
+    dependency: "direct main"
+    description:
+      name: toggle_switch
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.8"
   typed_data:
     dependency: transitive
     description:

@@ -207,11 +207,11 @@ class _AddChannelState extends State<AddChannel> {
 //    pr.style(message: 'Please wait...');
     return Scaffold(
         appBar: AppBar(
-          leading: GestureDetector(
-            onTap: () {
+          leading: IconButton(
+            onPressed: () {
               Navigator.pop(context);
             },
-            child: Icon(
+            icon: Icon(
               Icons.arrow_back,
               color: Colors.white,
             ),
@@ -225,13 +225,14 @@ class _AddChannelState extends State<AddChannel> {
             ),
           ),
         ),
-        body: Stack(
-          children: <Widget>[
+        body: SingleChildScrollView(
+          child: Stack(
+            children: <Widget>[
 
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
 //                Padding(
 //                  padding: const EdgeInsets.fromLTRB(30, 30, 0, 0),
 //                  child: Row(
@@ -269,15 +270,14 @@ class _AddChannelState extends State<AddChannel> {
 //                    ],
 //                  ),
 //                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(25, 20, 25, 0),
-                  child: SingleChildScrollView(
-                      child: new Container(
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(25, 20, 25, 0),
+                    child: new Container(
 //                        color: Color(0xff444b69),
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-                          child: Column(
-                            children: <Widget>[
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                        child: Column(
+                          children: <Widget>[
 //                                    GestureDetector(
 //                                      onTap: () {
 //                                        _displayDialog(context);
@@ -361,36 +361,27 @@ class _AddChannelState extends State<AddChannel> {
 //                                  ],
 //                                ),
 
-                              SizedBox(
-                                height: 0,
-                              ),
+                            SizedBox(
+                              height: 0,
+                            ),
 
-                              new Container(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment:
-                                  CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Row(
-                                      children: <Widget>[
-                                        Expanded(
-                                          child: new TextFormField(
-                                            controller: _nameController,
-                                            textInputAction:
-                                            TextInputAction.done,
-                                            decoration: new InputDecoration(
-                                              hintText: 'Channel Name',
+                            new Container(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment:
+                                CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Row(
+                                    children: <Widget>[
+                                      Expanded(
+                                        child: new TextFormField(
+                                          controller: _nameController,
+                                          textInputAction:
+                                          TextInputAction.done,
+                                          decoration: new InputDecoration(
+                                            hintText: 'Channel Name',
 //                                                labelText: (first_name!=null)?first_name:'First Name',
-                                              hintStyle: TextStyle(
-
-//                                            fontWeight: FontWeight.w400,
-                                                fontSize: 15,
-//                                        fontWeight: FontWeight.bold,
-                                                color: Color(0xff444b69),
-//                                            letterSpacing: 1
-                                              ),
-                                            ),
-                                            style: TextStyle(
+                                            hintStyle: TextStyle(
 
 //                                            fontWeight: FontWeight.w400,
                                               fontSize: 15,
@@ -398,30 +389,39 @@ class _AddChannelState extends State<AddChannel> {
                                               color: Color(0xff444b69),
 //                                            letterSpacing: 1
                                             ),
-                                            maxLines: 1,
-                                            autofocus: false,
                                           ),
+                                          style: TextStyle(
+
+//                                            fontWeight: FontWeight.w400,
+                                            fontSize: 15,
+//                                        fontWeight: FontWeight.bold,
+                                            color: Color(0xff444b69),
+//                                            letterSpacing: 1
+                                          ),
+                                          maxLines: 1,
+                                          autofocus: false,
                                         ),
+                                      ),
 
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(
-                                height: 20,
-                              ),
-                              new TextFormField(
-                                controller: _descController,
-                                textInputAction: TextInputAction.done,
-                                keyboardType: TextInputType.emailAddress,
-                                decoration: new InputDecoration(
-                                  hintText: 'Description',
-                                  hintStyle: TextStyle(
-
-                                    fontSize: 16.0,
-                                    color: Color(0xFF5a6381),
+                                    ],
                                   ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            new TextFormField(
+                              controller: _descController,
+                              textInputAction: TextInputAction.done,
+                              keyboardType: TextInputType.emailAddress,
+                              decoration: new InputDecoration(
+                                hintText: 'Description',
+                                hintStyle: TextStyle(
+
+                                  fontSize: 16.0,
+                                  color: Color(0xFF5a6381),
+                                ),
 //                                        suffixIcon: Container(
 //                                          padding:
 //                                          EdgeInsets.symmetric(vertical: 15),
@@ -433,10 +433,10 @@ class _AddChannelState extends State<AddChannel> {
 //                                            width: 15,
 //                                          ),
 //                                        ),
-                                ),
-                                maxLines: 1,
-                                autofocus: false,
                               ),
+                              maxLines: 1,
+                              autofocus: false,
+                            ),
 //                                    SizedBox(
 //                                      height: 20,
 //                                    ),
@@ -542,212 +542,225 @@ class _AddChannelState extends State<AddChannel> {
 //                                        ],
 //                                      ),
 //                                    ),
-                              Row(
-                                children: <Widget>[
-                                  Expanded(
-                                    child: Text(
-                                      'Private',
-                                      style: TextStyle(
-                                        color:
-                                        Color(0xff444b69),
-                                      ),
+                            Row(
+                              children: <Widget>[
+                                Expanded(
+                                  child: Text(
+                                    'Private',
+                                    style: TextStyle(
+                                      color:
+                                      Color(0xff444b69),
                                     ),
                                   ),
-                                  Padding(
-                                    padding: EdgeInsets.all(5),
-                                    child: Center(
-                                      child: Switch(
-                                        value: isPrivate,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            isPrivate = value;
-                                            print(isPrivate);
-                                          });
-                                        },
-                                        activeTrackColor: Colors.lightBlueAccent,
-                                        activeColor: Color(0xff00adef),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                children: <Widget>[
-                                  Expanded(
-                                    child: Text(
-                                      'Subscriber Private',
-                                      style: TextStyle(
-                                        color:
-                                        Color(0xff444b69),
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.all(5),
-                                    child: Center(
-                                      child: Switch(
-                                        value: isSubscribers,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            isSubscribers = value;
-                                            print(isSubscribers);
-                                          });
-                                        },
-                                        activeTrackColor: Colors.lightBlueAccent,
-                                        activeColor: Color(0xff00adef),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                children: <Widget>[
-                                  Expanded(
-                                    child: Text(
-                                      'Playlist Private',
-                                      style: TextStyle(
-                                        color:
-                                        Color(0xff444b69),
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.all(5),
-                                    child: Center(
-                                      child: Switch(
-                                        value: isPlaylist,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            isPlaylist = value;
-                                            print(isPlaylist);
-                                          });
-                                        },
-                                        activeTrackColor: Colors.lightBlueAccent,
-                                        activeColor: Color(0xff00adef),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-
-                              new Container(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Padding(
-                                      padding: const EdgeInsets.fromLTRB(0.0, 8, 0, 0),
-                                      child: Text(
-                                        'Select Cover Image',
-                                        style: TextStyle(
-                                          color: Color(0xFF5a6381),
-                                          fontSize: 16,
-//                                                  fontWeight: FontWeight.w700
-                                        ),
-                                      ),
-                                    ),
-                                    Row(
-                                      children: <Widget>[
-                                        Flexible(child: new TextField(
-                                          decoration: new InputDecoration(
-                                            labelText: fileName,
-                                            hintStyle: style1,
-                                            suffixIcon: Icon(Icons.file_upload,color: Color(0xFF5a6381)),
-                                          ),
-                                          expands: false,
-                                          showCursor: false,
-                                          readOnly: true,
-                                          maxLines: 1,
-                                          autofocus: false,
-                                          onTap: (){
-                                            _displayDialog(context);
-                                          },
-                                        ),flex: 1,),
-
-                                      ],
-                                    ),
-                                  ],
                                 ),
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              new Container(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: <Widget>[
-                                    Padding(
-                                      padding: const EdgeInsets.fromLTRB(0.0, 8, 0, 0),
-                                      child: Text(
-                                        'Select Logo Image',
-                                        style: TextStyle(
-                                          color: Color(0xFF5a6381),
-                                          fontSize: 16,
+                                Padding(
+                                  padding: EdgeInsets.all(5),
+                                  child: Center(
+                                    child: Switch(
+                                      value: isPrivate,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          isPrivate = value;
+                                          print(isPrivate);
+                                        });
+                                      },
+                                      activeTrackColor: Colors.lightBlueAccent,
+                                      activeColor: Color(0xff00adef),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: <Widget>[
+                                Expanded(
+                                  child: Text(
+                                    'Subscriber Private',
+                                    style: TextStyle(
+                                      color:
+                                      Color(0xff444b69),
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.all(5),
+                                  child: Center(
+                                    child: Switch(
+                                      value: isSubscribers,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          isSubscribers = value;
+                                          print(isSubscribers);
+                                        });
+                                      },
+                                      activeTrackColor: Colors.lightBlueAccent,
+                                      activeColor: Color(0xff00adef),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: <Widget>[
+                                Expanded(
+                                  child: Text(
+                                    'Playlist Private',
+                                    style: TextStyle(
+                                      color:
+                                      Color(0xff444b69),
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.all(5),
+                                  child: Center(
+                                    child: Switch(
+                                      value: isPlaylist,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          isPlaylist = value;
+                                          print(isPlaylist);
+                                        });
+                                      },
+                                      activeTrackColor: Colors.lightBlueAccent,
+                                      activeColor: Color(0xff00adef),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+
+                            new Container(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Padding(
+                                    padding: const EdgeInsets.fromLTRB(0.0, 8, 0, 0),
+                                    child: Text(
+                                      'Select Cover Image',
+                                      style: TextStyle(
+                                        color: Color(0xFF5a6381),
+                                        fontSize: 16,
 //                                                  fontWeight: FontWeight.w700
-                                        ),
                                       ),
                                     ),
-                                    Row(
-                                      children: <Widget>[
-                                        Flexible(child: new TextField(
-                                          decoration: new InputDecoration(
-                                            labelText: fileNameTwo,
-                                            hintStyle: style1,
-                                            suffixIcon: Icon(Icons.file_upload,color: Color(0xFF5a6381)),
-                                          ),
-                                          expands: false,
-                                          showCursor: false,
-                                          readOnly: true,
-                                          maxLines: 1,
-                                          autofocus: false,
-                                          onTap: (){
-                                            _displayDialogTwo(context);
-                                          },
-                                        ),flex: 1,),
+                                  ),
+                                  Row(
+                                    children: <Widget>[
+                                      Flexible(child: new TextField(
+                                        decoration: new InputDecoration(
+                                          labelText: fileName,
+                                          hintStyle: style1,
+                                          suffixIcon: Icon(Icons.file_upload,color: Color(0xFF5a6381)),
+                                        ),
+                                        expands: false,
+                                        showCursor: false,
+                                        readOnly: true,
+                                        maxLines: 1,
+                                        autofocus: false,
+                                        onTap: (){
+                                          _displayDialog(context);
+                                        },
+                                      ),flex: 1,),
 
-                                      ],
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            new Container(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Padding(
+                                    padding: const EdgeInsets.fromLTRB(0.0, 8, 0, 0),
+                                    child: Text(
+                                      'Select Logo Image',
+                                      style: TextStyle(
+                                        color: Color(0xFF5a6381),
+                                        fontSize: 16,
+//                                                  fontWeight: FontWeight.w700
+                                      ),
                                     ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
+                                  ),
+                                  Row(
+                                    children: <Widget>[
+                                      Flexible(child: new TextField(
+                                        decoration: new InputDecoration(
+                                          labelText: fileNameTwo,
+                                          hintStyle: style1,
+                                          suffixIcon: Icon(Icons.file_upload,color: Color(0xFF5a6381)),
+                                        ),
+                                        expands: false,
+                                        showCursor: false,
+                                        readOnly: true,
+                                        maxLines: 1,
+                                        autofocus: false,
+                                        onTap: (){
+                                          _displayDialogTwo(context);
+                                        },
+                                      ),flex: 1,),
 
-                            ],
-                          ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+
+                          ],
                         ),
+                      ),
 
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15.0),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15.0),
 //                        image: DecorationImage(
 //                          image: AssetImage("assets/images/card_background.png"),
 //                          fit: BoxFit.fill,
 //
 //                        ),
-                            color: Colors.transparent),
-                      )),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
-                  child: Center(
-                      child: GestureDetector(
-                        onTap: () {
-                          updateProfile();
-                          if(!["", null, false, 0].contains(_nameController.text.toString())){
-                            if(!["", null, false, 0].contains(_descController.text.toString()))
-                            {
-                              if(!["", null, false, 0,].contains(_imageFileTwo))
+                          color: Colors.transparent),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+                    child: Center(
+                        child: GestureDetector(
+                          onTap: () {
+                            updateProfile();
+                            if(!["", null, false, 0].contains(_nameController.text.toString())){
+                              if(!["", null, false, 0].contains(_descController.text.toString()))
                               {
-                                if(!["", null, false, 0,].contains(_imageFile))
+                                if(!["", null, false, 0,].contains(_imageFileTwo))
                                 {
-                                  updateProfile();
+                                  if(!["", null, false, 0,].contains(_imageFile))
+                                  {
+                                    updateProfile();
+
+                                  }else{
+
+                                    Fluttertoast.showToast(
+                                        msg: "Upload cover photo",
+                                        toastLength: Toast.LENGTH_SHORT,
+                                        gravity: ToastGravity.CENTER,
+                                        timeInSecForIosWeb: 1,
+                                        backgroundColor: Colors.red,
+                                        textColor: Colors.white,
+                                        fontSize: 16.0
+                                    );
+                                  }
 
                                 }else{
 
                                   Fluttertoast.showToast(
-                                      msg: "Upload cover photo",
+                                      msg: "Upload logo",
                                       toastLength: Toast.LENGTH_SHORT,
                                       gravity: ToastGravity.CENTER,
                                       timeInSecForIosWeb: 1,
@@ -755,12 +768,14 @@ class _AddChannelState extends State<AddChannel> {
                                       textColor: Colors.white,
                                       fontSize: 16.0
                                   );
+
                                 }
+
 
                               }else{
 
                                 Fluttertoast.showToast(
-                                    msg: "Upload logo",
+                                    msg: "Please Enter Description",
                                     toastLength: Toast.LENGTH_SHORT,
                                     gravity: ToastGravity.CENTER,
                                     timeInSecForIosWeb: 1,
@@ -771,11 +786,11 @@ class _AddChannelState extends State<AddChannel> {
 
                               }
 
-
                             }else{
 
+
                               Fluttertoast.showToast(
-                                  msg: "Please Enter Description",
+                                  msg: "Please Channel Name",
                                   toastLength: Toast.LENGTH_SHORT,
                                   gravity: ToastGravity.CENTER,
                                   timeInSecForIosWeb: 1,
@@ -786,68 +801,54 @@ class _AddChannelState extends State<AddChannel> {
 
                             }
 
-                          }else{
 
-
-                            Fluttertoast.showToast(
-                                msg: "Please Channel Name",
-                                toastLength: Toast.LENGTH_SHORT,
-                                gravity: ToastGravity.CENTER,
-                                timeInSecForIosWeb: 1,
-                                backgroundColor: Colors.red,
-                                textColor: Colors.white,
-                                fontSize: 16.0
-                            );
-
-                          }
-
-
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(40, 0, 40, 0),
-                          child: Card(
-                            child: Container(
-                              decoration: new BoxDecoration(
-                                color: Color(0xee08c1f8),
-                                borderRadius: new BorderRadius.circular(10),
-                              ),
-                              height: 50.0, // height of the button
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(40, 0, 40, 0),
+                            child: Card(
+                              child: Container(
+                                decoration: new BoxDecoration(
+                                  color: Color(0xee08c1f8),
+                                  borderRadius: new BorderRadius.circular(10),
+                                ),
+                                height: 50.0, // height of the button
 //                                      width: 120.0, // width of the button
-                              child: Center(
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      Padding(
-                                        padding: EdgeInsets.all(10),
-                                        child: Text(
-                                          'Submit',
-                                          style: TextStyle(
+                                child: Center(
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        Padding(
+                                          padding: EdgeInsets.all(10),
+                                          child: Text(
+                                            'Submit',
+                                            style: TextStyle(
 
-                                              fontSize: 25,
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w400),
+                                                fontSize: 25,
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w400),
+                                          ),
                                         ),
-                                      ),
-                                    ],
-                                  )),
-                            ),
+                                      ],
+                                    )),
+                              ),
 //                                    elevation: 5,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(40.0),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(40.0),
+                              ),
                             ),
                           ),
-                        ),
-                      )),
-                ),
-              ],
-            ),
-            Visibility(
-              visible: visible,
-              child: Center(
-                child: CircularProgressIndicator(),
+                        )),
+                  ),
+                ],
               ),
-            )
-          ],
+              Visibility(
+                visible: visible,
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              )
+            ],
+          ),
         ),
         resizeToAvoidBottomPadding: true);
   }
