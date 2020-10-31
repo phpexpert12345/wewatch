@@ -30,8 +30,8 @@ class _LoginScreenProcessTwoState extends State<LoginScreenProcessTwo> {
   String _message='';
   @override
     void initState() {
-      // TODO: implement initState
-      super.initState();
+    _register();
+     super.initState();
     }
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
 
@@ -65,7 +65,7 @@ class _LoginScreenProcessTwoState extends State<LoginScreenProcessTwo> {
     });
 
 
-    _register();
+    //await _register();
 
     // Getting value from Controller
 
@@ -82,7 +82,7 @@ class _LoginScreenProcessTwoState extends State<LoginScreenProcessTwo> {
       formData = new FormData.from({
         "email": _emailFilter.text.toString().trim(),
         "password": _passwordFilter.text.toString().trim(),
-        "fcm_token": prefs.getString('fb_token'),
+        "fcm_token": prefs.getString("fb_token"),
 
       });
     }
@@ -90,7 +90,7 @@ class _LoginScreenProcessTwoState extends State<LoginScreenProcessTwo> {
       formData = new FormData.from({
         "email": _emailFilter.text.toString().trim(),
         "password": _passwordFilter.text.toString().trim(),
-        "fcm_token": prefs.getString('fb_token'),
+        "fcm_token": prefs.getString("fb_token"),
       });
     }
 

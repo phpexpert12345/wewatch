@@ -336,7 +336,7 @@ class _DashboardState extends State<Dashboard> {
       print('submitting to backend...');
       Map<String, dynamic> decodedMap = jsonDecode(response.body);
       Map<String, dynamic> decodedMapAttachment = jsonDecode(response.body);
-      var body = await json.decode(response.body);
+     // var body = await json.decode(response.body);
       apiCalled=true;
       _appNotifierClass.setChange(false);
       _appNotifierClass.notifyListeners();
@@ -2523,7 +2523,7 @@ Future saveLike(String videoId, String status) async {
 
   // Getting Server response into variable.
 
-  var body = await json.decode(response.body);
+  var body = json.decode(response.body);
   var message = jsonDecode(response.body);
 
   print("ffff" + message.toString());

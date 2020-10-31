@@ -97,7 +97,7 @@ class _CommunityState extends State<Community> {
 
     // Getting Server response into variable.
 
-    var body = await json.decode(response.body);
+    var body = json.decode(response.body);
     var message = jsonDecode(response.body);
 
     print("ffff" + message.toString());
@@ -193,12 +193,12 @@ class _CommunityState extends State<Community> {
         );
       }
     } catch (e) {
-      Fluttertoast.showToast(
-        msg: e.toString(),
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-//        timeInSecForIos: 1,
-      );
+//       Fluttertoast.showToast(
+//         msg: e.toString(),
+//         toastLength: Toast.LENGTH_SHORT,
+//         gravity: ToastGravity.CENTER,
+// //        timeInSecForIos: 1,
+//       );
       throw Exception(e);
     }
     // If the Response Message is Matched.
@@ -229,7 +229,7 @@ class _CommunityState extends State<Community> {
       'Authorization': 'Bearer $access_token',
     });
 
-    var body = await json.decode(response.body);
+    var body = json.decode(response.body);
     var message = jsonDecode(response.body);
 
     print("ffff" + message.toString());
@@ -295,12 +295,12 @@ class _CommunityState extends State<Community> {
         );
       }
     } catch (e) {
-      Fluttertoast.showToast(
-        msg: e.toString(),
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-//        timeInSecForIos: 1,
-      );
+//       Fluttertoast.showToast(
+//         msg: e.toString(),
+//         toastLength: Toast.LENGTH_SHORT,
+//         gravity: ToastGravity.CENTER,
+// //        timeInSecForIos: 1,
+//       );
       throw Exception(e);
     }
     // If the Response Message is Matched.
@@ -2441,7 +2441,7 @@ Future saveLike(String videoId, String status) async {
 
   // Getting Server response into variable.
 
-  var body = await json.decode(response.body);
+  var body = json.decode(response.body);
   var message = jsonDecode(response.body);
 
   print("ffff" + message.toString());
@@ -2533,12 +2533,12 @@ Future saveLike(String videoId, String status) async {
           fontSize: 16.0);
     }
   } catch (e) {
-    Fluttertoast.showToast(
-      msg: e.toString(),
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.CENTER,
-//        timeInSecForIos: 1,
-    );
+//     Fluttertoast.showToast(
+//       msg: e.toString(),
+//       toastLength: Toast.LENGTH_SHORT,
+//       gravity: ToastGravity.CENTER,
+// //        timeInSecForIos: 1,
+//     );
     throw Exception(e);
   }
   // If the Response Message is Matched.

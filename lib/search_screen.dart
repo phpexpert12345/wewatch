@@ -67,7 +67,7 @@ class _SearchScreenState extends State<SearchScreen> {
     String access_token = prefs.getString('access_token');
     String login_url =
         "https://wewatch.in/wewatch-up/api/v1/video-search?search=" +
-            _emailFilter.text.toString()+"&page="+pageCount.toString();
+            _emailFilter.text.toString()+"&page="+pageCount.toString()+"&filter_by_video_category="+category;
     // "+&page=1&filter_by_state=" +
     // state +
     // "&filter_by_city=" +
@@ -77,12 +77,6 @@ class _SearchScreenState extends State<SearchScreen> {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $access_token',
     });
-
-   // print(response.body);
-
-    //Simulate a service call
-
-
     try {
       if (response.statusCode == 200) {
         //print("Ankit" + body.toString());
@@ -153,6 +147,7 @@ class _SearchScreenState extends State<SearchScreen> {
 //        new MaterialPageRoute(builder: (context) => new OnboardingScreen()));
   }
 
+  String serachText;
   Future<List<Category>> getVehical(String type) async {
 
     prefs = await SharedPreferences.getInstance();
@@ -206,6 +201,7 @@ class _SearchScreenState extends State<SearchScreen> {
 //        ),
         backgroundColor: Color(0xff00adef),
         centerTitle: true,
+
 
         title: Text('Search'),
         actions: <Widget>[
@@ -278,11 +274,18 @@ class _SearchScreenState extends State<SearchScreen> {
                                         )),
                                     onTap: () {
                                       _onSelected(index);
+                                      print("val==="+snapshot.data[index].name.toString());
+
+                                      pageCount=1;
+                                      setState(() {
+                                        students.clear();
+                                        moreDataLoading=true;
+                                      });
                                       getQuotes(
                                           _emailFilter.text,
                                           prefs.getString('city'),
                                           prefs.getString('state'),
-                                          snapshot.data[index].id.toString());
+                                          snapshot.data[index].name.toString());
                                     });
                               },
                               padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
@@ -313,7 +316,17 @@ class _SearchScreenState extends State<SearchScreen> {
                       filled: true,
                       fillColor: Colors.white,
                       hintText: 'Enter video name',
-                      suffixIcon: Icon(Icons.search),
+                      suffixIcon: IconButton(
+                            onPressed: (){
+                              setState(() {
+                                students.clear();
+                                moreDataLoading=true;
+                              });
+                              pageCount=1;
+                              getQuotes(_emailFilter.text, prefs.getString('city'),
+                                  prefs.getString('state'), "");
+                            }
+                            ,icon: Icon(Icons.search)),
                       contentPadding:
                           EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
                       border: OutlineInputBorder(
@@ -321,10 +334,10 @@ class _SearchScreenState extends State<SearchScreen> {
                           borderRadius: BorderRadius.circular(32.0)),
                     ),
                     onChanged: (text) {
-                      setState(() {
-                        getQuotes(text, prefs.getString('city'),
-                            prefs.getString('state'), "");
-                      });
+                     // setState(() {
+                        serachText=text;
+                        //getQuotes(text, prefs.getString('city'),prefs.getString('state'), "");
+                     // });
                     },
                   ),
                 ),
@@ -357,313 +370,315 @@ class _SearchScreenState extends State<SearchScreen> {
                             const EdgeInsets.fromLTRB(0, 5, 5, 5),
                             child: Stack(
                               children: <Widget>[
-                                Padding(
-                                  padding: const EdgeInsets.fromLTRB(
-                                      0.0, 0, 0, 0),
-                                  child: Card(
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius:
-                                        BorderRadius.circular(5),
+                                Column(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                          0.0, 0, 0, 0),
+                                      child: Card(
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                            BorderRadius.circular(5),
 
 //                                    decoration: BoxDecoration(
 //                                      image:
 //                                      borderRadius: BorderRadius.circular(20.0),
 //                                    ),
-                                        color: Colors.transparent,
-                                      ),
+                                            color: Colors.transparent,
+                                          ),
 
-                                      child: Column(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          Padding(
-                                            padding:
-                                            const EdgeInsets.fromLTRB(
-                                                2, 2, 2, 2),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                              crossAxisAlignment:
-                                              CrossAxisAlignment
-                                                  .start,
-                                              children: <Widget>[
-                                                Padding(
-                                                  padding:
-                                                  EdgeInsets.fromLTRB(
-                                                      10, 0, 10, 10),
-                                                  child: Center(
-                                                    child: Container(
-                                                        width: 50.0,
-                                                        height: 50.0,
-                                                        decoration:
-                                                        BoxDecoration(
-                                                            borderRadius:
-                                                            BorderRadius.circular(
-                                                                5.0),
-                                                            shape: BoxShape
-                                                                .rectangle,
-                                                            image:
-                                                            DecorationImage(
-                                                              fit: BoxFit
-                                                                  .fill,
-                                                              image: (![
-                                                                "",
-                                                                null,
-                                                                false,
-                                                                0,
-                                                              ].contains(students[index].video_thumb_image))
-                                                                  ? NetworkImage(
-                                                                students[index].video_thumb_image,
-                                                              )
-                                                                  : AssetImage(
-                                                                "assets/images/logo_splash.png",
-                                                              ),
-                                                            ))),
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  child: Padding(
-                                                    padding:
-                                                    const EdgeInsets
-                                                        .all(4.0),
-                                                    child: Column(
-                                                      mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .start,
-                                                      crossAxisAlignment:
-                                                      CrossAxisAlignment
-                                                          .start,
-                                                      children: <Widget>[
-                                                        Padding(
-                                                          padding:
-                                                          const EdgeInsets
-                                                              .fromLTRB(
-                                                              0.0,
-                                                              0.0,
-                                                              0.0,
-                                                              0.0),
-                                                          child: Align(
-                                                            child:
-                                                            new Text(
-                                                              (![
-                                                                "",
-                                                                null,
-                                                                false,
-                                                                0,
-                                                              ].contains(students[
-                                                              index]
-                                                                  .video_title))
-                                                                  ? students[index]
-                                                                  .video_title
-                                                                  : "Video title",
-                                                              style:
-                                                              TextStyle(
-                                                                color: Colors
-                                                                    .black,
-                                                                fontSize:
-                                                                13,
-                                                                letterSpacing:
-                                                                0,
-                                                                fontWeight:
-                                                                FontWeight
-                                                                    .bold,
-                                                              ),
-                                                              textAlign:
-                                                              TextAlign
-                                                                  .left,
-//                                              textDirection:
-//                                              TextDirection.ltr,
-                                                            ),
-                                                            alignment:
-                                                            Alignment
-                                                                .centerLeft,
-                                                          ),
-                                                        ),
-                                                        Padding(
-                                                          padding:
-                                                          const EdgeInsets
-                                                              .all(
-                                                              4.0),
-                                                          child: Row(
-                                                            mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
-                                                            crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                            children: <
-                                                                Widget>[
-                                                              Padding(
-                                                                padding: const EdgeInsets
-                                                                    .fromLTRB(
-                                                                    0.0,
-                                                                    0.0,
-                                                                    0.0,
-                                                                    0.0),
-                                                                child:
-                                                                Align(
-                                                                  child:
-                                                                  new Text(
-                                                                    (![
-                                                                      "",
-                                                                      null,
-                                                                      false,
-                                                                      0,
-                                                                    ].contains(students[index].reporter_name))
-                                                                        ? students[index].reporter_name + " | "
-                                                                        : "Video title | ",
-                                                                    style:
-                                                                    TextStyle(
-                                                                      color:
-                                                                      Colors.black,
-                                                                      fontSize:
-                                                                      11,
-                                                                      letterSpacing:
-                                                                      0,
-                                                                      fontWeight:
-                                                                      FontWeight.bold,
-                                                                    ),
-                                                                    textAlign:
-                                                                    TextAlign.left,
-//                                              textDirection:
-//                                              TextDirection.ltr,
+                                          child: Column(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                            children: <Widget>[
+                                              Padding(
+                                                padding:
+                                                const EdgeInsets.fromLTRB(
+                                                    2, 2, 2, 2),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                  CrossAxisAlignment
+                                                      .start,
+                                                  children: <Widget>[
+                                                    Padding(
+                                                      padding:
+                                                      EdgeInsets.fromLTRB(
+                                                          10, 0, 10, 10),
+                                                      child: Center(
+                                                        child: Container(
+                                                            width: 50.0,
+                                                            height: 50.0,
+                                                            decoration:
+                                                            BoxDecoration(
+                                                                borderRadius:
+                                                                BorderRadius.circular(
+                                                                    5.0),
+                                                                shape: BoxShape
+                                                                    .rectangle,
+                                                                image:
+                                                                DecorationImage(
+                                                                  fit: BoxFit
+                                                                      .fill,
+                                                                  image: (![
+                                                                    "",
+                                                                    null,
+                                                                    false,
+                                                                    0,
+                                                                  ].contains(students[index].video_thumb_image))
+                                                                      ? NetworkImage(
+                                                                    students[index].video_thumb_image,
+                                                                  )
+                                                                      : AssetImage(
+                                                                    "assets/images/logo_splash.png",
                                                                   ),
-                                                                  alignment:
-                                                                  Alignment.centerLeft,
-                                                                ),
-                                                              ),
-                                                              Padding(
-                                                                padding: const EdgeInsets
-                                                                    .fromLTRB(
-                                                                    0.0,
-                                                                    0.0,
-                                                                    0.0,
-                                                                    0.0),
-                                                                child:
-                                                                Align(
-                                                                  child:
-                                                                  new Text(
-                                                                    (![
-                                                                      "",
-                                                                      null,
-                                                                      false,
-                                                                      0,
-                                                                    ].contains(students[index].video_locality))
-                                                                        ? students[index].video_locality + ", "
-                                                                        : "Video title, ",
-                                                                    style:
-                                                                    TextStyle(
-                                                                      color:
-                                                                      Colors.black,
-                                                                      fontSize:
-                                                                      10.6,
-                                                                      letterSpacing:
-                                                                      0,
-                                                                    ),
-                                                                    textAlign:
-                                                                    TextAlign.left,
-//                                              textDirection:
-//                                              TextDirection.ltr,
-                                                                  ),
-                                                                  alignment:
-                                                                  Alignment.centerLeft,
-                                                                ),
-                                                              ),
-
-//                                       Padding(
-//                                         padding: const EdgeInsets.fromLTRB(
-//                                             0.0, 5.0, 0.0, 0.0),
-//                                         child: Align(
-//                                           child: new Text(
-//                                             (!["", null, false, 0,].contains(cellModel.video_description)) ? cellModel.video_description +"| New Delhi | 15th Sep 2020 | Posted at 12:05 pm" : "Video title",
-//                                             style: TextStyle(
-//
-//                                               color: Colors.black,
-//                                               fontSize: 11,
-//                                               letterSpacing: 0,
-//                                               fontWeight: FontWeight.bold,
-//                                             ),
-//                                             textAlign: TextAlign.left,
-// //                                              textDirection:
-// //                                              TextDirection.ltr,
-//                                           ),
-//                                           alignment: Alignment.centerLeft,
-//                                         ),
-//                                       ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                        Padding(
-                                                          padding:
-                                                          const EdgeInsets
-                                                              .fromLTRB(
-                                                              0.0,
-                                                              0.0,
-                                                              0.0,
-                                                              0.0),
-                                                          child: Align(
-                                                            child:
-                                                            new Text(
-                                                              (![
-                                                                "",
-                                                                null,
-                                                                false,
-                                                                0,
-                                                              ].contains(students[
-                                                              index]
-                                                                  .posted_time))
-                                                                  ? students[index].posted_date +
-                                                                  " | " +
-                                                                  "Posted at " +
-                                                                  students[index].posted_time
-                                                                  : "NA",
-                                                              style:
-                                                              TextStyle(
-                                                                color: Colors
-                                                                    .black,
-                                                                fontSize:
-                                                                11,
-                                                                letterSpacing:
-                                                                0,
-                                                              ),
-                                                              textAlign:
-                                                              TextAlign
-                                                                  .left,
-//                                              textDirection:
-//                                              TextDirection.ltr,
-                                                            ),
-                                                            alignment:
-                                                            Alignment
-                                                                .centerLeft,
-                                                          ),
-                                                        ),
-//                                       Padding(
-//                                         padding: const EdgeInsets.fromLTRB(
-//                                             0.0, 5.0, 0.0, 0.0),
-//                                         child: Align(
-//                                           child: new Text(
-//                                             (!["", null, false, 0,].contains(cellModel.video_description)) ? cellModel.video_description +"| New Delhi | 15th Sep 2020 | Posted at 12:05 pm" : "Video title",
-//                                             style: TextStyle(
-//
-//                                               color: Colors.black,
-//                                               fontSize: 11,
-//                                               letterSpacing: 0,
-//                                               fontWeight: FontWeight.bold,
-//                                             ),
-//                                             textAlign: TextAlign.left,
-// //                                              textDirection:
-// //                                              TextDirection.ltr,
-//                                           ),
-//                                           alignment: Alignment.centerLeft,
-//                                         ),
-//                                       ),
-                                                      ],
+                                                                ))),
+                                                      ),
                                                     ),
-                                                  ),
-                                                ),
+                                                    Expanded(
+                                                      child: Padding(
+                                                        padding:
+                                                        const EdgeInsets
+                                                            .all(4.0),
+                                                        child: Column(
+                                                          mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                          crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                          children: <Widget>[
+                                                            Padding(
+                                                              padding:
+                                                              const EdgeInsets
+                                                                  .fromLTRB(
+                                                                  0.0,
+                                                                  0.0,
+                                                                  0.0,
+                                                                  0.0),
+                                                              child: Align(
+                                                                child:
+                                                                new Text(
+                                                                  (![
+                                                                    "",
+                                                                    null,
+                                                                    false,
+                                                                    0,
+                                                                  ].contains(students[
+                                                                  index]
+                                                                      .video_title))
+                                                                      ? students[index]
+                                                                      .video_title
+                                                                      : "Video title",
+                                                                  style:
+                                                                  TextStyle(
+                                                                    color: Colors
+                                                                        .black,
+                                                                    fontSize:
+                                                                    13,
+                                                                    letterSpacing:
+                                                                    0,
+                                                                    fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                  ),
+                                                                  textAlign:
+                                                                  TextAlign
+                                                                      .left,
+//                                              textDirection:
+//                                              TextDirection.ltr,
+                                                                ),
+                                                                alignment:
+                                                                Alignment
+                                                                    .centerLeft,
+                                                              ),
+                                                            ),
+                                                            Padding(
+                                                              padding:
+                                                              const EdgeInsets
+                                                                  .all(
+                                                                  4.0),
+                                                              child: Row(
+                                                                mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .start,
+                                                                crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                                children: <
+                                                                    Widget>[
+                                                                  Padding(
+                                                                    padding: const EdgeInsets
+                                                                        .fromLTRB(
+                                                                        0.0,
+                                                                        0.0,
+                                                                        0.0,
+                                                                        0.0),
+                                                                    child:
+                                                                    Align(
+                                                                      child:
+                                                                      new Text(
+                                                                        (![
+                                                                          "",
+                                                                          null,
+                                                                          false,
+                                                                          0,
+                                                                        ].contains(students[index].reporter_name))
+                                                                            ? students[index].reporter_name + " | "
+                                                                            : "Video title | ",
+                                                                        style:
+                                                                        TextStyle(
+                                                                          color:
+                                                                          Colors.black,
+                                                                          fontSize:
+                                                                          11,
+                                                                          letterSpacing:
+                                                                          0,
+                                                                          fontWeight:
+                                                                          FontWeight.bold,
+                                                                        ),
+                                                                        textAlign:
+                                                                        TextAlign.left,
+//                                              textDirection:
+//                                              TextDirection.ltr,
+                                                                      ),
+                                                                      alignment:
+                                                                      Alignment.centerLeft,
+                                                                    ),
+                                                                  ),
+                                                                  Padding(
+                                                                    padding: const EdgeInsets
+                                                                        .fromLTRB(
+                                                                        0.0,
+                                                                        0.0,
+                                                                        0.0,
+                                                                        0.0),
+                                                                    child:
+                                                                    Align(
+                                                                      child:
+                                                                      new Text(
+                                                                        (![
+                                                                          "",
+                                                                          null,
+                                                                          false,
+                                                                          0,
+                                                                        ].contains(students[index].video_locality))
+                                                                            ? students[index].video_locality + ", "
+                                                                            : "Video title, ",
+                                                                        style:
+                                                                        TextStyle(
+                                                                          color:
+                                                                          Colors.black,
+                                                                          fontSize:
+                                                                          10.6,
+                                                                          letterSpacing:
+                                                                          0,
+                                                                        ),
+                                                                        textAlign:
+                                                                        TextAlign.left,
+//                                              textDirection:
+//                                              TextDirection.ltr,
+                                                                      ),
+                                                                      alignment:
+                                                                      Alignment.centerLeft,
+                                                                    ),
+                                                                  ),
+
+//                                       Padding(
+//                                         padding: const EdgeInsets.fromLTRB(
+//                                             0.0, 5.0, 0.0, 0.0),
+//                                         child: Align(
+//                                           child: new Text(
+//                                             (!["", null, false, 0,].contains(cellModel.video_description)) ? cellModel.video_description +"| New Delhi | 15th Sep 2020 | Posted at 12:05 pm" : "Video title",
+//                                             style: TextStyle(
+//
+//                                               color: Colors.black,
+//                                               fontSize: 11,
+//                                               letterSpacing: 0,
+//                                               fontWeight: FontWeight.bold,
+//                                             ),
+//                                             textAlign: TextAlign.left,
+// //                                              textDirection:
+// //                                              TextDirection.ltr,
+//                                           ),
+//                                           alignment: Alignment.centerLeft,
+//                                         ),
+//                                       ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                            Padding(
+                                                              padding:
+                                                              const EdgeInsets
+                                                                  .fromLTRB(
+                                                                  0.0,
+                                                                  0.0,
+                                                                  0.0,
+                                                                  0.0),
+                                                              child: Align(
+                                                                child:
+                                                                new Text(
+                                                                  (![
+                                                                    "",
+                                                                    null,
+                                                                    false,
+                                                                    0,
+                                                                  ].contains(students[
+                                                                  index]
+                                                                      .posted_time))
+                                                                      ? students[index].posted_date +
+                                                                      " | " +
+                                                                      "Posted at " +
+                                                                      students[index].posted_time
+                                                                      : "NA",
+                                                                  style:
+                                                                  TextStyle(
+                                                                    color: Colors
+                                                                        .black,
+                                                                    fontSize:
+                                                                    11,
+                                                                    letterSpacing:
+                                                                    0,
+                                                                  ),
+                                                                  textAlign:
+                                                                  TextAlign
+                                                                      .left,
+//                                              textDirection:
+//                                              TextDirection.ltr,
+                                                                ),
+                                                                alignment:
+                                                                Alignment
+                                                                    .centerLeft,
+                                                              ),
+                                                            ),
+//                                       Padding(
+//                                         padding: const EdgeInsets.fromLTRB(
+//                                             0.0, 5.0, 0.0, 0.0),
+//                                         child: Align(
+//                                           child: new Text(
+//                                             (!["", null, false, 0,].contains(cellModel.video_description)) ? cellModel.video_description +"| New Delhi | 15th Sep 2020 | Posted at 12:05 pm" : "Video title",
+//                                             style: TextStyle(
+//
+//                                               color: Colors.black,
+//                                               fontSize: 11,
+//                                               letterSpacing: 0,
+//                                               fontWeight: FontWeight.bold,
+//                                             ),
+//                                             textAlign: TextAlign.left,
+// //                                              textDirection:
+// //                                              TextDirection.ltr,
+//                                           ),
+//                                           alignment: Alignment.centerLeft,
+//                                         ),
+//                                       ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
 //                                Center(
 //                                  child: Padding(
 //                                    padding: EdgeInsets.all(20),
@@ -675,172 +690,427 @@ class _SearchScreenState extends State<SearchScreen> {
 //                                    ),
 //                                  ),
 //                                ),
-                                              ],
-                                            ),
-                                          ),
-
-                                          GestureDetector(
-                                            onTap: () {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        VideoPlay(
-                                                          id: students[index]
-                                                              .id
-                                                              .toString(),
-                                                          user_id: students[index]
-                                                              .user_id
-                                                              .toString(),
-                                                          citi_id: students[index]
-                                                              .citi_id
-                                                              .toString(),
-                                                          state_id: students[index]
-                                                              .state_id
-                                                              .toString(),
-                                                          video_category: students[index]
-                                                              .video_category
-                                                              .toString(),
-                                                          video_description: students[index]
-                                                              .video_description
-                                                              .toString(),
-                                                          video_file: students[index]
-                                                              .video_file
-                                                              .toString(),
-                                                          video_locality: students[index]
-                                                              .video_locality
-                                                              .toString(),
-                                                          video_tag: students[index]
-                                                              .video_tag
-                                                              .toString(),
-                                                          video_thumb_image: students[index]
-                                                              .video_thumb_image
-                                                              .toString(),
-                                                          video_title: students[index]
-                                                              .video_title
-                                                              .toString(),
-                                                          like_count: students[index]
-                                                              .total_likes,
-                                                          dislike_count:
-                                                          students[
-                                                          index]
-                                                              .total_dislikes,
-                                                          comments_count:
-                                                          students[
-                                                          index]
-                                                              .total_comments,
-                                                          islike: students[index]
-                                                              .is_like,
-                                                          date: students[index]
-                                                              .posted_date,
-                                                          time: students[index]
-                                                              .posted_time,
-                                                          reporter_name:
-                                                          students[
-                                                          index]
-                                                              .reporter_name,
-                                                        )),
-                                              );
-                                            },
-                                            child: Stack(
-                                              alignment:
-                                              AlignmentDirectional
-                                                  .center,
-                                              children: <Widget>[
-                                                Padding(
-                                                  padding:
-                                                  EdgeInsets.fromLTRB(
-                                                      2, 0, 2, 0),
-                                                  child: Container(
-                                                      height: 300,
-//                width: 100,
-                                                      child:
-                                                      VisibilityDetector(
-                                                        key: ObjectKey(flickManagerSearch),
-                                                        onVisibilityChanged: (visibility) {
-                                                          if (visibility.visibleFraction == 0 && this.mounted) {
-                                                            flickManagerSearch.flickControlManager
-                                                                .pause();
-                                                          } else if (visibility.visibleFraction ==1) {
-                                                            flickManagerSearch.flickControlManager
-                                                                .play();
-                                                          }
-                                                        },
-                                                        child: Container(
-                                                          child: FlickVideoPlayer(
-                                                            flickManager: flickManagerSearch,
-                                                            flickVideoWithControls:
-                                                            FlickVideoWithControls(
-                                                              controls: FlickPortraitControls(),
-                                                            ),
-                                                            flickVideoWithControlsFullscreen:
-                                                            FlickVideoWithControls(
-                                                              controls: FlickLandscapeControls(),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      )),
+                                                  ],
                                                 ),
-                                              ],
-                                            ),
-                                          ),
+                                              ),
+
+                                              GestureDetector(
+                                                onTap: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            VideoPlay(
+                                                              id: students[index]
+                                                                  .id
+                                                                  .toString(),
+                                                              user_id: students[index]
+                                                                  .user_id
+                                                                  .toString(),
+                                                              citi_id: students[index]
+                                                                  .citi_id
+                                                                  .toString(),
+                                                              state_id: students[index]
+                                                                  .state_id
+                                                                  .toString(),
+                                                              video_category: students[index]
+                                                                  .video_category
+                                                                  .toString(),
+                                                              video_description: students[index]
+                                                                  .video_description
+                                                                  .toString(),
+                                                              video_file: students[index]
+                                                                  .video_file
+                                                                  .toString(),
+                                                              video_locality: students[index]
+                                                                  .video_locality
+                                                                  .toString(),
+                                                              video_tag: students[index]
+                                                                  .video_tag
+                                                                  .toString(),
+                                                              video_thumb_image: students[index]
+                                                                  .video_thumb_image
+                                                                  .toString(),
+                                                              video_title: students[index]
+                                                                  .video_title
+                                                                  .toString(),
+                                                              like_count: students[index]
+                                                                  .total_likes,
+                                                              dislike_count:
+                                                              students[
+                                                              index]
+                                                                  .total_dislikes,
+                                                              comments_count:
+                                                              students[
+                                                              index]
+                                                                  .total_comments,
+                                                              islike: students[index]
+                                                                  .is_like,
+                                                              date: students[index]
+                                                                  .posted_date,
+                                                              time: students[index]
+                                                                  .posted_time,
+                                                              reporter_name:
+                                                              students[
+                                                              index]
+                                                                  .reporter_name,
+                                                            )),
+                                                  );
+                                                },
+                                                child: Stack(
+                                                  alignment:
+                                                  AlignmentDirectional
+                                                      .center,
+                                                  children: <Widget>[
+                                                    Padding(
+                                                      padding:
+                                                      EdgeInsets.fromLTRB(
+                                                          2, 0, 2, 0),
+                                                      child: Container(
+                                                          height: 300,
+//                width: 100,
+                                                          child:
+                                                          VisibilityDetector(
+                                                            key: ObjectKey(flickManagerSearch),
+                                                            onVisibilityChanged: (visibility) {
+                                                              if (visibility.visibleFraction == 0 && this.mounted) {
+                                                                flickManagerSearch.flickControlManager
+                                                                    .pause();
+                                                              } else if (visibility.visibleFraction ==1) {
+                                                                flickManagerSearch.flickControlManager
+                                                                    .play();
+                                                              }
+                                                            },
+                                                            child: Container(
+                                                              child: FlickVideoPlayer(
+                                                                flickManager: flickManagerSearch,
+                                                                flickVideoWithControls:
+                                                                FlickVideoWithControls(
+                                                                  controls: FlickPortraitControls(),
+                                                                ),
+                                                                flickVideoWithControlsFullscreen:
+                                                                FlickVideoWithControls(
+                                                                  controls: FlickLandscapeControls(),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          )),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
 
 //                          ChewieListItem(
 //                            videoPlayerController: VideoPlayerController.network(
 //                              cellModel.video_file,
 //                            ),
 //                          ),
-                                          Padding(
-                                            padding:
-                                            const EdgeInsets.fromLTRB(
-                                                0, 5, 0, 0),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                              crossAxisAlignment:
-                                              CrossAxisAlignment
-                                                  .start,
-                                              children: <Widget>[
-                                                Expanded(
-                                                    child:
-                                                    GestureDetector(
-                                                      onTap: () {
-                                                        if (doLogin == 1) {
-                                                          setState(() {
-                                                            // if(countValue){
-                                                            //   countValue=false;
-                                                            //   countValue1=true;
-                                                            // }
-                                                            if (!countValue) {
-                                                              countValue =true;
-                                                              countValue1 =false;
-                                                              saveLike( students[ index].id.toString(),"1");
-                                                              students[index]
-                                                                  .total_likes = students[
-                                                              index]
-                                                                  .total_likes +
-                                                                  1;
-                                                              if (students[
-                                                              index]
-                                                                  .total_dislikes >
-                                                                  0) {
-                                                                students[
-                                                                index]
-                                                                    .total_dislikes = students[
-                                                                index]
-                                                                    .total_dislikes -
-                                                                    1;
-                                                              }
+                                              Padding(
+                                                padding:
+                                                const EdgeInsets.fromLTRB(
+                                                    0, 5, 0, 0),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                  CrossAxisAlignment
+                                                      .start,
+                                                  children: <Widget>[
+                                                    Expanded(
+                                                        child:
+                                                        GestureDetector(
+                                                          onTap: () {
+                                                            if (doLogin == 1) {
+                                                              setState(() {
+                                                                // if(countValue){
+                                                                //   countValue=false;
+                                                                //   countValue1=true;
+                                                                // }
+                                                                if (!countValue) {
+                                                                  countValue =true;
+                                                                  countValue1 =false;
+                                                                  saveLike( students[ index].id.toString(),"1");
+                                                                  students[index]
+                                                                      .total_likes = students[
+                                                                  index]
+                                                                      .total_likes +
+                                                                      1;
+                                                                  if (students[
+                                                                  index]
+                                                                      .total_dislikes >
+                                                                      0) {
+                                                                    students[
+                                                                    index]
+                                                                        .total_dislikes = students[
+                                                                    index]
+                                                                        .total_dislikes -
+                                                                        1;
+                                                                  }
+                                                                }
+                                                              });
                                                             }
-                                                          });
-                                                        }
 
-                                                        if (doLogin == 0) {}
-                                                      },
+                                                            if (doLogin == 0) {}
+                                                          },
+                                                          child: Padding(
+                                                            padding:
+                                                            const EdgeInsets
+                                                                .all(10),
+                                                            child: Column(
+                                                              mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                              crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                              children: <Widget>[
+                                                                Padding(
+                                                                  padding:
+                                                                  EdgeInsets
+                                                                      .fromLTRB(
+                                                                      0,
+                                                                      0,
+                                                                      0,
+                                                                      0),
+                                                                  child: Center(
+                                                                    child:
+                                                                    Container(
+                                                                      height: 15,
+                                                                      width: 15,
+                                                                      decoration:
+                                                                      BoxDecoration(
+                                                                        color: Colors
+                                                                            .white,
+                                                                        borderRadius:
+                                                                        BorderRadius.all(
+                                                                            Radius.circular(30)),
+//                                            border: Border.all(
+//                                                                   width: 0,
+//                                                                   color: Colors
+//                                                                       .lightBlue,
+//                                                                   style:
+//                                                                   BorderStyle
+//                                                                       .solid)
+                                                                      ),
+                                                                      child:
+                                                                      Center(
+                                                                        child:
+                                                                        Padding(
+                                                                          padding:
+                                                                          EdgeInsets.all(0),
+                                                                          child: Image
+                                                                              .asset(
+                                                                            "assets/images/like_grey.png",
+//                                              height: 150.0,
+//                                              width: 50.0,
+                                                                            fit: BoxFit
+                                                                                .fill,
+                                                                            color: countValue
+                                                                                ? Color(0xff00adef)
+                                                                                : Colors.grey,
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                                Padding(
+                                                                  padding:
+                                                                  const EdgeInsets
+                                                                      .fromLTRB(
+                                                                      0.0,
+                                                                      0.0,
+                                                                      0.0,
+                                                                      0.0),
+                                                                  child: Align(
+                                                                    child:
+                                                                    new Text(
+                                                                      !["",null
+                                                                      ].contains(students[index]
+                                                                          .total_likes
+                                                                          .toString())
+                                                                          ? students[index].total_likes.toString() +
+                                                                          ' Likes'
+                                                                          : '0 Likes',
+                                                                      style:
+                                                                      TextStyle(
+                                                                        color: Color(
+                                                                            0xff444b69),
+                                                                        fontSize:
+                                                                        13,
+                                                                        letterSpacing:
+                                                                        0,
+                                                                        fontWeight:
+                                                                        FontWeight
+                                                                            .w400,
+                                                                      ),
+                                                                      textAlign:
+                                                                      TextAlign
+                                                                          .center,
+                                                                    ),
+                                                                    alignment:
+                                                                    Alignment
+                                                                        .center,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        )),
+                                                    Expanded(
+                                                        child:
+                                                        GestureDetector(
+                                                          onTap: () {
+                                                            if (doLogin == 1) {
+                                                              setState(() {
+                                                                // if(countValue1){
+                                                                //   countValue1=false;
+                                                                //   countValue=true;
+                                                                // }
+                                                                if (!countValue1) {
+                                                                  countValue1 =
+                                                                  true;
+                                                                  countValue =
+                                                                  false;
+
+                                                                  saveLike(
+                                                                      students[
+                                                                      index]
+                                                                          .id
+                                                                          .toString(),
+                                                                      "0");
+                                                                  students[index]
+                                                                      .total_dislikes = students[
+                                                                  index]
+                                                                      .total_dislikes +
+                                                                      1;
+                                                                  if (students[
+                                                                  index]
+                                                                      .total_likes >
+                                                                      0) {
+                                                                    students[
+                                                                    index]
+                                                                        .total_likes = students[
+                                                                    index]
+                                                                        .total_likes -
+                                                                        1;
+                                                                  }
+                                                                }
+                                                              });
+                                                            } else {}
+                                                          },
+                                                          child: Padding(
+                                                            padding:
+                                                            const EdgeInsets
+                                                                .all(10),
+                                                            child: Column(
+                                                              mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                              crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                              children: <Widget>[
+                                                                Padding(
+                                                                  padding:
+                                                                  EdgeInsets
+                                                                      .fromLTRB(
+                                                                      0,
+                                                                      0,
+                                                                      0,
+                                                                      0),
+                                                                  child: Center(
+                                                                    child:
+                                                                    Container(
+                                                                      height: 15,
+                                                                      width: 15,
+                                                                      decoration:
+                                                                      BoxDecoration(
+                                                                        color: Colors
+                                                                            .white,
+                                                                        borderRadius:
+                                                                        BorderRadius.all(
+                                                                            Radius.circular(30)),
+//                                            border: Border.all(
+//                                                                   width: 0,
+//                                                                   color: Colors
+//                                                                       .lightBlue,
+//                                                                   style:
+//                                                                   BorderStyle
+//                                                                       .solid)
+                                                                      ),
+                                                                      child:
+                                                                      Center(
+                                                                        child:
+                                                                        Padding(
+                                                                          padding:
+                                                                          EdgeInsets.all(0),
+                                                                          child: Image.asset(
+                                                                              "assets/images/dislike_grey.png",
+//                                              height: 150.0,
+//                                              width: 50.0,
+                                                                              fit: BoxFit
+                                                                                  .fill,
+                                                                              color: countValue1
+                                                                                  ? Color(0xff00adef)
+                                                                                  : Colors.grey),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                                Padding(
+                                                                  padding:
+                                                                  const EdgeInsets
+                                                                      .fromLTRB(
+                                                                      0.0,
+                                                                      0.0,
+                                                                      0.0,
+                                                                      0.0),
+                                                                  child: Align(
+                                                                    child:
+                                                                    new Text(
+                                                                      ![
+                                                                        "",
+                                                                        null
+                                                                      ].contains(students[
+                                                                      index]
+                                                                          .total_dislikes
+                                                                          .toString())
+                                                                          ? students[index].total_dislikes.toString() +
+                                                                          ' Dislikes'
+                                                                          : '0 Dislike',
+                                                                      style:
+                                                                      TextStyle(
+                                                                        color: Color(
+                                                                            0xff444b69),
+                                                                        fontSize:
+                                                                        13,
+                                                                        letterSpacing:
+                                                                        0,
+                                                                        fontWeight:
+                                                                        FontWeight
+                                                                            .w400,
+                                                                      ),
+                                                                      textAlign:
+                                                                      TextAlign
+                                                                          .center,
+                                                                    ),
+                                                                    alignment:
+                                                                    Alignment
+                                                                        .center,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        )),
+                                                    Expanded(
                                                       child: Padding(
                                                         padding:
                                                         const EdgeInsets
-                                                            .all(10),
+                                                            .fromLTRB(
+                                                            5, 10, 5, 10),
                                                         child: Column(
                                                           mainAxisAlignment:
                                                           MainAxisAlignment
@@ -885,14 +1155,11 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                       EdgeInsets.all(0),
                                                                       child: Image
                                                                           .asset(
-                                                                        "assets/images/like_grey.png",
+                                                                        "assets/images/comments.png",
 //                                              height: 150.0,
 //                                              width: 50.0,
                                                                         fit: BoxFit
                                                                             .fill,
-                                                                        color: countValue
-                                                                            ? Color(0xff00adef)
-                                                                            : Colors.grey,
                                                                       ),
                                                                     ),
                                                                   ),
@@ -910,161 +1177,16 @@ class _SearchScreenState extends State<SearchScreen> {
                                                               child: Align(
                                                                 child:
                                                                 new Text(
-                                                                  !["",null
-                                                                  ].contains(students[index]
-                                                                      .total_likes
-                                                                      .toString())
-                                                                      ? students[index].total_likes.toString() +
-                                                                      ' Likes'
-                                                                      : '0 Likes',
-                                                                  style:
-                                                                  TextStyle(
-                                                                    color: Color(
-                                                                        0xff444b69),
-                                                                    fontSize:
-                                                                    13,
-                                                                    letterSpacing:
-                                                                    0,
-                                                                    fontWeight:
-                                                                    FontWeight
-                                                                        .w400,
-                                                                  ),
-                                                                  textAlign:
-                                                                  TextAlign
-                                                                      .center,
-                                                                ),
-                                                                alignment:
-                                                                Alignment
-                                                                    .center,
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    )),
-                                                Expanded(
-                                                    child:
-                                                    GestureDetector(
-                                                      onTap: () {
-                                                        if (doLogin == 1) {
-                                                          setState(() {
-                                                            // if(countValue1){
-                                                            //   countValue1=false;
-                                                            //   countValue=true;
-                                                            // }
-                                                            if (!countValue1) {
-                                                              countValue1 =
-                                                              true;
-                                                              countValue =
-                                                              false;
-
-                                                              saveLike(
-                                                                  students[
-                                                                  index]
-                                                                      .id
-                                                                      .toString(),
-                                                                  "0");
-                                                              students[index]
-                                                                  .total_dislikes = students[
-                                                              index]
-                                                                  .total_dislikes +
-                                                                  1;
-                                                              if (students[
-                                                              index]
-                                                                  .total_likes >
-                                                                  0) {
-                                                                students[
-                                                                index]
-                                                                    .total_likes = students[
-                                                                index]
-                                                                    .total_likes -
-                                                                    1;
-                                                              }
-                                                            }
-                                                          });
-                                                        } else {}
-                                                      },
-                                                      child: Padding(
-                                                        padding:
-                                                        const EdgeInsets
-                                                            .all(10),
-                                                        child: Column(
-                                                          mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                          crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                          children: <Widget>[
-                                                            Padding(
-                                                              padding:
-                                                              EdgeInsets
-                                                                  .fromLTRB(
-                                                                  0,
-                                                                  0,
-                                                                  0,
-                                                                  0),
-                                                              child: Center(
-                                                                child:
-                                                                Container(
-                                                                  height: 15,
-                                                                  width: 15,
-                                                                  decoration:
-                                                                  BoxDecoration(
-                                                                    color: Colors
-                                                                        .white,
-                                                                    borderRadius:
-                                                                    BorderRadius.all(
-                                                                        Radius.circular(30)),
-//                                            border: Border.all(
-//                                                                   width: 0,
-//                                                                   color: Colors
-//                                                                       .lightBlue,
-//                                                                   style:
-//                                                                   BorderStyle
-//                                                                       .solid)
-                                                                  ),
-                                                                  child:
-                                                                  Center(
-                                                                    child:
-                                                                    Padding(
-                                                                      padding:
-                                                                      EdgeInsets.all(0),
-                                                                      child: Image.asset(
-                                                                          "assets/images/dislike_grey.png",
-//                                              height: 150.0,
-//                                              width: 50.0,
-                                                                          fit: BoxFit
-                                                                              .fill,
-                                                                          color: countValue1
-                                                                              ? Color(0xff00adef)
-                                                                              : Colors.grey),
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            Padding(
-                                                              padding:
-                                                              const EdgeInsets
-                                                                  .fromLTRB(
-                                                                  0.0,
-                                                                  0.0,
-                                                                  0.0,
-                                                                  0.0),
-                                                              child: Align(
-                                                                child:
-                                                                new Text(
-                                                                  ![
+                                                                  [
                                                                     "",
                                                                     null
                                                                   ].contains(students[
                                                                   index]
-                                                                      .total_dislikes
+                                                                      .total_comments
                                                                       .toString())
-                                                                      ? students[index].total_dislikes.toString() +
-                                                                      ' Dislikes'
-                                                                      : '0 Dislike',
+                                                                      ?students[index].total_comments.toString() +
+                                                                      'Comments'
+                                                                      : '0 Comments',
                                                                   style:
                                                                   TextStyle(
                                                                     color: Color(
@@ -1089,157 +1211,50 @@ class _SearchScreenState extends State<SearchScreen> {
                                                           ],
                                                         ),
                                                       ),
-                                                    )),
-                                                Expanded(
-                                                  child: Padding(
-                                                    padding:
-                                                    const EdgeInsets
-                                                        .fromLTRB(
-                                                        5, 10, 5, 10),
-                                                    child: Column(
-                                                      mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .start,
-                                                      crossAxisAlignment:
-                                                      CrossAxisAlignment
-                                                          .start,
-                                                      children: <Widget>[
-                                                        Padding(
-                                                          padding:
-                                                          EdgeInsets
-                                                              .fromLTRB(
-                                                              0,
-                                                              0,
-                                                              0,
-                                                              0),
-                                                          child: Center(
-                                                            child:
-                                                            Container(
-                                                              height: 15,
-                                                              width: 15,
-                                                              decoration:
-                                                              BoxDecoration(
-                                                                color: Colors
-                                                                    .white,
-                                                                borderRadius:
-                                                                BorderRadius.all(
-                                                                    Radius.circular(30)),
-//                                            border: Border.all(
-//                                                                   width: 0,
-//                                                                   color: Colors
-//                                                                       .lightBlue,
-//                                                                   style:
-//                                                                   BorderStyle
-//                                                                       .solid)
-                                                              ),
-                                                              child:
-                                                              Center(
-                                                                child:
-                                                                Padding(
-                                                                  padding:
-                                                                  EdgeInsets.all(0),
-                                                                  child: Image
-                                                                      .asset(
-                                                                    "assets/images/comments.png",
-//                                              height: 150.0,
-//                                              width: 50.0,
-                                                                    fit: BoxFit
-                                                                        .fill,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        Padding(
-                                                          padding:
-                                                          const EdgeInsets
-                                                              .fromLTRB(
-                                                              0.0,
-                                                              0.0,
-                                                              0.0,
-                                                              0.0),
-                                                          child: Align(
-                                                            child:
-                                                            new Text(
-                                                              [
-                                                                "",
-                                                                null
-                                                              ].contains(students[
-                                                              index]
-                                                                  .total_comments
-                                                                  .toString())
-                                                                  ?students[index].total_comments.toString() +
-                                                                  'Comments'
-                                                                  : '0 Comments',
-                                                              style:
-                                                              TextStyle(
-                                                                color: Color(
-                                                                    0xff444b69),
-                                                                fontSize:
-                                                                13,
-                                                                letterSpacing:
-                                                                0,
-                                                                fontWeight:
-                                                                FontWeight
-                                                                    .w400,
-                                                              ),
-                                                              textAlign:
-                                                              TextAlign
-                                                                  .center,
-                                                            ),
-                                                            alignment:
-                                                            Alignment
-                                                                .center,
-                                                          ),
-                                                        ),
-                                                      ],
                                                     ),
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  child: Padding(
-                                                    padding:
-                                                    const EdgeInsets
-                                                        .all(10),
-                                                    child:
-                                                    GestureDetector(
-                                                      onTap: () {
-                                                        Share.share(
-                                                          students[index]
-                                                              .state_id,
-                                                          subject: students[index]
-                                                              .video_title,
-                                                        );
-                                                      },
-                                                      child: Column(
-                                                        mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .start,
-                                                        crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                        children: <
-                                                            Widget>[
-                                                          Padding(
-                                                            padding: EdgeInsets
-                                                                .fromLTRB(
-                                                                0,
-                                                                0,
-                                                                0,
-                                                                0),
-                                                            child: Center(
-                                                              child:
-                                                              Container(
-                                                                height:
-                                                                15,
-                                                                width: 15,
-                                                                decoration:
-                                                                BoxDecoration(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  borderRadius:
-                                                                  BorderRadius.all(Radius.circular(30)),
+                                                    Expanded(
+                                                      child: Padding(
+                                                        padding:
+                                                        const EdgeInsets
+                                                            .all(10),
+                                                        child:
+                                                        GestureDetector(
+                                                          onTap: () {
+                                                            Share.share(
+                                                              students[index]
+                                                                  .state_id,
+                                                              subject: students[index]
+                                                                  .video_title,
+                                                            );
+                                                          },
+                                                          child: Column(
+                                                            mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                            crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                            children: <
+                                                                Widget>[
+                                                              Padding(
+                                                                padding: EdgeInsets
+                                                                    .fromLTRB(
+                                                                    0,
+                                                                    0,
+                                                                    0,
+                                                                    0),
+                                                                child: Center(
+                                                                  child:
+                                                                  Container(
+                                                                    height:
+                                                                    15,
+                                                                    width: 15,
+                                                                    decoration:
+                                                                    BoxDecoration(
+                                                                      color: Colors
+                                                                          .white,
+                                                                      borderRadius:
+                                                                      BorderRadius.all(Radius.circular(30)),
 //                                            border: Border.all(
 //                                                                   width: 0,
 //                                                                   color: Colors
@@ -1247,68 +1262,68 @@ class _SearchScreenState extends State<SearchScreen> {
 //                                                                   style:
 //                                                                   BorderStyle
 //                                                                       .solid)
-                                                                ),
-                                                                child:
-                                                                Center(
-                                                                  child:
-                                                                  Padding(
-                                                                    padding:
-                                                                    EdgeInsets.all(0),
+                                                                    ),
                                                                     child:
-                                                                    Image.asset(
-                                                                      "assets/images/share_grey.png",
+                                                                    Center(
+                                                                      child:
+                                                                      Padding(
+                                                                        padding:
+                                                                        EdgeInsets.all(0),
+                                                                        child:
+                                                                        Image.asset(
+                                                                          "assets/images/share_grey.png",
 //                                              height: 150.0,
 //                                              width: 50.0,
-                                                                      fit:
-                                                                      BoxFit.fill,
+                                                                          fit:
+                                                                          BoxFit.fill,
+                                                                        ),
+                                                                      ),
                                                                     ),
                                                                   ),
                                                                 ),
                                                               ),
-                                                            ),
-                                                          ),
-                                                          Padding(
-                                                            padding:
-                                                            const EdgeInsets
-                                                                .fromLTRB(
-                                                                0.0,
-                                                                0.0,
-                                                                0.0,
-                                                                0.0),
-                                                            child: Align(
-                                                              child:
-                                                              new Text(
-                                                                'Share',
-                                                                style:
-                                                                TextStyle(
-                                                                  color: Color(
-                                                                      0xff444b69),
-                                                                  fontSize:
-                                                                  13,
-                                                                  letterSpacing:
-                                                                  0,
-                                                                  fontWeight:
-                                                                  FontWeight.w400,
+                                                              Padding(
+                                                                padding:
+                                                                const EdgeInsets
+                                                                    .fromLTRB(
+                                                                    0.0,
+                                                                    0.0,
+                                                                    0.0,
+                                                                    0.0),
+                                                                child: Align(
+                                                                  child:
+                                                                  new Text(
+                                                                    'Share',
+                                                                    style:
+                                                                    TextStyle(
+                                                                      color: Color(
+                                                                          0xff444b69),
+                                                                      fontSize:
+                                                                      13,
+                                                                      letterSpacing:
+                                                                      0,
+                                                                      fontWeight:
+                                                                      FontWeight.w400,
+                                                                    ),
+                                                                    textAlign:
+                                                                    TextAlign
+                                                                        .center,
+                                                                  ),
+                                                                  alignment:
+                                                                  Alignment
+                                                                      .center,
                                                                 ),
-                                                                textAlign:
-                                                                TextAlign
-                                                                    .center,
                                                               ),
-                                                              alignment:
-                                                              Alignment
-                                                                  .center,
-                                                            ),
+                                                            ],
                                                           ),
-                                                        ],
+                                                        ),
                                                       ),
                                                     ),
-                                                  ),
+                                                  ],
                                                 ),
-                                              ],
-                                            ),
+                                              ),
+                                            ],
                                           ),
-                                        ],
-                                      ),
 //                        decoration: BoxDecoration(
 //                          image: DecorationImage(
 //                            image: AssetImage(
@@ -1317,17 +1332,23 @@ class _SearchScreenState extends State<SearchScreen> {
 //                          ),
 //                          borderRadius: BorderRadius.circular(10.0),
 //                        ),
-                                    ),
-                                    elevation: 5,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.only(
-                                        topRight: Radius.circular(5),
-                                        topLeft: Radius.circular(5),
-                                        bottomLeft: Radius.circular(5),
-                                        bottomRight: Radius.circular(5),
+                                        ),
+                                        elevation: 5,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.only(
+                                            topRight: Radius.circular(5),
+                                            topLeft: Radius.circular(5),
+                                            bottomLeft: Radius.circular(5),
+                                            bottomRight: Radius.circular(5),
+                                          ),
+                                        ),
                                       ),
                                     ),
-                                  ),
+                                    if(students.length==1)
+                                      SizedBox(
+                                        height: 10,
+                                      )
+                                  ],
                                 ),
 //              Center(
 ////                                        heightFactor: 5,
