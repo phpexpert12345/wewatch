@@ -26,11 +26,7 @@ import 'package:we_watch_app/util/UtilityClass.dart';
 
 import '../../trim_video.dart';
 
-int rc = 1;
-int id = 0;
-int check = 0;
-bool audioplay = false;
-bool preview = false;
+
 
 class CreatePost extends StatefulWidget {
   final userName;
@@ -39,8 +35,15 @@ class CreatePost extends StatefulWidget {
   @override
   _CreatePostState createState() => _CreatePostState();
 }
-
+int rc = 1;
+int id = 0;
+int check = 0;
+bool audioplay = false;
+bool preview = false;
 class _CreatePostState extends State<CreatePost> {
+
+
+
   Recording _recording = new Recording();
   bool _isRecording = false;
   Random random = new Random();
@@ -104,7 +107,7 @@ class _CreatePostState extends State<CreatePost> {
                       ),
                     ),
                     preview
-                        ? _video != null
+                        ? _videoFile != null
                             ? AspectRatio(
                                 aspectRatio: 16 / 9,
                                 child: VideoPlayer(_videoPlayerController),
@@ -245,15 +248,15 @@ class _CreatePostState extends State<CreatePost> {
                             color: Colors.red,
                           ),
                         ),
-                        child: GestureDetector(
-                          onTap: () {
+                        child: IconButton(
+                          onPressed: () {
                             _start();
                             setState(() {
                               audioplay = !audioplay;
                               print(DateTime.now().millisecondsSinceEpoch.toString());
                             });
                           },
-                          child: Icon(
+                          icon: Icon(
                             Icons.play_circle_outline,
                             color: Colors.red,
                           ),
@@ -321,15 +324,15 @@ class _CreatePostState extends State<CreatePost> {
                             borderRadius: BorderRadius.circular(18.0),
                           ),
                           onPressed: () {
-                            setState(() {
-                              combine();
+                            setState(() async{
+                              await combine();
 
                               _videoPlayerController = VideoPlayerController.file(
                                   File('/storage/emulated/0/news_${id}.mkv'))
                                 ..initialize().then((_) {
                                   setState(() {});
                                   _videoPlayerController.play();
-                                  _video = File('/storage/emulated/0/news_${id}.mkv');
+                                  _videoFile = File('/storage/emulated/0/news_${id}.mkv');
                                   preview = true;
                                 }, onError: (g) {
                                   if (check == 1) {
@@ -615,38 +618,46 @@ class _CreatePostState extends State<CreatePost> {
     }
   }
 
-  void _pickVideo() async {
-    File video = await ImagePicker.pickVideo(source: ImageSource.gallery);
+  // void _pickVideo() async {
+  //   File video = await ImagePicker.pickVideo(source: ImageSource.gallery);
+  //
+  //   print(_video.path);
+  //   _videoMerger();
+  // }
 
-    print(_video.path);
-    _videoMerger();
+  @override
+  void initState() {
+
+   // Permission.accessMediaLocation;
+    super.initState();
   }
-
-
   // it will override audio of video file
   void _videoMerger() async {
     try {
-      _video = File('/storage/emulated/0/mute_${id}.mp4');
-      final appDir = await syspaths.getApplicationDocumentsDirectory();
-      String rawDocumentPath = appDir.path;
-      final outputPath = '$rawDocumentPath/output.mp4';
-      final op = '/storage/emulated/0/news_${id}.mkv';
-      final FlutterFFmpeg _flutterFFmpeg = new FlutterFFmpeg();
-      print('sundar' + outputPath);
-      String commandToExecute;
-        commandToExecute =
-            '-y -i ${_video.path} -i ${recording
-            .path} -c:v copy -c:a aac ${op}';
+      if (_videoFile != null) {
+        File _video = File('/storage/emulated/0/mute_${id}.mp4');
+        print("videopath"+_video.path);
+        final appDir = await syspaths.getApplicationDocumentsDirectory();
+        String rawDocumentPath = appDir.path;
+        final outputPath = '$rawDocumentPath/output.mp4';
+        final op = '/storage/emulated/0/news_${id}.mkv';
+        final FlutterFFmpeg _flutterFFmpeg = new FlutterFFmpeg();
+        print('sundar' + outputPath);
+        String commandToExecute =    //"-i video.mp4 -i audio.mp4 -c copy output.mp4"
+            '-y -i ${_video.path} -i ${recording.path} -c:v copy -c:a aac ${op}';  //-i v.mp4 -i a.wav -c:v copy -map 0:v:0 -map 1:a:0 new.mp4
         // '-y -i ${_storedVideoOne.path} -an ${op}';
         // '-y -i ${_storedVideoOne.path} -i ${_storedVideoTwo.path} -r 24000/1001 -filter_complex \'[0:v:0][0:a:0][1:v:0][1:a:0]concat=n=2:v=1:a=1[out]\' -map \'[out]\' $outputPath';
         // '-y -i ${_storedVideoOne.path} -i ${_storedVideoTwo.path} -filter_complex \'[0:0][1:0]concat=n=2:v=1:a=0[out]\' -map \'[out]\' $outputPath';
-      _flutterFFmpeg.execute(commandToExecute).then((r) {
-        setState(() {
-          rc = r;
+        _flutterFFmpeg.execute(commandToExecute).then((r) {
+          setState(() {
+            rc = r;
+          });
         });
-      });
+      }else{
+        UtilityClass.showMsg("Please add video first");
+      }
     }catch(ex){
-      debugPrint("merging exception"+ex);
+      print("sk exception"+ex);
     }
   }
 
@@ -695,7 +706,6 @@ class _CreatePostState extends State<CreatePost> {
   Future<String> _recordVideo() async {
     final appDir = await syspaths.getApplicationDocumentsDirectory();
     String rawDocumentPath = appDir.path;
-    print("record path"+rawDocumentPath);
     final outputPath = '$rawDocumentPath/output.mp4';
     final op = '/storage/emulated/0/mute_${id}.mp4';
     final FlutterFFmpeg _flutterFFmpeg = new FlutterFFmpeg();
@@ -705,20 +715,16 @@ class _CreatePostState extends State<CreatePost> {
         _buttonText = 'Saving in Progress...';
       });
       GallerySaver.saveVideo(recordedVideo.path).then((_) {
-        print("path"+recordedVideo.path);
-        setState(() {
-          _videoFile=recordedVideo;
-        });
-        //showTrimAlert();
-        //loadTrimmer(recordedVideo);
         setState(() {
           _buttonText = 'Video Saved!\n\nClick to Record New Video';
-          if (_storedVideoOne == null) {
-            _storedVideoOne = recordedVideo;
+          if (_videoFile == null) {
+            _videoFile = recordedVideo;
+            setState(() {
+              _videoFile = recordedVideo;
+            });
             String commandToExecute =
-                // '-y -i ${_storedVideoOne.path} -i ${recording.path} -c:v copy -c:a aac ${op}';
-                '-y -i ${_storedVideoOne.path} -an ${op}';
-            print("stored"+commandToExecute);
+            // '-y -i ${_storedVideoOne.path} -i ${recording.path} -c:v copy -c:a aac ${op}';
+                '-y -i ${_videoFile.path} -an ${op}';
             // '-y -i ${_storedVideoOne.path} -i ${_storedVideoTwo.path} -r 24000/1001 -filter_complex \'[0:v:0][0:a:0][1:v:0][1:a:0]concat=n=2:v=1:a=1[out]\' -map \'[out]\' $outputPath';
             // '-y -i ${_storedVideoOne.path} -i ${_storedVideoTwo.path} -filter_complex \'[0:0][1:0]concat=n=2:v=1:a=0[out]\' -map \'[out]\' $outputPath';
             _flutterFFmpeg
@@ -726,15 +732,14 @@ class _CreatePostState extends State<CreatePost> {
                 .then((rc) => print("FFmpeg process exited with rc $rc"));
             print('video 1 done');
           } else {
-            _storedVideoOne = recordedVideo;
+            _videoFile = recordedVideo;
+            setState(() {
+              _videoFile = recordedVideo;
+
+            });
             String commandToExecute =
-                // '-y -i ${_storedVideoOne.path} -i ${recording.path} -c:v copy -c:a aac ${op}';
-                '-y -i ${_storedVideoOne.path} -an ${op}';
-            print("stored"+commandToExecute);
-            // setState(() {
-            //   fileNameVideo="${op}";
-            //
-            // });
+            // '-y -i ${_storedVideoOne.path} -i ${recording.path} -c:v copy -c:a aac ${op}';
+                '-y -i ${_videoFile.path} -an ${op}';
             // '-y -i ${_storedVideoOne.path} -i ${_storedVideoTwo.path} -r 24000/1001 -filter_complex \'[0:v:0][0:a:0][1:v:0][1:a:0]concat=n=2:v=1:a=1[out]\' -map \'[out]\' $outputPath';
             // '-y -i ${_storedVideoOne.path} -i ${_storedVideoTwo.path} -filter_complex \'[0:0][1:0]concat=n=2:v=1:a=0[out]\' -map \'[out]\' $outputPath';
             _flutterFFmpeg.execute(commandToExecute).then((rc) {
@@ -746,7 +751,6 @@ class _CreatePostState extends State<CreatePost> {
         });
       });
     });
-
   }
   loadTrimmer(File f) async{
     if (f != null) {
@@ -769,7 +773,8 @@ class _CreatePostState extends State<CreatePost> {
   String base64video = '', fileNameVideo;
   Future<void> videoFromGallery() async {
     try {
-      var videoFile = await ImagePicker.pickVideo(source: ImageSource.gallery);
+      var videoFile = await ImagePicker.pickVideo(source: ImageSource.gallery,);
+
 //      videoFile = await videoFile.rename("${_videoFile.path}.mp4");
       setState(() {
         _videoFile = videoFile;
@@ -892,3 +897,6 @@ class CustomCameraState extends State<CustomCamraScreen>{
   }
 
 }
+
+
+
