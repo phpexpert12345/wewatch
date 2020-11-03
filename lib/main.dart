@@ -20,6 +20,7 @@ import 'package:we_watch_app/live.dart';
 import 'package:we_watch_app/settings.dart';
 import 'package:we_watch_app/size_config.dart';
 import 'package:we_watch_app/skills.dart';
+import 'package:we_watch_app/ui/CreatePost/Createpost.dart';
 import 'package:we_watch_app/ui/comments.dart';
 import 'package:we_watch_app/ui/show_up.dart';
 import 'package:we_watch_app/NavigationPages/video_list.dart';
@@ -76,7 +77,7 @@ class MyApp extends StatelessWidget {
                 // is not restarted.
                 primarySwatch: Colors.blue,
               ),
-              home: SplashScreen1(),
+              home: CreatePost(userName: "",userImage: "",),//SplashScreen1(),
             );
           },
         );
