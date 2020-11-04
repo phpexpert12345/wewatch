@@ -35,11 +35,7 @@ class CreatePost extends StatefulWidget {
   @override
   _CreatePostState createState() => _CreatePostState();
 }
-int rc = 1;
-int id = 0;
-int check = 0;
-bool audioplay = false;
-bool preview = false;
+
 class _CreatePostState extends State<CreatePost> {
 
 
@@ -61,6 +57,41 @@ class _CreatePostState extends State<CreatePost> {
   String imageName;
   final Trimmer _trimmer = Trimmer();
   var uint8list;
+
+  int rc = 1;
+  int id = 0;
+  int check = 0;
+  bool audioplay = false;
+  bool preview = false;
+
+  @override
+  void initState() {
+    preview = false;
+    rc=1;
+    id=0;
+    check=0;
+    audioplay=false;
+    // Permission.accessMediaLocation;
+    Permission.microphone.request().whenComplete(() {
+      print("permission granted");
+      permissionsCamera();
+    });
+
+    super.initState();
+  }
+  permissionsCamera() async{
+    await Permission.camera.request().whenComplete(() {
+      permissionsStorage();
+    });
+  }
+  permissionsStorage() async{
+    await Permission.storage.request().whenComplete((){
+      print("permission granted");
+
+    });
+  }
+
+
   getThumbNail() async{
       uint8list = await VideoThumbnail.thumbnailData(
       video: _videoFile.path,
@@ -176,6 +207,92 @@ class _CreatePostState extends State<CreatePost> {
                     Divider(
                       color: Colors.black26,
                     ),
+                    _videoFile!=null ? Align(
+                      alignment: Alignment.bottomRight,
+                      child: Container(
+                        padding: EdgeInsets.all(5),
+                        margin: EdgeInsets.only(right: 10),
+
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          borderRadius: BorderRadius.circular(8.0)
+                        ),
+                        child: GestureDetector(
+                          onTap: (){
+                            setState(() async{
+                              String filePath='/storage/emulated/0/news_${id}.mkv';
+                              if(recording!=null){
+                                await combine();
+                                _videoPlayerController = VideoPlayerController.file(
+                                    File('/storage/emulated/0/news_${id}.mkv'))
+                                  ..initialize().then((_) {
+                                    setState(() {
+                                      _videoPlayerController.play();
+                                      _videoFile = File('/storage/emulated/0/news_${id}.mkv');
+                                      preview = true;
+                                    });
+                                  }, onError: (g) {
+                                    if (check == 1) {
+                                      Fluttertoast.showToast(
+                                        msg: 'Wait video uploading',
+                                        backgroundColor: Colors.redAccent,
+                                        toastLength: Toast.LENGTH_SHORT,
+                                        gravity: ToastGravity.CENTER,
+//        timeInSecForIos: 1,
+                                      );
+                                    } else {
+                                      Fluttertoast.showToast(
+                                        msg: 'Add required parameters',
+                                        backgroundColor: Colors.redAccent,
+                                        toastLength: Toast.LENGTH_SHORT,
+                                        gravity: ToastGravity.CENTER,
+//        timeInSecForIos: 1,
+                                      );
+                                    }
+                                  });
+                              } else {
+                                check=1;
+                                filePath = _videoFile.path;
+                                _videoPlayerController =
+                                VideoPlayerController.file(
+                                    File(filePath))
+                                  ..initialize().then((_) {
+                                    setState(() {
+                                      _videoPlayerController.play();
+                                      //_videoFile = File(filePath);
+                                      preview = true;
+                                    });
+                                  }, onError: (g) {
+                                    if (check == 1) {
+                                      Fluttertoast.showToast(
+                                        msg: 'Wait video uploading',
+                                        backgroundColor: Colors.redAccent,
+                                        toastLength: Toast.LENGTH_SHORT,
+                                        gravity: ToastGravity.CENTER,
+//        timeInSecForIos: 1,
+                                      );
+                                    } else {
+                                      Fluttertoast.showToast(
+                                        msg: 'Add required parameters',
+                                        backgroundColor: Colors.redAccent,
+                                        toastLength: Toast.LENGTH_SHORT,
+                                        gravity: ToastGravity.CENTER,
+//        timeInSecForIos: 1,
+                                      );
+                                    }
+                                  });
+                              }
+                            }
+                            );
+
+                          },
+                          child: Text("Preview",style: new TextStyle(fontSize: 16,color: Colors.white),),
+                        ),
+                      ),
+                    ):Container(),
+                    SizedBox(
+                      height: 5,
+                    ),
                     GestureDetector(
                       onTap: () {
                         print('tap');
@@ -236,14 +353,14 @@ class _CreatePostState extends State<CreatePost> {
                     ListTile(
                       trailing: Visibility(
                         visible: audioplay ? false : true,
-                        replacement: GestureDetector(
-                          onTap: () {
+                        replacement: IconButton(
+                          onPressed: () {
                             _stop();
                             setState(() {
                               audioplay = !audioplay;
                             });
                           },
-                          child: Icon(
+                          icon: Icon(
                             Icons.stop,
                             color: Colors.red,
                           ),
@@ -262,7 +379,14 @@ class _CreatePostState extends State<CreatePost> {
                           ),
                         ),
                       ),
-                      title: Text('Add Voice Recording'),
+                      title: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Add Voice Recording'),
+                          recording!=null?Icon(Icons.check_circle,size: 18,color: Colors.green.shade500,):Container()
+
+                        ],
+                      ),
                       leading: Icon(
                         Icons.mic,
                         color: Colors.black,
@@ -271,18 +395,25 @@ class _CreatePostState extends State<CreatePost> {
                     Divider(
                       color: Colors.black26,
                     ),
-                    ListTile(
-                      leading: Icon(
-                        Icons.location_on,
-                        color: Colors.black,
-                      ),
-                      title: Text('Add Location'),
-                      trailing: GestureDetector(
-                        onTap: (){
-                          //_getCurrentLocation();
-                          Navigator.push(context, new MaterialPageRoute(builder: (context) => GeoLocation()));
-                        },
-                        child: Icon(
+                    GestureDetector(
+                      onTap: (){
+                        Navigator.push(context, new MaterialPageRoute(builder: (context) => GeoLocation()));
+
+                      },
+                      child: ListTile(
+                        leading: Icon(
+                          Icons.location_on,
+                          color: Colors.black,
+                        ),
+                        title: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Add Location'),
+                            //loca!=null?Icon(Icons.check_circle,size: 18,color: Colors.green.shade500,):Container()
+
+                          ],
+                        ),
+                        trailing: Icon(
                           Icons.add_circle_outline,
                           color: Colors.blue,
                         ),
@@ -292,6 +423,7 @@ class _CreatePostState extends State<CreatePost> {
                       visible: preview ? false : true,
                       replacement: Container(
                         width: MediaQuery.of(context).size.width * 0.7,
+                        //height: MediaQuery.of(context).size.height*.5,
                         child: RaisedButton(
                             color: Colors.blue,
                             shape: RoundedRectangleBorder(
@@ -299,20 +431,20 @@ class _CreatePostState extends State<CreatePost> {
                             ),
                             onPressed: () {
                               setState(() {
-                                id = 1;
+                                //id = 1;
                                 check = 0;
                                 preview = false;
-                                for (int i = 1; i <= id; i++) {
-                                  print(i);
-                                  File('/storage/emulated/0/we_watch${i}.m4a').delete();
-                                  File('/storage/emulated/0/mute_${i}.mp4').delete();
-                                }
-                                File('/storage/emulated/0/news_${id}.mkv').delete();
-                                Navigator.of(context).pop();
+                                // for (int i = 1; i <= id; i++) {
+                                //   print(i);
+                                //   File('/storage/emulated/0/we_watch${i}.m4a').delete();
+                                //   File('/storage/emulated/0/mute_${i}.mp4').delete();
+                                // }
+                                // File('/storage/emulated/0/news_${id}.mkv').delete();
+                                //Navigator.of(context).pop();
                               });
                             },
                             child: Text(
-                              'Post',
+                              'Close Preview',
                               style: TextStyle(color: Colors.black,fontSize: 20),
                             )),
                       ),
@@ -324,36 +456,7 @@ class _CreatePostState extends State<CreatePost> {
                             borderRadius: BorderRadius.circular(18.0),
                           ),
                           onPressed: () {
-                            setState(() async{
-                              await combine();
 
-                              _videoPlayerController = VideoPlayerController.file(
-                                  File('/storage/emulated/0/news_${id}.mkv'))
-                                ..initialize().then((_) {
-                                  setState(() {});
-                                  _videoPlayerController.play();
-                                  _videoFile = File('/storage/emulated/0/news_${id}.mkv');
-                                  preview = true;
-                                }, onError: (g) {
-                                  if (check == 1) {
-                                    Fluttertoast.showToast(
-                                      msg: 'Wait video uploading',
-                                      backgroundColor: Colors.redAccent,
-                                      toastLength: Toast.LENGTH_SHORT,
-                                      gravity: ToastGravity.CENTER,
-//        timeInSecForIos: 1,
-                                    );
-                                  } else {
-                                    Fluttertoast.showToast(
-                                      msg: 'Add required parameters',
-                                      backgroundColor: Colors.redAccent,
-                                      toastLength: Toast.LENGTH_SHORT,
-                                      gravity: ToastGravity.CENTER,
-//        timeInSecForIos: 1,
-                                    );
-                                  }
-                                });
-                            });
 
                             // confirmationDialog();
                           },
@@ -377,6 +480,7 @@ class _CreatePostState extends State<CreatePost> {
                 //   ),
                 //
                 // ))
+
               ],
             ),
 
@@ -444,7 +548,7 @@ class _CreatePostState extends State<CreatePost> {
     );
   }
 
-  showTrimAlert(){
+  showTrimAlert() async{
     showDialog(context: context,
     builder: (BuildContext cntxt){
       return AlertDialog(
@@ -453,7 +557,7 @@ class _CreatePostState extends State<CreatePost> {
           RaisedButton(
             onPressed: () async{
               Navigator.pop(cntxt);
-              await loadTrimmer(_videoFile);
+              //await loadTrimmer(_videoFile);
             },
             color: Colors.blue,
             shape: RoundedRectangleBorder(
@@ -625,16 +729,17 @@ class _CreatePostState extends State<CreatePost> {
   //   _videoMerger();
   // }
 
-  @override
-  void initState() {
 
-   // Permission.accessMediaLocation;
-    super.initState();
-  }
   // it will override audio of video file
   void _videoMerger() async {
     try {
       if (_videoFile != null) {
+        final fDelete = '/storage/emulated/0/news_${id}.mkv';
+        File f=new File(fDelete);
+        bool c= await f.exists();
+        if(c){
+          f.delete();
+        }
         var _video = File('/storage/emulated/0/mute_${id}.mp4');
         print("videopath"+_video.path);
         final appDir = await syspaths.getApplicationDocumentsDirectory();
@@ -763,14 +868,16 @@ class _CreatePostState extends State<CreatePost> {
     });
   }
   loadTrimmer(File f) async{
-    if (f != null) {
+    if (f.path != null) {
       await _trimmer.loadVideo(videoFile: File(f.path));
       var trimFile= await  Navigator.of(context).push(MaterialPageRoute(builder: (context)=>TrimmerView(_trimmer)));
       print("trim"+trimFile);
       if(trimFile!=null){
         setState(() {
           _videoFile=new File(trimFile);
-          createVideoMuteFile();
+          if(recording!=null)
+            createVideoMuteFile();
+
         });
       }else {
         createVideoMuteFile();
@@ -789,7 +896,7 @@ class _CreatePostState extends State<CreatePost> {
       var videoFile = await ImagePicker.pickVideo(source: ImageSource.gallery,);
 
 //      videoFile = await videoFile.rename("${_videoFile.path}.mp4");
-      setState(() {
+      setState(() async {
         _videoFile = videoFile;
         bytevideo = videoFile.readAsBytesSync();
         base64video = base64Encode(videoFile.readAsBytesSync());
@@ -798,9 +905,11 @@ class _CreatePostState extends State<CreatePost> {
         final newLetter = 'mp4';
         fileNameVideo = fileNameVideo.replaceAll(letter, newLetter);
         print(fileNameVideo + '------' + base64video);
-        createVideoMuteFile();
-        if(_videoFile!=null){
+        //createVideoMuteFile();
+        if(_videoFile.path!=null){
+           //await showTrimAlert();
            loadTrimmer(_videoFile);
+
         }
       });
       //showTrimAlert();
@@ -948,6 +1057,7 @@ class CustomCameraState extends State<CustomCamraScreen>{
   }
 
 }
+
 
 
 

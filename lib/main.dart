@@ -77,7 +77,7 @@ class MyApp extends StatelessWidget {
                 // is not restarted.
                 primarySwatch: Colors.blue,
               ),
-              home: CreatePost(userName: "",userImage: "",),//SplashScreen1(),
+              home:SplashScreen1(),// CreatePost(userName: "",userImage: "",),//SplashScreen1(),
             );
           },
         );
