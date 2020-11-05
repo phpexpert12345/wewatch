@@ -62,10 +62,56 @@ class SplashScreenState1 extends  State<SplashScreen1>  {
     super.initState();
     _register();
     getMessage();
-    Timer(
-        Duration(seconds: 2),checkFirstSeen);
+    count=1;
+    Timer( Duration(seconds: 5),checkFirstSeen);
+      changeColor();
 
   }
+
+  static int count;
+  bool blue=false;
+  bool yello=false;
+  bool skyBlue=false;
+
+  void changeColor() async{
+    Future.delayed(Duration(milliseconds: 300)).whenComplete(() {
+      if(count > 0 && count <8){
+          count++;
+          print(count);
+          if(count > 1){
+            setState(() {
+              blue=true;
+            });
+          }
+          if(count > 4){
+            setState(() {
+              blue=true;
+              yello=true;
+            });
+            //print("yellow");
+          }
+          if(count > 6 ){
+            setState(() {
+              blue=true;
+              yello=true;
+              skyBlue=true;
+            });
+          }
+          changeColor();
+      } else {
+        setState(() {
+          count=1;
+          blue=false;
+          yello=false;
+          skyBlue=false;
+        });
+        changeColor();
+      }
+
+    });
+  }
+
+
   Future checkFirstSeen() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -74,8 +120,8 @@ class SplashScreenState1 extends  State<SplashScreen1>  {
       if (_isLogin) {
 
         if(![null,"",''].contains(prefs.getString('city'))){
-          await Future.delayed(Duration(seconds: 2));
-
+          // await Future.delayed(Duration(seconds: 2));
+          //
           Navigator.of(context).pushReplacement(
               new MaterialPageRoute(builder: (context) => new HomePageTwo()));
 
@@ -106,7 +152,7 @@ class SplashScreenState1 extends  State<SplashScreen1>  {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xffffffff),
+      backgroundColor: Color.fromRGBO(0, 47, 116, 1),//const Color(0xffffffff),
       body:Stack(
         children: <Widget>[
 
@@ -121,15 +167,39 @@ class SplashScreenState1 extends  State<SplashScreen1>  {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
-                    height: 100,
-                    width: 100,
-                    child: Image.asset('assets/images/logo_splash.png',
+                    height: 150,
+                    width: 120,
+                    child: Image.asset('assets/images/splash_new.webp',
                       fit: BoxFit.fill,),
                   ),
                   SizedBox(
-                    height: 10,
+                    height: 20,
                   ),
-                  CupertinoActivityIndicator(radius: 20,animating: true,),
+                  //CupertinoActivityIndicator(radius: 20,animating: true,),
+                  Container(
+                    height: 30,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                      blue? CircleAvatar(
+                          radius: 10,
+                          backgroundColor: Colors.blue.shade900,
+                        ):Container(),
+                        SizedBox(width: 10,),
+                        yello?CircleAvatar(
+                          radius: 10,
+                          backgroundColor: Colors.yellow,
+                        ):Container(),
+                        SizedBox(width: 10,),
+
+                        skyBlue? CircleAvatar(
+                          radius: 10,
+                          backgroundColor: Color.fromRGBO(0, 187, 254, 1),
+                        ):Container()
+                      ],
+                    ),
+                  )
                 ],
               ),
             ),),

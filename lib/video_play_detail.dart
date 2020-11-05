@@ -1212,126 +1212,126 @@ class _VideoPlayState extends State<VideoPlay> {
                                         ),
                                       ),
                                     ),
-                                    Expanded(
-                                      child: Padding(
-                                        padding: const EdgeInsets.fromLTRB(5, 10, 5, 10),
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: <Widget>[
-                                            Padding(
-                                              padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                              child: Center(
-                                                child: Container(
-                                                  height: 30,
-                                                  width: 30,
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.white,
-                                                    borderRadius: BorderRadius.all(
-                                                        Radius.circular(30)),
-//                                            border: Border.all(
-//                                                                   width: 0,
-//                                                                   color: Colors
-//                                                                       .lightBlue,
-//                                                                   style:
-//                                                                   BorderStyle
-//                                                                       .solid)
-                                                  ),
-                                                  child: Center(
-                                                    child: Padding(
-                                                      padding: EdgeInsets.all(0),
-                                                      child: Icon(
-                                                        Icons.file_download,
-                                                        color: Color(0xff757998),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.fromLTRB(
-                                                  0.0, 0.0, 0.0, 0.0),
-                                              child: Align(
-                                                child: new Text(
-                                                  'Download',
-                                                  style: TextStyle(
-                                                    color: Color(0xff444b69),
-                                                    fontSize: 12,
-                                                    letterSpacing: 0,
-                                                    fontWeight: FontWeight.w400,
-                                                  ),
-                                                  textAlign: TextAlign.center,
-                                                  textDirection: TextDirection.ltr,
-                                                ),
-                                                alignment: Alignment.center,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Padding(
-                                        padding: const EdgeInsets.fromLTRB(5, 10, 5, 10),
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: <Widget>[
-                                            Padding(
-                                              padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                                              child: Center(
-                                                child: Container(
-                                                  height: 30,
-                                                  width: 30,
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.white,
-                                                    borderRadius: BorderRadius.all(
-                                                        Radius.circular(30)),
-//                                            border: Border.all(
-//                                                                   width: 0,
-//                                                                   color: Colors
-//                                                                       .lightBlue,
-//                                                                   style:
-//                                                                   BorderStyle
-//                                                                       .solid)
-                                                  ),
-                                                  child: Center(
-                                                    child: Padding(
-                                                      padding: EdgeInsets.all(0),
-                                                      child: Image.asset(
-                                                        "assets/images/watch_list_grey.png",
-//                                              height: 150.0,
-//                                              width: 50.0,
-                                                        fit: BoxFit.fill,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.fromLTRB(
-                                                  0.0, 0.0, 0.0, 0.0),
-                                              child: Align(
-                                                child: new Text(
-                                                  'Watchlist',
-                                                  style: TextStyle(
-                                                    color: Color(0xff444b69),
-                                                    fontSize: 12,
-                                                    letterSpacing: 0,
-                                                    fontWeight: FontWeight.w400,
-                                                  ),
-                                                  textAlign: TextAlign.center,
-                                                  textDirection: TextDirection.ltr,
-                                                ),
-                                                alignment: Alignment.center,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
+//                                     Expanded(
+//                                       child: Padding(
+//                                         padding: const EdgeInsets.fromLTRB(5, 10, 5, 10),
+//                                         child: Column(
+//                                           mainAxisAlignment: MainAxisAlignment.start,
+//                                           crossAxisAlignment: CrossAxisAlignment.start,
+//                                           children: <Widget>[
+//                                             Padding(
+//                                               padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+//                                               child: Center(
+//                                                 child: Container(
+//                                                   height: 30,
+//                                                   width: 30,
+//                                                   decoration: BoxDecoration(
+//                                                     color: Colors.white,
+//                                                     borderRadius: BorderRadius.all(
+//                                                         Radius.circular(30)),
+// //                                            border: Border.all(
+// //                                                                   width: 0,
+// //                                                                   color: Colors
+// //                                                                       .lightBlue,
+// //                                                                   style:
+// //                                                                   BorderStyle
+// //                                                                       .solid)
+//                                                   ),
+//                                                   child: Center(
+//                                                     child: Padding(
+//                                                       padding: EdgeInsets.all(0),
+//                                                       child: Icon(
+//                                                         Icons.file_download,
+//                                                         color: Color(0xff757998),
+//                                                       ),
+//                                                     ),
+//                                                   ),
+//                                                 ),
+//                                               ),
+//                                             ),
+//                                             Padding(
+//                                               padding: const EdgeInsets.fromLTRB(
+//                                                   0.0, 0.0, 0.0, 0.0),
+//                                               child: Align(
+//                                                 child: new Text(
+//                                                   'Download',
+//                                                   style: TextStyle(
+//                                                     color: Color(0xff444b69),
+//                                                     fontSize: 12,
+//                                                     letterSpacing: 0,
+//                                                     fontWeight: FontWeight.w400,
+//                                                   ),
+//                                                   textAlign: TextAlign.center,
+//                                                   textDirection: TextDirection.ltr,
+//                                                 ),
+//                                                 alignment: Alignment.center,
+//                                               ),
+//                                             ),
+//                                           ],
+//                                         ),
+//                                       ),
+//                                     ),
+//                                     Expanded(
+//                                       child: Padding(
+//                                         padding: const EdgeInsets.fromLTRB(5, 10, 5, 10),
+//                                         child: Column(
+//                                           mainAxisAlignment: MainAxisAlignment.start,
+//                                           crossAxisAlignment: CrossAxisAlignment.start,
+//                                           children: <Widget>[
+//                                             Padding(
+//                                               padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+//                                               child: Center(
+//                                                 child: Container(
+//                                                   height: 30,
+//                                                   width: 30,
+//                                                   decoration: BoxDecoration(
+//                                                     color: Colors.white,
+//                                                     borderRadius: BorderRadius.all(
+//                                                         Radius.circular(30)),
+// //                                            border: Border.all(
+// //                                                                   width: 0,
+// //                                                                   color: Colors
+// //                                                                       .lightBlue,
+// //                                                                   style:
+// //                                                                   BorderStyle
+// //                                                                       .solid)
+//                                                   ),
+//                                                   child: Center(
+//                                                     child: Padding(
+//                                                       padding: EdgeInsets.all(0),
+//                                                       child: Image.asset(
+//                                                         "assets/images/watch_list_grey.png",
+// //                                              height: 150.0,
+// //                                              width: 50.0,
+//                                                         fit: BoxFit.fill,
+//                                                       ),
+//                                                     ),
+//                                                   ),
+//                                                 ),
+//                                               ),
+//                                             ),
+//                                             Padding(
+//                                               padding: const EdgeInsets.fromLTRB(
+//                                                   0.0, 0.0, 0.0, 0.0),
+//                                               child: Align(
+//                                                 child: new Text(
+//                                                   'Watchlist',
+//                                                   style: TextStyle(
+//                                                     color: Color(0xff444b69),
+//                                                     fontSize: 12,
+//                                                     letterSpacing: 0,
+//                                                     fontWeight: FontWeight.w400,
+//                                                   ),
+//                                                   textAlign: TextAlign.center,
+//                                                   textDirection: TextDirection.ltr,
+//                                                 ),
+//                                                 alignment: Alignment.center,
+//                                               ),
+//                                             ),
+//                                           ],
+//                                         ),
+//                                       ),
+//                                     ),
                                   ],
                                 ),
                               ),
@@ -4999,6 +4999,11 @@ class _CommentsCellState extends State<CommentsCell> {
                                                     onSelected: (value) {
                                                       setState(() {
                                                         if (value == 1) {
+                                                          setState(() {
+                                                            _editcommentController.text=widget
+                                                                .cellModel
+                                                                .comment;
+                                                          });
                                                           slideDialog
                                                               .showSlideDialog(
                                                             barrierDismissible:

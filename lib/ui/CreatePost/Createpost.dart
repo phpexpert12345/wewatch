@@ -3,13 +3,17 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:audio_recorder/audio_recorder.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_video_info/flutter_video_info.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:progress_dialog/progress_dialog.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart' as syspaths;
@@ -25,7 +29,7 @@ import 'package:we_watch_app/ui/GeoLocation/GeoLocation.dart';
 import 'package:we_watch_app/util/UtilityClass.dart';
 
 import '../../trim_video.dart';
-
+import 'package:http/http.dart' as http;
 
 
 class CreatePost extends StatefulWidget {
@@ -43,7 +47,9 @@ class _CreatePostState extends State<CreatePost> {
   Recording _recording = new Recording();
   bool _isRecording = false;
   Random random = new Random();
-  TextEditingController _controller = new TextEditingController();
+  TextEditingController controllerTitle = new TextEditingController();
+  TextEditingController controllerDescription = new TextEditingController();
+
   var _buttonText = 'Record Video';
   VideoPlayerController _videoPlayerController;
   File _video;
@@ -71,6 +77,7 @@ class _CreatePostState extends State<CreatePost> {
     id=0;
     check=0;
     audioplay=false;
+    deleteFiles();
     // Permission.accessMediaLocation;
     Permission.microphone.request().whenComplete(() {
       print("permission granted");
@@ -78,6 +85,17 @@ class _CreatePostState extends State<CreatePost> {
     });
 
     super.initState();
+  }
+  Future<void> deleteFiles() async{
+    if(await File("/storage/emulated/0/news_${id}.mkv").exists()){
+      File("/storage/emulated/0/news_${id}.mkv").delete();
+    }
+    if(await File("/storage/emulated/0/mute_${id}.mp4").exists()){
+      File("/storage/emulated/0/mute_${id}.mp4").delete();
+    }
+    if(await File("/storage/emulated/0/we_watch${id}.m4a").exists()){
+      File("/storage/emulated/0/we_watch${id}.m4a").delete();
+    }
   }
   permissionsCamera() async{
     await Permission.camera.request().whenComplete(() {
@@ -159,6 +177,7 @@ class _CreatePostState extends State<CreatePost> {
                             child: TextFormField(
                               maxLines: 2,
                               cursorColor: Colors.black,
+                              controller: controllerTitle,
                               decoration: new InputDecoration(
                                   border: InputBorder.none,
                                   focusedBorder: InputBorder.none,
@@ -188,6 +207,7 @@ class _CreatePostState extends State<CreatePost> {
                       child: TextFormField(
                         maxLines: 5,
                         cursorColor: Colors.black,
+                        controller: controllerDescription,
                         decoration: new InputDecoration(
                             border: InputBorder.none,
                             focusedBorder: InputBorder.none,
@@ -383,7 +403,12 @@ class _CreatePostState extends State<CreatePost> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text('Add Voice Recording'),
-                          recording!=null?Icon(Icons.check_circle,size: 18,color: Colors.green.shade500,):Container()
+                          Row(
+                            children: [
+                              recording!=null?Icon(Icons.check_circle,size: 18,color: Colors.green.shade500,):Container(),
+                              audioLength!=null ? Text(audioLength+" seconds",style: new TextStyle(color: Colors.black45),):Container()
+                            ],
+                          )
 
                         ],
                       ),
@@ -432,8 +457,9 @@ class _CreatePostState extends State<CreatePost> {
                             onPressed: () {
                               setState(() {
                                 //id = 1;
-                                check = 0;
+                                //check = 0;
                                 preview = false;
+                                _videoPlayerController.pause();
                                 // for (int i = 1; i <= id; i++) {
                                 //   print(i);
                                 //   File('/storage/emulated/0/we_watch${i}.m4a').delete();
@@ -456,9 +482,7 @@ class _CreatePostState extends State<CreatePost> {
                             borderRadius: BorderRadius.circular(18.0),
                           ),
                           onPressed: () {
-
-
-                            // confirmationDialog();
+                              //postData();  Api call
                           },
                           child: Text(
                             'Post',
@@ -735,10 +759,8 @@ class _CreatePostState extends State<CreatePost> {
     try {
       if (_videoFile != null) {
         final fDelete = '/storage/emulated/0/news_${id}.mkv';
-        File f=new File(fDelete);
-        bool c= await f.exists();
-        if(c){
-          f.delete();
+        if(await File(fDelete).exists() ){
+          await File(fDelete).delete();
         }
         var _video = File('/storage/emulated/0/mute_${id}.mp4');
         print("videopath"+_video.path);
@@ -800,11 +822,15 @@ class _CreatePostState extends State<CreatePost> {
     recording = await AudioRecorder.stop();
     print("Stop recording: ${recording.path}");
     bool isRecording = await AudioRecorder.isRecording;
-
+    var  info= await videoInfo.getVideoInfo(recording.path);
     setState(() {
       _recording = recording;
       _isRecording = isRecording;
       check = 1;
+      audioLength=(info.duration.round()/1000).toString();
+      if(_videoFile!=null){
+        createVideoMuteFile();
+      }
     });
     print(recording.path);
   }
@@ -813,6 +839,8 @@ class _CreatePostState extends State<CreatePost> {
     _videoMerger();
   }
 
+  final videoInfo = FlutterVideoInfo();
+  String audioLength;
   Future<String> _recordVideo() async {
     final op = '/storage/emulated/0/mute_${id}.mp4';
     File f=new File(op);
@@ -830,8 +858,10 @@ class _CreatePostState extends State<CreatePost> {
         _buttonText = 'Saving in Progress...';
       });
       GallerySaver.saveVideo(recordedVideo.path).then((_) {
-        setState(() {
+        setState(() async{
           _buttonText = 'Video Saved!\n\nClick to Record New Video';
+          var  info= await videoInfo.getVideoInfo(recordedVideo.path);
+          print("length=+"+info.duration.toString());
           if (_videoFile == null) {
             _videoFile = recordedVideo;
             setState(() {
@@ -990,6 +1020,359 @@ class _CreatePostState extends State<CreatePost> {
       print(e);
       print("sunny locality exception"+e.toString());
     }
+  }
+
+  String userCity,userState,userLocality;
+  String categoryName="Local News";
+  double percentage = 0.0;
+
+  postData(){
+    // updateProfile();
+
+    if (![
+      "",
+      null,
+      false,
+      0
+    ].contains(controllerTitle.text.toString())) {
+      if (!["", null, false, 0].contains(
+          controllerDescription.text.toString())) {
+        if (![
+          "",
+          null,
+          false,
+          0,
+        ].contains(userState)) {
+          if (![
+            "",
+            null,
+            false,
+            0,
+          ].contains(userCity)) {
+            if (![
+              "",
+              null,
+              false,
+              0,
+            ].contains(
+                userLocality)) {
+              if (![
+                "",
+                null,
+                false,
+                0,
+              ].contains(categoryName)) {
+                if (![
+                  "",
+                  null,
+                  false,
+                  0,
+                ].contains(_videoFile)) {
+                  FocusScope.of(context)
+                      .requestFocus(FocusNode());
+
+                  ProgressDialog pr;
+                  pr = ProgressDialog(
+                    context,
+                    // customBody: LinearProgressIndicator(
+                    //   valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),
+                    //   backgroundColor: Colors.white,
+                    // ),
+                  );
+                  pr.show();
+                  updateProfile();
+                  Future.delayed(Duration(seconds: 2))
+                      .then((onvalue) {
+                    percentage = percentage + 10.0;
+                    print(percentage);
+
+                    pr.update(
+                      progress: percentage,
+                      message:
+                      "Uploading...${percentage}",
+                      progressWidget: Container(
+                          padding: EdgeInsets.all(8.0),
+                          child:
+                          CircularProgressIndicator()),
+                      maxProgress: 100.0,
+                      progressTextStyle: TextStyle(
+                          color: Colors.black,
+                          fontSize: 13.0,
+                          fontWeight: FontWeight.w400),
+                      messageTextStyle: TextStyle(
+                          color: Colors.black,
+                          fontSize: 19.0,
+                          fontWeight: FontWeight.w600),
+                    );
+
+                    Future.delayed(Duration(seconds: 2))
+                        .then((value) {
+                      Future.delayed(Duration(seconds: 2))
+                          .then((value) {
+                        percentage = percentage + 10.0;
+                        pr.update(
+                            progress: percentage,
+                            message:
+                            "Uploading...${percentage}");
+                        print(percentage);
+                        Future.delayed(
+                            Duration(seconds: 2))
+                            .then((value) {
+                          percentage = percentage + 10.0;
+                          pr.update(
+                              progress: percentage,
+                              message:
+                              "Uploading...${percentage}");
+                          print(percentage);
+                          Future.delayed(
+                              Duration(seconds: 2))
+                              .then((value) {
+                            percentage =
+                                percentage + 10.0;
+                            pr.update(
+                                progress: percentage,
+                                message:
+                                "Uploading...${percentage}");
+                            print(percentage);
+                            Future.delayed(
+                                Duration(seconds: 2))
+                                .then((value) {
+                              percentage =
+                                  percentage + 10.0;
+                              pr.update(
+                                  progress: percentage,
+                                  message:
+                                  "Uploading...${percentage}");
+                              print(percentage);
+                              Future.delayed(Duration(
+                                  seconds: 2))
+                                  .then((value) {
+                                percentage =
+                                    percentage + 10.0;
+                                pr.update(
+                                    progress: percentage,
+                                    message:
+                                    "Uploading...${percentage}");
+                                print(percentage);
+                                Future.delayed(Duration(
+                                    seconds: 2))
+                                    .then((value) {
+                                  percentage =
+                                      percentage + 10.0;
+                                  pr.update(
+                                      progress:
+                                      percentage,
+                                      message:
+                                      "Uploading...${percentage}");
+                                  print(percentage);
+                                  Future.delayed(Duration(
+                                      seconds: 2))
+                                      .then((value) {
+                                    percentage =
+                                        percentage + 10.0;
+                                    pr.update(
+                                        progress:
+                                        percentage,
+                                        message:
+                                        "Uploading...${percentage}");
+                                    print(percentage);
+                                    Future.delayed(
+                                        Duration(
+                                            seconds:
+                                            2))
+                                        .then((value) {
+                                      percentage =
+                                          percentage +
+                                              10.0;
+                                      pr.update(
+                                          progress:
+                                          percentage,
+                                          message:
+                                          "Uploading...${percentage}");
+                                      print(percentage);
+                                      percentage =
+                                          percentage +
+                                              10.0;
+                                      pr.update(
+                                          progress:
+                                          percentage,
+                                          message:
+                                          "Almost done...");
+                                      print(percentage);
+                                      Future.delayed(
+                                          Duration(
+                                              seconds:
+                                              2))
+                                          .then((value) {
+                                        percentage =
+                                            percentage +
+                                                10.0;
+                                        pr
+                                            .hide()
+                                            .whenComplete(
+                                                () {
+                                              print(pr
+                                                  .isShowing());
+                                              Navigator
+                                                  .pushReplacement(
+                                                context,
+                                                CupertinoPageRoute(
+                                                    builder:
+                                                        (context) =>
+                                                        HomePageTwo()),
+                                              );
+                                            });
+                                      });
+                                    });
+                                  });
+                                });
+                              });
+                            });
+                          });
+                        });
+                      });
+                    });
+                  });
+                  print("Done");
+                } else {
+                  Fluttertoast.showToast(
+                      msg: "Please add video file",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.CENTER,
+                      timeInSecForIosWeb: 10,
+                      backgroundColor: Colors.red,
+                      textColor: Colors.white,
+                      fontSize: 16.0);
+                }
+              } else {
+                Fluttertoast.showToast(
+                    msg: "Please enter category",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.CENTER,
+                    timeInSecForIosWeb: 10,
+                    backgroundColor: Colors.red,
+                    textColor: Colors.white,
+                    fontSize: 16.0);
+              }
+
+              //getToekn();
+
+            } else {
+              Fluttertoast.showToast(
+                  msg: "Please Enter Locality",
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.CENTER,
+                  timeInSecForIosWeb: 1,
+                  backgroundColor: Colors.red,
+                  textColor: Colors.white,
+                  fontSize: 16.0);
+            }
+          } else {
+            Fluttertoast.showToast(
+                msg: "Select City",
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.CENTER,
+                timeInSecForIosWeb: 1,
+                backgroundColor: Colors.red,
+                textColor: Colors.white,
+                fontSize: 16.0);
+          }
+
+          //getToekn();
+
+        } else {
+          Fluttertoast.showToast(
+              msg: "Select State",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.CENTER,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.red,
+              textColor: Colors.white,
+              fontSize: 16.0);
+        }
+      } else {
+        Fluttertoast.showToast(
+            msg: "Please Enter Description",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      }
+    } else {
+      Fluttertoast.showToast(
+          msg: "Please Enter Title",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    }
+
+//                    setPersonalData();
+  }
+
+  Future updateProfile() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String access_token = prefs.getString('access_token');
+    setState(() {
+      //visible = true;
+    });
+    Map<String, String> headers = {'Authorization': 'Bearer $access_token'};
+    var stream = new http.ByteStream(_imageFile.openRead());
+    var streamVideo = new http.ByteStream(_videoFile.openRead());
+    // get file length
+    var length = await _imageFile.length();
+    var lengthVideo = await _videoFile.length();
+    var request = http.MultipartRequest(
+        'POST', Uri.parse('https://wewatch.in/wewatch-up/api/v1/video'));
+    request.fields["video_title"] = controllerTitle.text;
+    request.fields["video_description"] = controllerDescription.text;
+    request.fields["video_locality"] = "";// _localityController.text;
+    request.fields["state_id"] ="";// _myselection2;
+    request.fields["city_id"] = "";//_mySelection;
+    request.fields["video_tag"] = ""; // _videoTagController.text;
+    request.fields["video_category"] = "Local News";//categoryName;
+    request.files.add(await http.MultipartFile(
+        'video_thumb_image', stream, length,
+        filename: fileName));
+    request.files.add(await http.MultipartFile(
+        'video_file', streamVideo, lengthVideo,
+        filename: fileNameVideo));
+    request.headers.addAll(headers);
+    var response = await request.send();
+
+    if (response.statusCode == 200) {
+      setState(() {
+       // visible = false;
+      });
+      Fluttertoast.showToast(
+          msg: "Your video uploaded successfully!!",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.lightGreen,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    } else {
+      setState(() {
+       // visible = false;
+      });
+      Fluttertoast.showToast(
+          msg: "Failed!!",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.redAccent,
+          textColor: Colors.white,
+          fontSize: 16.0);
+      print("Upload Failed");
+    }
+    response.stream.transform(utf8.decoder).listen((value) {
+      print(value);
+    });
   }
 
 }

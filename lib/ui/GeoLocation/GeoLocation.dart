@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_places_autocomplete/flutter_places_autocomplete.dart';
+import 'package:flutter_google_places/flutter_google_places.dart';
+import 'package:flutter_places_autocomplete/flutter_places_autocomplete.dart' as pr;
+import 'package:google_maps_webservice/directions.dart';
+import 'package:google_maps_webservice/src/places.dart';
 import 'package:we_watch_app/ui/GeoLocation/AddressSearch.dart';
 import 'package:we_watch_app/ui/location_access_page.dart';
 
@@ -9,14 +12,14 @@ class GeoLocation extends StatefulWidget {
 }
 
 class _GeoLocationState extends State<GeoLocation> {
-  PlacesAutocomplete placesAutocomplete;
-  List<Prediction> predictions;
+  pr.PlacesAutocomplete placesAutocomplete;
+  List<pr.Prediction> predictions;
   final searchController = TextEditingController();
 
   @override
   void initState() {
     placesAutocomplete =
-        PlacesAutocomplete(apiKey: 'AIzaSyAl_DrFzKqFTx54VoG2fAgopn5M2pC2sk4');
+        pr.PlacesAutocomplete(apiKey: "AIzaSyAl_DrFzKqFTx54VoG2fAgopn5M2pC2sk4");
     predictions = [];
   }
 
@@ -42,13 +45,17 @@ class _GeoLocationState extends State<GeoLocation> {
             controller: _controller,
             onTap: () async {
               // should show search screen here
-              showSearch(
-                context: context,
-                // we haven't created AddressSearch class
-                // this should be extending SearchDelegate
-
-                delegate: AddressSearch(token: sessionToken,text: _controller.text),
-              );
+              Prediction p=await PlacesAutocomplete.show(context: context, apiKey: "AIzaSyAl_DrFzKqFTx54VoG2fAgopn5M2pC2sk4",
+                   language: "en",
+              components: [Component(Component.country,"in"),
+              ]);
+              // showSearch(
+              //   context: context,
+              //   // we haven't created AddressSearch class
+              //   // this should be extending SearchDelegate
+              //
+              //   delegate: AddressSearch(token: sessionToken,text: _controller.text),
+              // );
             },
             decoration: InputDecoration(
               icon: Container(

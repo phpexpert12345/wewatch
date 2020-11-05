@@ -61,13 +61,14 @@ dependencies:
   permission_handler: ^5.0.1+1
   geocoder: 0.2.1
   video_thumbnail : 0.2.2
-#  google_maps_webservice: 0.0.18
+  google_maps_webservice: 0.0.18
   flutter_local_notifications: 2.0.0+1
 
   flutter_places_autocomplete: 0.2.0
   toggle_switch : 0.1.8
   font_awesome_flutter: 8.10.0
 #  flutter_vlc_player: 4.0.2
+  flutter_video_info: 1.0.1
 
 
 

@@ -5764,55 +5764,55 @@ class _HomePageTwoState extends State<HomePageTwo> {
                             );
                           },
                         ),
-                        ListTile(
-                          leading: Container(
-                            height: 35,
-                            width: 35,
-                            decoration: BoxDecoration(
-                              color: Color(0xffef7432),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(50)),
-//                                                border: Border.all(width: 1, color: Color(0xffe25705), style: BorderStyle.solid)
-                            ),
-                            child: Stack(
-                              children: <Widget>[
-                                Center(
-                                  child: Padding(
-                                    padding: EdgeInsets.all(0),
-                                    child: SvgPicture.asset(
-                                      "assets/images/refresh.svg",
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                                Center(
-                                  child: Padding(
-                                    padding: EdgeInsets.all(5),
-                                    child: SvgPicture.asset(
-                                      "assets/images/watch_later.svg",
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          title: Text(
-                            "Watch Later",
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 18,
-                            ),
-                          ),
-                          onTap: () {
-                            Navigator.of(context).pop();
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => WatchThree()),
-                            );
-                          },
-                        ),
+//                         ListTile(
+//                           leading: Container(
+//                             height: 35,
+//                             width: 35,
+//                             decoration: BoxDecoration(
+//                               color: Color(0xffef7432),
+//                               borderRadius:
+//                                   BorderRadius.all(Radius.circular(50)),
+// //                                                border: Border.all(width: 1, color: Color(0xffe25705), style: BorderStyle.solid)
+//                             ),
+//                             child: Stack(
+//                               children: <Widget>[
+//                                 Center(
+//                                   child: Padding(
+//                                     padding: EdgeInsets.all(0),
+//                                     child: SvgPicture.asset(
+//                                       "assets/images/refresh.svg",
+//                                       color: Colors.white,
+//                                     ),
+//                                   ),
+//                                 ),
+//                                 Center(
+//                                   child: Padding(
+//                                     padding: EdgeInsets.all(5),
+//                                     child: SvgPicture.asset(
+//                                       "assets/images/watch_later.svg",
+//                                       color: Colors.white,
+//                                     ),
+//                                   ),
+//                                 ),
+//                               ],
+//                             ),
+//                           ),
+//                           title: Text(
+//                             "Watch Later",
+//                             style: TextStyle(
+//                               color: Colors.black,
+//                               fontSize: 18,
+//                             ),
+//                           ),
+//                           onTap: () {
+//                             Navigator.of(context).pop();
+//                             Navigator.push(
+//                               context,
+//                               MaterialPageRoute(
+//                                   builder: (context) => WatchThree()),
+//                             );
+//                           },
+//                         ),
                         ListTile(
                           leading: Container(
                             height: 35,
@@ -6035,43 +6035,43 @@ class _HomePageTwoState extends State<HomePageTwo> {
                             );
                           },
                         ),
-                        ListTile(
-                          leading: Container(
-                            height: 35,
-                            width: 35,
-                            decoration: BoxDecoration(
-                              color: Color(0xff42445d),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(50)),
-//                                                border: Border.all(width: 1, color: Color(0xffe25705), style: BorderStyle.solid)
-                            ),
-                            child: Center(
-                              child: Padding(
-                                padding: EdgeInsets.all(5),
-                                child: Image.asset(
-                                  "assets/images/outbox.png",
-//                                                                          height: 50.0,
-//                                                                          width: 50.0,
-                                  fit: BoxFit.fill,
-                                ),
-                              ),
-                            ),
-                          ),
-                          title: Text(
-                            "Downloads",
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 18,
-                            ),
-                          ),
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Downloads()),
-                            );
-                          },
-                        ),
+//                         ListTile(
+//                           leading: Container(
+//                             height: 35,
+//                             width: 35,
+//                             decoration: BoxDecoration(
+//                               color: Color(0xff42445d),
+//                               borderRadius:
+//                                   BorderRadius.all(Radius.circular(50)),
+// //                                                border: Border.all(width: 1, color: Color(0xffe25705), style: BorderStyle.solid)
+//                             ),
+//                             child: Center(
+//                               child: Padding(
+//                                 padding: EdgeInsets.all(5),
+//                                 child: Image.asset(
+//                                   "assets/images/outbox.png",
+// //                                                                          height: 50.0,
+// //                                                                          width: 50.0,
+//                                   fit: BoxFit.fill,
+//                                 ),
+//                               ),
+//                             ),
+//                           ),
+//                           title: Text(
+//                             "Downloads",
+//                             style: TextStyle(
+//                               color: Colors.black,
+//                               fontSize: 18,
+//                             ),
+//                           ),
+//                           onTap: () {
+//                             Navigator.push(
+//                               context,
+//                               MaterialPageRoute(
+//                                   builder: (context) => Downloads()),
+//                             );
+//                           },
+//                         ),
                         ListTile(
                           leading: Container(
                             height: 35,
