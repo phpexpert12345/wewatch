@@ -241,7 +241,17 @@ class _CreatePostState extends State<CreatePost> {
                           onTap: (){
                             setState(() async{
                               String filePath='/storage/emulated/0/news_${id}.mkv';
-                              if(recording!=null){
+                              if(_isRecording){
+                                _videoPlayerController = VideoPlayerController.file(
+                                    File('/storage/emulated/0/mute_${id}.mp4'))
+                                  ..initialize().then((_) {
+                                    setState(() {
+                                      _videoPlayerController.play();
+                                      _videoFile = File('/storage/emulated/0/news_${id}.mkv');
+                                      preview = true;
+                                    });
+                                  });
+                              }else if(recording!=null){
                                 await combine();
                                 _videoPlayerController = VideoPlayerController.file(
                                     File('/storage/emulated/0/news_${id}.mkv'))
@@ -803,6 +813,10 @@ class _CreatePostState extends State<CreatePost> {
         File('/storage/emulated/0/we_watch${id}.m4a').delete();
 
       }
+      setState(() {
+        preview=true;
+        clickOnRecordAudio="recording";
+      });
 
       await AudioRecorder.start(
           path: '/storage/emulated/0/we_watch${id}',
@@ -817,6 +831,7 @@ class _CreatePostState extends State<CreatePost> {
     });
   }
 
+  String clickOnRecordAudio="";
   _stop() async {
 
     recording = await AudioRecorder.stop();
