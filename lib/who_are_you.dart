@@ -16,7 +16,7 @@ class WhoAreYou extends StatefulWidget {
 class _WhoAreYouState extends State<WhoAreYou> with SingleTickerProviderStateMixin{
   void selectProfile(String type) async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
-
+    print("typr"+type);
     prefs.setString('type',type);
 
   }
@@ -29,6 +29,7 @@ class _WhoAreYouState extends State<WhoAreYou> with SingleTickerProviderStateMix
   bool _socialWorker=false;
   bool _jobSeeker=false;
   bool _journalist=true;
+  bool _other=false;
   String _email = "";
   String _password = "";
   Map<String, bool> values = {
@@ -118,7 +119,7 @@ class _WhoAreYouState extends State<WhoAreYou> with SingleTickerProviderStateMix
             _jobSeeker=false;
             _journalist=false;
             _socialWorker=false;
-
+            _other=false;
             }),
           ),
           ListTile(
@@ -153,7 +154,7 @@ class _WhoAreYouState extends State<WhoAreYou> with SingleTickerProviderStateMix
             title: Text("Journalist/Creator"),
             onTap: ()=> this.setState(() { this._journalist= !this._journalist ;
             _jobSeeker=false;
-
+            _other=false;
             _socialWorker=false;
             _student=false;}),
           ),
@@ -186,10 +187,11 @@ class _WhoAreYouState extends State<WhoAreYou> with SingleTickerProviderStateMix
               ),
             ),
             title: Text("Social Worker"),
-            onTap: ()=> this.setState(() { this._socialWorker= !this._socialWorker ;
+            onTap: ()=> this.setState(()
+            { this._socialWorker= !this._socialWorker ;
             _jobSeeker=false;
             _journalist=false;
-
+            _other=false;
             _student=false;}),
           ),
           ListTile(
@@ -223,7 +225,43 @@ class _WhoAreYouState extends State<WhoAreYou> with SingleTickerProviderStateMix
             ),
             title: Text("Job Seeker"),
             onTap: ()=> this.setState(() { this._jobSeeker= !this._jobSeeker ;
+            _other=false;
+            _journalist=false;
+            _socialWorker=false;
+            _student=false;}),
+          ),
+          ListTile(
+            leading: Container(
+//              decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.transparent,border: new Border.all(
+//                width: 1.0,
+//                color: Color(0xff00adef),
+//              ),),
+              child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: _other
+                      ? Icon(
+                    Icons.check_circle_outline,
+                    size: 30.0,
+                    color: Color(0xff00adef),
+                  )
+                      :Container(
+                    padding: const EdgeInsets.all(0),
+                    decoration: BoxDecoration(shape: BoxShape.circle, color: Colors.transparent,border: new Border.all(
+                      width: 2.0,
+                      color: Color(0xff00adef),
+                    ),),
+                    child: Icon(
+                      Icons.check_circle,
+                      size: 20.0,
+                      color: Colors.white,
+                    ),
+                  )
 
+              ),
+            ),
+            title: Text("Other"),
+            onTap: ()=> this.setState(() { this._other= !this._other ;
+            _jobSeeker=false;
             _journalist=false;
             _socialWorker=false;
             _student=false;}),
@@ -401,7 +439,7 @@ class _WhoAreYouState extends State<WhoAreYou> with SingleTickerProviderStateMix
                         padding: EdgeInsets.all(8.0),
                         child: Padding(
                           padding:
-                          const EdgeInsets.fromLTRB(0.0, 30.0, 0.0, 0.0),
+                          const EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 0.0),
                           child: Align(
                             child: new Text(
                               'Who are you?',
@@ -426,7 +464,7 @@ class _WhoAreYouState extends State<WhoAreYou> with SingleTickerProviderStateMix
 
 
                         SizedBox(
-                          height: SizeConfig.heightMultiplier *10.19,
+                          height: SizeConfig.heightMultiplier *5.19,
                         ),
 
 
@@ -454,7 +492,7 @@ class _WhoAreYouState extends State<WhoAreYou> with SingleTickerProviderStateMix
                             child: Center(
                                 child: GestureDetector(
                                   onTap: () {
-                                    if(_jobSeeker||_socialWorker||_journalist||_student)
+                                    if(_jobSeeker||_socialWorker||_journalist||_student || _other)
                                     {
                                       if(_jobSeeker)
                                         {
@@ -468,6 +506,10 @@ class _WhoAreYouState extends State<WhoAreYou> with SingleTickerProviderStateMix
                                         {
                                           selectProfile("reporter");
                                         }
+                                      if(_other)
+                                      {
+                                        selectProfile("other");
+                                      }
                                       if(_socialWorker)
                                         {
                                           selectProfile("group_channel");

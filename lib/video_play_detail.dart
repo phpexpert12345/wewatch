@@ -4405,11 +4405,28 @@ class _CommentsCellState extends State<CommentsCell> {
   //     ),
   //   ),
   // );
+  var sk;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     comment_new = cellModel.comment;
+    getUserName();
+    sk=(15700/1000)%60;
+    print("sk"+sk.toString());
+
+  }
+
+  String userName;
+  getUserName() async{
+    await SharedPreferences.getInstance().then((value) {
+      String f_name=value.getString('first_name') ?? '';
+      String l_name=value.getString('last_name') ?? '';
+      setState(() {
+        userName=f_name+" "+l_name;
+        print("name "+userName);
+      });
+    });
   }
 
   String _showDialog(BuildContext contex, var id) {
@@ -4977,7 +4994,7 @@ class _CommentsCellState extends State<CommentsCell> {
                                                     ),
                                                   ),
                                                 ),
-                                                Center(
+                                                userName.toString().toLowerCase().trim()==cellModel.name.toString().toLowerCase().trim()?Center(
                                                   //
                                                   child: PopupMenuButton<int>(
                                                     itemBuilder: (context) => [
@@ -5047,7 +5064,9 @@ class _CommentsCellState extends State<CommentsCell> {
                                                               ),
                                                             ),
                                                           );
-                                                        } else if (value == 2) {
+
+                                                        }
+                                                        if (value == 2) {
                                                           deletecomment(widget
                                                               .cellModel.id);
                                                           setState(() => {});
@@ -5056,7 +5075,7 @@ class _CommentsCellState extends State<CommentsCell> {
                                                     },
                                                     icon: Icon(Icons.more_vert),
                                                   ),
-                                                ),
+                                                ):Container(width: 50,),
                                               ],
                                             ),
                                           ),

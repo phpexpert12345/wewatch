@@ -71,6 +71,11 @@ class _CreatePostState extends State<CreatePost> {
   bool preview = false;
 
   @override
+  void dispose(){
+    _videoPlayerController.dispose();
+    super.dispose();
+  }
+  @override
   void initState() {
     preview = false;
     rc=1;
@@ -105,11 +110,12 @@ class _CreatePostState extends State<CreatePost> {
   permissionsStorage() async{
     await Permission.storage.request().whenComplete((){
       print("permission granted");
-
+      deleteFiles();
     });
   }
 
 
+  bool visible=false;
   getThumbNail() async{
       uint8list = await VideoThumbnail.thumbnailData(
       video: _videoFile.path,
@@ -119,6 +125,7 @@ class _CreatePostState extends State<CreatePost> {
     );
   }
 
+  var scController=ScrollController();
   @override
   Widget build(BuildContext context) {
     deviceSize=MediaQuery.of(context).size;
@@ -141,381 +148,446 @@ class _CreatePostState extends State<CreatePost> {
           title: Text('Create New News'),
         ),
         body: ListView(
+          controller: scController,
           children: <Widget>[
-            Stack(
-              children: [
-                Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.all(15.0),
-                      child: ListTile(
-                        leading: CircleAvatar(
-                          child:!["",null].contains(widget.userImage)? Image.network(widget.userImage):Image.asset("assets/images/logo_splash.png"),
+            Container(
+              //height: deviceSize.height,
+              width: deviceSize.width,
+              child: Stack(
+                children: [
+                  Column(
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            child:!["",null].contains(widget.userImage)? Image.network(widget.userImage):Image.asset("assets/images/logo_splash.png"),
+                          ),
+                          title: Text(widget.userName!=null?widget.userName:"",style: new TextStyle(fontSize:18 ),),
                         ),
-                        title: Text(widget.userName!=null?widget.userName:"",style: new TextStyle(fontSize:18 ),),
                       ),
-                    ),
-                    preview
-                        ? _videoFile != null
-                            ? AspectRatio(
-                                aspectRatio: 16 / 9,
-                                child: VideoPlayer(_videoPlayerController),
-                              )
-                            : Container()
-                        : Container(
-                            //height: 150,
-                            margin: EdgeInsets.only(left: 5.0,right: 5.0),
-                            decoration: BoxDecoration(
-                              border: Border(top: BorderSide(color: COLORS.CONTAINER_BORDER_COLOR),
-                                      left: BorderSide(color: COLORS.CONTAINER_BORDER_COLOR),
-                                      right: BorderSide(color: COLORS.CONTAINER_BORDER_COLOR),
-                                      bottom: BorderSide(color: COLORS.CONTAINER_BORDER_COLOR)
+                      preview
+                          ? _videoFile != null
+                              ? AspectRatio(
+                                  aspectRatio: 16 / 9,
+                                  child: VideoPlayer(_videoPlayerController),
+                                )
+                              : Container()
+                          : Container(
+                              //height: 150,
+                              margin: EdgeInsets.only(left: 5.0,right: 5.0),
+                              decoration: BoxDecoration(
+                                border: Border(top: BorderSide(color: COLORS.CONTAINER_BORDER_COLOR),
+                                        left: BorderSide(color: COLORS.CONTAINER_BORDER_COLOR),
+                                        right: BorderSide(color: COLORS.CONTAINER_BORDER_COLOR),
+                                        bottom: BorderSide(color: COLORS.CONTAINER_BORDER_COLOR)
+                                ),
+                                borderRadius: BorderRadius.all(Radius.circular(8.0))
+
                               ),
-                              borderRadius: BorderRadius.all(Radius.circular(8.0))
-
+                              child: TextFormField(
+                                maxLines: 2,
+                                cursorColor: Colors.black,
+                                controller: controllerTitle,
+                                decoration: new InputDecoration(
+                                    border: InputBorder.none,
+                                    focusedBorder: InputBorder.none,
+                                    enabledBorder: InputBorder.none,
+                                    errorBorder: InputBorder.none,
+                                    disabledBorder: InputBorder.none,
+                                    contentPadding: EdgeInsets.only(
+                                        left: 15, bottom: 11, top: 11, right: 15),
+                                    hintText: "Video title ",
+                                hintStyle: new TextStyle(color: Colors.black45)),
+                                inputFormatters: [
+                                  LengthLimitingTextInputFormatter(50),
+                                ],
+                              ),
                             ),
-                            child: TextFormField(
-                              maxLines: 2,
-                              cursorColor: Colors.black,
-                              controller: controllerTitle,
-                              decoration: new InputDecoration(
-                                  border: InputBorder.none,
-                                  focusedBorder: InputBorder.none,
-                                  enabledBorder: InputBorder.none,
-                                  errorBorder: InputBorder.none,
-                                  disabledBorder: InputBorder.none,
-                                  contentPadding: EdgeInsets.only(
-                                      left: 15, bottom: 11, top: 11, right: 15),
-                                  hintText: "Video title ",
-                              hintStyle: new TextStyle(color: Colors.black45)),
-                              inputFormatters: [
-                                LengthLimitingTextInputFormatter(50),
-                              ],
-                            ),
-                          ),
-                    SizedBox(height: 5.0,),
-                    Container(
-                      margin: EdgeInsets.only(left: 5.0,right: 5.0),
-                      decoration: BoxDecoration(
-                          border: Border(top: BorderSide(color: COLORS.CONTAINER_BORDER_COLOR),
-                              left: BorderSide(color: COLORS.CONTAINER_BORDER_COLOR),
-                              right: BorderSide(color: COLORS.CONTAINER_BORDER_COLOR),
-                              bottom: BorderSide(color: COLORS.CONTAINER_BORDER_COLOR)
-                          ),
-                          borderRadius: BorderRadius.all(Radius.circular(8.0))
-                        ),
-                      child: TextFormField(
-                        maxLines: 5,
-                        cursorColor: Colors.black,
-                        controller: controllerDescription,
-                        decoration: new InputDecoration(
-                            border: InputBorder.none,
-                            focusedBorder: InputBorder.none,
-                            enabledBorder: InputBorder.none,
-                            errorBorder: InputBorder.none,
-                            disabledBorder: InputBorder.none,
-                            contentPadding: EdgeInsets.only(
-                                left: 15, bottom: 11, top: 11, right: 15),
-                            hintText: 'Video description ',
-                            hintStyle: new TextStyle(color: Colors.black45)),
-                        inputFormatters: [
-                          LengthLimitingTextInputFormatter(200),
-                        ],
-                      ),
-
-                    ),
-                    Divider(
-                      color: Colors.black26,
-                    ),
-                    _videoFile!=null ? Align(
-                      alignment: Alignment.bottomRight,
-                      child: Container(
-                        padding: EdgeInsets.all(5),
-                        margin: EdgeInsets.only(right: 10),
-
+                      SizedBox(height: 5.0,),
+                      Container(
+                        margin: EdgeInsets.only(left: 5.0,right: 5.0),
                         decoration: BoxDecoration(
-                          color: Colors.blue,
-                          borderRadius: BorderRadius.circular(8.0)
+                            border: Border(top: BorderSide(color: COLORS.CONTAINER_BORDER_COLOR),
+                                left: BorderSide(color: COLORS.CONTAINER_BORDER_COLOR),
+                                right: BorderSide(color: COLORS.CONTAINER_BORDER_COLOR),
+                                bottom: BorderSide(color: COLORS.CONTAINER_BORDER_COLOR)
+                            ),
+                            borderRadius: BorderRadius.all(Radius.circular(8.0))
+                          ),
+                        child: TextFormField(
+                          maxLines: 5,
+                          cursorColor: Colors.black,
+                          controller: controllerDescription,
+                          decoration: new InputDecoration(
+                              border: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              errorBorder: InputBorder.none,
+                              disabledBorder: InputBorder.none,
+                              contentPadding: EdgeInsets.only(
+                                  left: 15, bottom: 11, top: 11, right: 15),
+                              hintText: 'Video description ',
+                              hintStyle: new TextStyle(color: Colors.black45)),
+                          inputFormatters: [
+                            LengthLimitingTextInputFormatter(200),
+                          ],
                         ),
-                        child: GestureDetector(
-                          onTap: (){
-                            setState(() async{
-                              String filePath='/storage/emulated/0/news_${id}.mkv';
-                              if(_isRecording){
-                                _videoPlayerController = VideoPlayerController.file(
-                                    File('/storage/emulated/0/mute_${id}.mp4'))
-                                  ..initialize().then((_) {
-                                    setState(() {
-                                      _videoPlayerController.play();
-                                      _videoFile = File('/storage/emulated/0/news_${id}.mkv');
-                                      preview = true;
+
+                      ),
+                      Divider(
+                        color: Colors.black26,
+                      ),
+                      _videoFile!=null ? Align(
+                        alignment: Alignment.bottomRight,
+                        child: Container(
+                          padding: EdgeInsets.all(5),
+                          margin: EdgeInsets.only(right: 10),
+
+                          decoration: BoxDecoration(
+                            color: Colors.blue,
+                            borderRadius: BorderRadius.circular(8.0)
+                          ),
+                          child: GestureDetector(
+                            onTap: (){
+                              setState(() async{
+                                String filePath='/storage/emulated/0/news_${id}.mkv';
+                                if(_recording!=null){
+                                  if(!await File('/storage/emulated/0/news_${id}.mkv').exists())
+                                      await combine();
+                                  _videoPlayerController = VideoPlayerController.file(
+                                      File('/storage/emulated/0/news_${id}.mkv'))
+                                    ..initialize().then((_) {
+                                      setState(() {
+                                        _videoPlayerController.play();
+                                        _videoFile = File('/storage/emulated/0/news_${id}.mkv');
+                                        preview = true;
+                                      });
+                                    }, onError: (g) {
+                                      if (check == 1) {
+                                        Fluttertoast.showToast(
+                                          msg: 'Wait video uploading',
+                                          backgroundColor: Colors.redAccent,
+                                          toastLength: Toast.LENGTH_SHORT,
+                                          gravity: ToastGravity.CENTER,
+//        timeInSecForIos: 1,
+                                        );
+                                      } else {
+                                        Fluttertoast.showToast(
+                                          msg: 'Add required parameters',
+                                          backgroundColor: Colors.redAccent,
+                                          toastLength: Toast.LENGTH_SHORT,
+                                          gravity: ToastGravity.CENTER,
+//        timeInSecForIos: 1,
+                                        );
+                                      }
                                     });
-                                  });
-                              }else if(recording!=null){
-                                await combine();
-                                _videoPlayerController = VideoPlayerController.file(
-                                    File('/storage/emulated/0/news_${id}.mkv'))
-                                  ..initialize().then((_) {
-                                    setState(() {
-                                      _videoPlayerController.play();
-                                      _videoFile = File('/storage/emulated/0/news_${id}.mkv');
-                                      preview = true;
+                                } else {
+                                  check=1;
+                                  filePath = _videoFile.path;
+                                  _videoPlayerController =
+                                  VideoPlayerController.file(
+                                      File(filePath))
+                                    ..initialize().then((_) {
+                                      setState(() {
+                                        _videoPlayerController.play();
+                                        //_videoFile = File(filePath);
+                                        preview = true;
+                                      });
+                                    }, onError: (g) {
+                                      if (check == 1) {
+                                        Fluttertoast.showToast(
+                                          msg: 'Wait video uploading',
+                                          backgroundColor: Colors.redAccent,
+                                          toastLength: Toast.LENGTH_SHORT,
+                                          gravity: ToastGravity.CENTER,
+//        timeInSecForIos: 1,
+                                        );
+                                      } else {
+                                        Fluttertoast.showToast(
+                                          msg: 'Add required parameters',
+                                          backgroundColor: Colors.redAccent,
+                                          toastLength: Toast.LENGTH_SHORT,
+                                          gravity: ToastGravity.CENTER,
+//        timeInSecForIos: 1,
+                                        );
+                                      }
                                     });
-                                  }, onError: (g) {
-                                    if (check == 1) {
-                                      Fluttertoast.showToast(
-                                        msg: 'Wait video uploading',
-                                        backgroundColor: Colors.redAccent,
-                                        toastLength: Toast.LENGTH_SHORT,
-                                        gravity: ToastGravity.CENTER,
-//        timeInSecForIos: 1,
-                                      );
-                                    } else {
-                                      Fluttertoast.showToast(
-                                        msg: 'Add required parameters',
-                                        backgroundColor: Colors.redAccent,
-                                        toastLength: Toast.LENGTH_SHORT,
-                                        gravity: ToastGravity.CENTER,
-//        timeInSecForIos: 1,
-                                      );
-                                    }
-                                  });
-                              } else {
-                                check=1;
-                                filePath = _videoFile.path;
-                                _videoPlayerController =
-                                VideoPlayerController.file(
-                                    File(filePath))
-                                  ..initialize().then((_) {
-                                    setState(() {
-                                      _videoPlayerController.play();
-                                      //_videoFile = File(filePath);
-                                      preview = true;
-                                    });
-                                  }, onError: (g) {
-                                    if (check == 1) {
-                                      Fluttertoast.showToast(
-                                        msg: 'Wait video uploading',
-                                        backgroundColor: Colors.redAccent,
-                                        toastLength: Toast.LENGTH_SHORT,
-                                        gravity: ToastGravity.CENTER,
-//        timeInSecForIos: 1,
-                                      );
-                                    } else {
-                                      Fluttertoast.showToast(
-                                        msg: 'Add required parameters',
-                                        backgroundColor: Colors.redAccent,
-                                        toastLength: Toast.LENGTH_SHORT,
-                                        gravity: ToastGravity.CENTER,
-//        timeInSecForIos: 1,
-                                      );
-                                    }
-                                  });
+                                }
                               }
-                            }
-                            );
+                              );
 
-                          },
-                          child: Text("Preview",style: new TextStyle(fontSize: 16,color: Colors.white),),
-                        ),
-                      ),
-                    ):Container(),
-                    SizedBox(
-                      height: 5,
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        print('tap');
-                        //_recordVideo();
-                        // Navigator.push(context, new MaterialPageRoute(builder: (context)=> CustomCamraScreen()));
-                        showBottomDialogAddVideo("Video");
-                      },
-                      child: ListTile(
-                        trailing: Icon(
-                          Icons.add_circle_outline,
-                          color: Colors.blue,
-                        ),
-                        title: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Add Video'),
-                            //Text(fileNameVideo!=null?fileNameVideo:"",style: new TextStyle(fontSize: 12,color: Colors.black45),)
-                            _videoFile!=null?Icon(Icons.check_circle,size: 18,color: Colors.green.shade500,):Container()
-                          ],
-                        ),
-                        leading: Icon(
-                          Icons.video_call,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-
-                    Divider(
-                      color: Colors.black26,
-                    ),
-
-                    GestureDetector(
-                      onTap: (){
-                        showBottomDialogAddVideo("Image");
-                      },
-                      child: ListTile(
-                        leading: Icon(
-                          Icons.image,
-                          color: Colors.black,
-                        ),
-                        title: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('Add Image'),
-                            fileName!=null?Icon(Icons.check_circle,size: 18,color: Colors.green.shade500,):Container()
-
-                          ],
-                        ),
-                        trailing: Icon(
-                          Icons.add_circle_outline,
-                          color: Colors.blue,
-                        ),
-                      ),
-                    ),
-                    Divider(
-                      color: Colors.black26,
-                    ),
-                    ListTile(
-                      trailing: Visibility(
-                        visible: audioplay ? false : true,
-                        replacement: IconButton(
-                          onPressed: () {
-                            _stop();
-                            setState(() {
-                              audioplay = !audioplay;
-                            });
-                          },
-                          icon: Icon(
-                            Icons.stop,
-                            color: Colors.red,
+                            },
+                            child: Text("Preview",style: new TextStyle(fontSize: 16,color: Colors.white),),
                           ),
                         ),
-                        child: IconButton(
-                          onPressed: () {
-                            _start();
-                            setState(() {
-                              audioplay = !audioplay;
-                              print(DateTime.now().millisecondsSinceEpoch.toString());
-                            });
-                          },
-                          icon: Icon(
-                            Icons.play_circle_outline,
-                            color: Colors.red,
-                          ),
+                      ):Container(),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          print('tap');
+                          //_recordVideo();
+                          // Navigator.push(context, new MaterialPageRoute(builder: (context)=> CustomCamraScreen()));
+                          showBottomDialogAddVideo("Video");
+                        },
+                        child: Stack(
+                          children: [
+                            ListTile(
+                              trailing: IconButton(
+                                onPressed: (){
+                                  showBottomDialogAddVideo("Video");
+                                },
+                                icon: Icon(
+                                  Icons.add_circle_outline,
+                                  color: Colors.blue,
+                                ),
+                              ),
+                              title: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text('Add Video'),
+                                  //Text(fileNameVideo!=null?fileNameVideo:"",style: new TextStyle(fontSize: 12,color: Colors.black45),)
+                                  _videoFile!=null?Icon(Icons.check_circle,size: 18,color: Colors.green.shade500,):Container()
+                                ],
+                              ),
+                              leading: Icon(
+                                Icons.video_call,
+                                color: Colors.black,
+                              ),
+                            ),
+                            Positioned(
+                              child: Align(
+                                alignment: Alignment.center,
+                                child: Visibility(
+                                  visible: visible,
+                                  child: Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                ),
+                              ),
+                            )
+                          ],
                         ),
                       ),
-                      title: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Add Voice Recording'),
-                          Row(
+
+                      Divider(
+                        color: Colors.black26,
+                      ),
+
+                      GestureDetector(
+                        onTap: (){
+                          showBottomDialogAddVideo("Image");
+                        },
+                        child: ListTile(
+                          leading: Icon(
+                            Icons.image,
+                            color: Colors.black,
+                          ),
+                          title: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              recording!=null?Icon(Icons.check_circle,size: 18,color: Colors.green.shade500,):Container(),
-                              audioLength!=null ? Text(audioLength+" seconds",style: new TextStyle(color: Colors.black45),):Container()
+                              Text('Add Image'),
+                              fileName!=null?Icon(Icons.check_circle,size: 18,color: Colors.green.shade500,):Container()
+
                             ],
-                          )
-
-                        ],
+                          ),
+                          trailing: IconButton(
+                            onPressed: (){
+                              showBottomDialogAddVideo("Image");
+                            },
+                            icon:Icon(Icons.add_circle_outline),
+                            color: Colors.blue,
+                          ),
+                        ),
                       ),
-                      leading: Icon(
-                        Icons.mic,
-                        color: Colors.black,
+                      Divider(
+                        color: Colors.black26,
                       ),
-                    ),
-                    Divider(
-                      color: Colors.black26,
-                    ),
-                    GestureDetector(
-                      onTap: (){
-                        Navigator.push(context, new MaterialPageRoute(builder: (context) => GeoLocation()));
+                      ListTile(
+                        trailing: Visibility(
+                          visible: audioplay ? false : true,
+                          replacement: IconButton(
+                            onPressed: () {
+                              _stop();
+                              setState(() {
+                                audioplay = !audioplay;
+                              });
+                            },
+                            icon: Icon(
+                              Icons.stop,
+                              color: Colors.red,
+                            ),
+                          ),
+                          child: IconButton(
+                            onPressed: () {
+                              if(visible){
+                                UtilityClass.showMsg("Please wait...");
+                              }else {
+                                _start();
+                                setState(() {
+                                  audioplay = !audioplay;
+                                  //preview=true;
+                                  print(DateTime
+                                      .now()
+                                      .millisecondsSinceEpoch
+                                      .toString());
 
-                      },
-                      child: ListTile(
-                        leading: Icon(
-                          Icons.location_on,
-                          color: Colors.black,
+                                  // if(_isRecording){
+                                  _videoPlayerController =
+                                  VideoPlayerController.file(
+                                      File(
+                                          '/storage/emulated/0/mute_${id}.mp4'))
+                                    ..initialize().then((_) {
+                                      setState(() {
+                                        _videoPlayerController.play();
+                                        // _videoFile = File('/storage/emulated/0/mute_${id}.mp4');
+                                        preview = true;
+                                      });
+                                    }, onError: (g) {
+                                      if (check == 1) {
+                                        Fluttertoast.showToast(
+                                          msg: 'Wait video uploading',
+                                          backgroundColor: Colors.redAccent,
+                                          toastLength: Toast.LENGTH_SHORT,
+                                          gravity: ToastGravity.CENTER,
+//        timeInSecForIos: 1,
+                                        );
+                                      } else {
+                                        Fluttertoast.showToast(
+                                          msg: 'Add required parameters',
+                                          backgroundColor: Colors.redAccent,
+                                          toastLength: Toast.LENGTH_SHORT,
+                                          gravity: ToastGravity.CENTER,
+//        timeInSecForIos: 1,
+                                        );
+                                      }
+                                    });
+                                  // }
+                                });
+                              }
+
+
+                            },
+                            icon: Icon(
+                              Icons.play_circle_outline,
+                              color: Colors.red,
+                            ),
+                          ),
                         ),
                         title: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Add Location'),
-                            //loca!=null?Icon(Icons.check_circle,size: 18,color: Colors.green.shade500,):Container()
+                            Text('Add Voice Recording'),
+                            Row(
+                              children: [
+                                recording!=null?Icon(Icons.check_circle,size: 18,color: Colors.green.shade500,):Container(),
+                                audioLength!=null ? Text(audioLength+" seconds",style: new TextStyle(color: Colors.black45),):Container()
+                              ],
+                            )
 
                           ],
                         ),
-                        trailing: Icon(
-                          Icons.add_circle_outline,
-                          color: Colors.blue,
+                        leading: Icon(
+                          Icons.mic,
+                          color: Colors.black,
                         ),
                       ),
-                    ),
-                    Visibility(
-                      visible: preview ? false : true,
-                      replacement: Container(
-                        width: MediaQuery.of(context).size.width * 0.7,
-                        //height: MediaQuery.of(context).size.height*.5,
-                        child: RaisedButton(
+                      Divider(
+                        color: Colors.black26,
+                      ),
+                      GestureDetector(
+                        onTap: (){
+                          Navigator.push(context, new MaterialPageRoute(builder: (context) => GeoLocation()));
+
+                        },
+                        child: ListTile(
+                          leading: Icon(
+                            Icons.location_on,
+                            color: Colors.black,
+                          ),
+                          title: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('Add Location'),
+                              //loca!=null?Icon(Icons.check_circle,size: 18,color: Colors.green.shade500,):Container()
+
+                            ],
+                          ),
+                          trailing: IconButton(
+                            onPressed: (){
+                              Navigator.push(context, new MaterialPageRoute(builder: (context) => GeoLocation()));
+                            },
+                           icon:Icon(Icons.add_circle_outline),
+                            color: Colors.blue,
+                          ),
+                        ),
+                      ),
+                      Visibility(
+                        visible: preview ? false : true,
+                        replacement: Container(
+                          width: MediaQuery.of(context).size.width * 0.7,
+                          //height: MediaQuery.of(context).size.height*.5,
+                          child: RaisedButton(
+                              color: Colors.blue,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(18.0),
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  //id = 1;
+                                  //check = 0;
+                                  preview = false;
+                                  _videoPlayerController.pause();
+                                  //_videoPlayerController.dispose();
+                                  // for (int i = 1; i <= id; i++) {
+                                  //   print(i);
+                                  //   File('/storage/emulated/0/we_watch${i}.m4a').delete();
+                                  //   File('/storage/emulated/0/mute_${i}.mp4').delete();
+                                  // }
+                                  // File('/storage/emulated/0/news_${id}.mkv').delete();
+                                  //Navigator.of(context).pop();
+                                });
+                              },
+                              child: Text(
+                                'Close Preview',
+                                style: TextStyle(color: Colors.black,fontSize: 20),
+                              )),
+                        ),
+                        child: Container(
+                          width: MediaQuery.of(context).size.width * 0.7,
+                          child: RaisedButton(
                             color: Colors.blue,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(18.0),
                             ),
                             onPressed: () {
-                              setState(() {
-                                //id = 1;
-                                //check = 0;
-                                preview = false;
-                                _videoPlayerController.pause();
-                                // for (int i = 1; i <= id; i++) {
-                                //   print(i);
-                                //   File('/storage/emulated/0/we_watch${i}.m4a').delete();
-                                //   File('/storage/emulated/0/mute_${i}.mp4').delete();
-                                // }
-                                // File('/storage/emulated/0/news_${id}.mkv').delete();
-                                //Navigator.of(context).pop();
-                              });
+                                //postData();  Api call
                             },
                             child: Text(
-                              'Close Preview',
-                              style: TextStyle(color: Colors.black,fontSize: 20),
-                            )),
-                      ),
-                      child: Container(
-                        width: MediaQuery.of(context).size.width * 0.7,
-                        child: RaisedButton(
-                          color: Colors.blue,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(18.0),
-                          ),
-                          onPressed: () {
-                              //postData();  Api call
-                          },
-                          child: Text(
-                            'Post',
-                            style: TextStyle(color: Colors.white),
+                              'Post',
+                              style: TextStyle(color: Colors.white),
+                            ),
                           ),
                         ),
-                      ),
-                    )
-                  ],
-                ),
-                // Positioned(child: Align(
-                //   alignment: Alignment.topRight,
-                //   child: Container(
-                //     margin: EdgeInsets.only(top: 20,right: 10),
-                //     color: Colors.black45,
-                //     height: 150,
-                //     width: 90,
-                //     child: _videoFile!=null? getThumbNail():Container(),
-                //   ),
-                //
-                // ))
+                      )
+                    ],
+                  ),
+                  // Positioned(child: Align(
+                  //   alignment: Alignment.topRight,
+                  //   child: Container(
+                  //     margin: EdgeInsets.only(top: 20,right: 10),
+                  //     color: Colors.black45,
+                  //     height: 150,
+                  //     width: 90,
+                  //     child: _videoFile!=null? getThumbNail():Container(),
+                  //   ),
+                  //
+                  // ))
 
-              ],
+                ],
+              ),
             ),
 
             // RecordVideoButton(_recordVideo, _buttonText),
@@ -768,9 +840,12 @@ class _CreatePostState extends State<CreatePost> {
   void _videoMerger() async {
     try {
       if (_videoFile != null) {
+        setState(() {
+          visible=true;
+        });
         final fDelete = '/storage/emulated/0/news_${id}.mkv';
         if(await File(fDelete).exists() ){
-          await File(fDelete).delete();
+            File(fDelete).delete();
         }
         var _video = File('/storage/emulated/0/mute_${id}.mp4');
         print("videopath"+_video.path);
@@ -788,13 +863,19 @@ class _CreatePostState extends State<CreatePost> {
         _flutterFFmpeg.execute(commandToExecute).then((r) {
           setState(() {
             rc = r;
+            setState(() {
+              visible=false;
+            });
           });
         });
       }else{
-        UtilityClass.showMsg("Please add video first");
+        UtilityClass.showMsg("Please add video file first");
       }
     }catch(ex){
       print("sk exception"+ex);
+      setState(() {
+        visible=false;
+      });
     }
   }
 
@@ -813,10 +894,6 @@ class _CreatePostState extends State<CreatePost> {
         File('/storage/emulated/0/we_watch${id}.m4a').delete();
 
       }
-      setState(() {
-        preview=true;
-        clickOnRecordAudio="recording";
-      });
 
       await AudioRecorder.start(
           path: '/storage/emulated/0/we_watch${id}',
@@ -831,7 +908,6 @@ class _CreatePostState extends State<CreatePost> {
     });
   }
 
-  String clickOnRecordAudio="";
   _stop() async {
 
     recording = await AudioRecorder.stop();
@@ -842,10 +918,13 @@ class _CreatePostState extends State<CreatePost> {
       _recording = recording;
       _isRecording = isRecording;
       check = 1;
-      audioLength=(info.duration.round()/1000).toString();
-      if(_videoFile!=null){
-        createVideoMuteFile();
-      }
+      audioLength=((info.duration.round()/1000)%60).toString();
+      //if(_videoPlayerController.play().)
+    //  _videoPlayerController.pause();
+      preview=false;
+      // if(_videoFile!=null){
+      //   createVideoMuteFile();
+      // }
     });
     print(recording.path);
   }
@@ -858,7 +937,7 @@ class _CreatePostState extends State<CreatePost> {
   String audioLength;
   Future<String> _recordVideo() async {
     final op = '/storage/emulated/0/mute_${id}.mp4';
-    File f=new File(op);
+    File f = File(op);
     bool c= await f.exists();
     if(c){
       f.delete();
@@ -874,6 +953,7 @@ class _CreatePostState extends State<CreatePost> {
       });
       GallerySaver.saveVideo(recordedVideo.path).then((_) {
         setState(() async{
+          visible=true;
           _buttonText = 'Video Saved!\n\nClick to Record New Video';
           var  info= await videoInfo.getVideoInfo(recordedVideo.path);
           print("length=+"+info.duration.toString());
@@ -889,7 +969,12 @@ class _CreatePostState extends State<CreatePost> {
             // '-y -i ${_storedVideoOne.path} -i ${_storedVideoTwo.path} -filter_complex \'[0:0][1:0]concat=n=2:v=1:a=0[out]\' -map \'[out]\' $outputPath';
             _flutterFFmpeg
                 .execute(commandToExecute)
-                .then((rc) => print("FFmpeg process exited with rc $rc"));
+                .then((rc) {
+                  setState(() {
+                    visible=false;
+                  });
+              print("FFmpeg process exited with rc $rc");
+            });
             print('video 1 done');
           } else {
             _videoFile = recordedVideo;
@@ -904,6 +989,7 @@ class _CreatePostState extends State<CreatePost> {
             // '-y -i ${_storedVideoOne.path} -i ${_storedVideoTwo.path} -filter_complex \'[0:0][1:0]concat=n=2:v=1:a=0[out]\' -map \'[out]\' $outputPath';
             _flutterFFmpeg.execute(commandToExecute).then((rc) {
               if (rc == 0) {
+                visible=false;
                 print(rc);
               }
             });
@@ -920,7 +1006,7 @@ class _CreatePostState extends State<CreatePost> {
       if(trimFile!=null){
         setState(() {
           _videoFile=new File(trimFile);
-          if(recording!=null)
+          //if(recording!=null)
             createVideoMuteFile();
 
         });
@@ -975,6 +1061,7 @@ class _CreatePostState extends State<CreatePost> {
     }
     setState(() {
       _buttonText = 'Video Saved!\n\nClick to Record New Video';
+      visible=true;
       if (_videoFile == null) {
         String commandToExecute =
         // '-y -i ${_storedVideoOne.path} -i ${recording.path} -c:v copy -c:a aac ${op}';
@@ -983,7 +1070,12 @@ class _CreatePostState extends State<CreatePost> {
         // '-y -i ${_storedVideoOne.path} -i ${_storedVideoTwo.path} -filter_complex \'[0:0][1:0]concat=n=2:v=1:a=0[out]\' -map \'[out]\' $outputPath';
         _flutterFFmpeg
             .execute(commandToExecute)
-            .then((rc) => print("FFmpeg process exited with rc $rc"));
+            .then((rc) {
+              setState(() {
+                visible=false;
+              });
+          print("FFmpeg process exited with rc $rc");
+        });
         print('video 1 done');
       } else {
         String commandToExecute =
@@ -994,6 +1086,11 @@ class _CreatePostState extends State<CreatePost> {
         _flutterFFmpeg.execute(commandToExecute).then((rc) {
           if (rc == 0) {
             print(rc);
+            setState(() {
+              visible=false;
+
+            });
+
           }
         });
       }

@@ -250,7 +250,7 @@ class _EditProfileState extends State<EditProfile> {
       emp_type = sharedPreferences.getString('emp_type');
       response_gender = sharedPreferences.getString('gender');
       mobile_number = sharedPreferences.getString('mobile_number');
-      date_of_birth = sharedPreferences.getString('date_of_birth');
+      _dobController.text = sharedPreferences.getString('date_of_birth');
       dob = sharedPreferences.getString('date_of_birth');
       gender = sharedPreferences.getString('gender');
       status = sharedPreferences.getString('status');
@@ -1675,7 +1675,7 @@ class _EditProfileState extends State<EditProfile> {
                                             }
                                           } else {
                                             Fluttertoast.showToast(
-                                                msg: "Please Enter Address",
+                                                msg: "Please Enter Zip code",
                                                 toastLength: Toast.LENGTH_SHORT,
                                                 gravity: ToastGravity.CENTER,
                                                 timeInSecForIosWeb: 10,

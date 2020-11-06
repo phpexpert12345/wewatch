@@ -99,13 +99,13 @@ class SplashScreenState1 extends  State<SplashScreen1>  {
           }
           changeColor();
       } else {
-        setState(() {
-          count=1;
-          blue=false;
-          yello=false;
-          skyBlue=false;
-        });
-        changeColor();
+        // setState(() {
+        //   count=1;
+        //   blue=false;
+        //   yello=false;
+        //   skyBlue=false;
+        // });
+        // changeColor();
       }
 
     });
