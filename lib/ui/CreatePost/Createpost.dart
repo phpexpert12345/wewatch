@@ -562,8 +562,13 @@ class _CreatePostState extends State<CreatePost> {
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(18.0),
                             ),
-                            onPressed: () {
-                                //postData();  Api call
+                            onPressed: () async{
+                              if(await File('/storage/emulated/0/news_${id}.mkv').exists()){
+                                await new File('/storage/emulated/0/news_${id}.mkv').copy("/storage/emulated/0/${DateTime.now().millisecondsSinceEpoch}.mkv");
+
+                              }
+
+                              //postData();  Api call
                             },
                             child: Text(
                               'Post',

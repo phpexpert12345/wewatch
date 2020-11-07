@@ -4465,7 +4465,7 @@ class _CommentsCellState extends State<CommentsCell> {
     // Showing CircularProgressIndicator.'
     String access_token = prefs.getString('access_token');
 
-    setState(() => {});
+    //setState(() => {});
     Map<String, String> headers = {'Authorization': 'Bearer $access_token'};
 
     // Getting value from Controller
@@ -4498,13 +4498,14 @@ class _CommentsCellState extends State<CommentsCell> {
 
     // Getting Server response into variable.
 
-    var body = await json.decode(response.body);
-    var message = jsonDecode(response.body);
 
     try {
       if (response.statusCode == 200) {
         // Hiding the CircularProgressIndicator.
 
+
+        var body = json.decode(response.body);
+        var message = jsonDecode(response.body);
         setState(() {
           comment_new = _editcommentController.text.toString();
         });
@@ -5049,15 +5050,12 @@ class _CommentsCellState extends State<CommentsCell> {
                                                                             .send),
                                                                     onPressed:
                                                                         () {
-                                                                      setState(
-                                                                          () {
-                                                                        updatecomment(widget
-                                                                            .cellModel
-                                                                            .id);
-                                                                        Navigator.of(context,
-                                                                                rootNavigator: true)
-                                                                            .pop();
-                                                                      });
+                                                                          updatecomment(widget
+                                                                              .cellModel
+                                                                              .id);
+                                                                          Navigator.of(context,
+                                                                              rootNavigator: true)
+                                                                              .pop();
                                                                     },
                                                                   )),
                                                                 ),

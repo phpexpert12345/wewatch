@@ -20,6 +20,7 @@ class _VideoHistoryState extends State<VideoHistory> {
   Size deviceSize;
   var scrollController =ScrollController();
   List<Quotes> videoList = new List<Quotes>();
+  bool noDataAvail=false;
 
   bool dataLoaded;
   @override
@@ -30,7 +31,6 @@ class _VideoHistoryState extends State<VideoHistory> {
     super.initState();
   }
 
-  bool noDataAvail=false;
   @override
   Widget build(BuildContext context) {
     deviceSize=MediaQuery.of(context).size;
