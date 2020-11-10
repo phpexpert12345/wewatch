@@ -11,9 +11,11 @@ import 'package:flutter_widgets/flutter_widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:share/share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
+import 'package:we_watch_app/API/WatchAPI.dart';
 import 'package:we_watch_app/NavigationPages/video_list.dart';
 import 'package:we_watch_app/conts/config.dart';
 import 'package:we_watch_app/job_description.dart';
@@ -24,6 +26,7 @@ import 'package:we_watch_app/ui/chewie_list_item.dart';
 import 'package:we_watch_app/ui/show_up.dart';
 import 'package:http/http.dart' as http;
 import 'package:we_watch_app/util/AppNotifierClass.dart';
+import 'package:we_watch_app/util/UtilityClass.dart';
 
 import '../video_home_page.dart';
 import '../video_play_detail.dart';
@@ -77,6 +80,7 @@ class _DashboardState extends State<Dashboard> {
   List names = new List();
   ScrollController scrollController = new ScrollController();
 
+  String addVideoPermission;
   Future getProfile() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     // Showing CircularProgressIndicator.
@@ -132,6 +136,7 @@ class _DashboardState extends State<Dashboard> {
             " " +
             body['data']['last_name'].toString();
         image = body['data']['image'].toString();
+        addVideoPermission=body['data']["permission"];
         user_type=body['data']['user_type'].toString();
 
         print("Ankit 22" + first_name);
@@ -475,14 +480,20 @@ class _DashboardState extends State<Dashboard> {
             ? FloatingActionButton(
                 child: Icon(Icons.switch_video),
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    PageRouteBuilder(
-                      pageBuilder: (_, __, ___) => CreatePost(userName: first_name,userImage: image,),
-                      transitionDuration: Duration(seconds: 0),
-                    ),
-                  );
-                  setState(() {});
+                  if(!["",null].contains(addVideoPermission) && addVideoPermission.trim().compareTo("yes")==0){
+                    Navigator.push(
+                      context,
+                      PageRouteBuilder(
+                        pageBuilder: (_, __, ___) => CreatePost(userName: first_name,userImage: image,),
+                        transitionDuration: Duration(seconds: 0),
+                      ),
+                    );
+                    //setState(() {});
+                  }else {
+                    //UtilityClass.showMsg("soorry");
+                    showPermissionDialog();
+                  }
+
                 })
             : null,
         body:
@@ -509,6 +520,41 @@ class _DashboardState extends State<Dashboard> {
           child: ListView(
             controller: scrollController,
             children: <Widget>[
+              ShowUp(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Center(
+                        child: Container(
+                            width: 40.0,
+                            height: 40.0,
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                image: DecorationImage(
+                                  fit: BoxFit.fill,
+                                  image:  AssetImage(
+                                    "assets/images/logo_splash.png",
+                                  ),
+                                ))),
+                      ),
+                      Text(
+                        "We Watch App",style: new TextStyle(fontSize: 20,color: Colors.black54,),
+                      )
+                    ],
+                  ),
+                ),
+                delay: 100,
+              ),
+              Padding(
+                padding: EdgeInsets.all(10),
+                child: Container(
+                  height: 1,
+                  color: Colors.grey.shade200,
+                ),
+              ),
               ShowUp(
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
@@ -761,19 +807,19 @@ class _DashboardState extends State<Dashboard> {
                                   )
                             : Text(''),
                       ),
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                        child: Center(
-                          child: Padding(
-                            padding: EdgeInsets.all(0),
-                            child: Image.asset(
-                              "assets/images/live_two.png",
-                              width: 40,
-                              height: 40,
-                            ),
-                          ),
-                        ),
-                      ),
+                      // Padding(
+                      //   padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                      //   child: Center(
+                      //     child: Padding(
+                      //       padding: EdgeInsets.all(0),
+                      //       child: Image.asset(
+                      //         "assets/images/live_two.png",
+                      //         width: 40,
+                      //         height: 40,
+                      //       ),
+                      //     ),
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),
@@ -1455,6 +1501,124 @@ class _DashboardState extends State<Dashboard> {
           ),
           color: Color(0xfff9f9f9),
         ));
+  }
+
+  void showPermissionDialog() {
+    Alert(context: context,
+      title: "Video Functionality",
+      desc: "You don't have permission to use this option, Please send a request for use it.",
+      buttons: [
+        DialogButton(
+          child: Text(
+            "Send Request",
+            style: TextStyle(color: Colors.white, fontSize: 14),
+          ),
+          onPressed: () {
+            sendRequestForVideoModule();
+            Navigator.pop(context);
+          },
+          width: 120,
+
+        ),
+        DialogButton(
+          child: Text(
+            "Not Now",
+            style: TextStyle(color: Colors.white, fontSize: 14),
+          ),
+          onPressed: () => Navigator.pop(context),
+          width: 120,
+        )
+
+      ]
+
+    ).show();
+  }
+
+
+  Future sendRequestForVideoModule() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String access_token = prefs.getString('access_token');
+    String userId = prefs.getString("user_id");
+    var response = await http.post(WatchAPI.PERMISSION_TO_ACCESS_VIDEO_MODULE,
+
+        body: <String,dynamic>{
+            "userid": userId,
+            "permission":"yes"
+        },
+        headers: {
+        'Authorization': 'Bearer $access_token',
+    });
+    try {
+      if (response.statusCode == 200) {
+        getProfile();
+        prefs.setString("permission_videomodule", "ok");
+        Fluttertoast.showToast(
+            msg: "Request has been sent successfully!!!",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+//          timeInSecForIosWeb: 1,
+            backgroundColor: Color(0xff00adef),
+            textColor: Colors.white,
+            fontSize: 16.0);
+
+      } else if (response.statusCode == 422) {
+            Fluttertoast.showToast(
+            msg: "Validation Failed",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      } else if (response.statusCode == 400) {
+        // If Email or Password did not Matched.
+        // Hiding the CircularProgressIndicator.
+
+        Fluttertoast.showToast(
+            msg: "Request Fail",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      } else if (response.statusCode == 401) {
+        // If Email or Password did not Matched.
+        // Hiding the CircularProgressIndicator.
+
+        Fluttertoast.showToast(
+            msg: "Authorization Failure",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      } else if (response.statusCode == 500) {
+        // If Email or Password did not Matched.
+        // Hiding the CircularProgressIndicator.
+
+        Fluttertoast.showToast(
+            msg: "Server Error",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      } else {
+        Fluttertoast.showToast(
+            msg: "Something went wrong",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      }
+    } catch (e) {
+      throw Exception(e);
+    }
   }
 }
 

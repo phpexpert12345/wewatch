@@ -585,6 +585,7 @@ class _VideoHomePageState extends State<VideoHomePage> {
           );
         },
       ),
+      Container(),
       Builder(
         builder: (context) {
           return Stack(
@@ -615,7 +616,7 @@ class _VideoHomePageState extends State<VideoHomePage> {
                               children: <Widget>[
                                 Padding(
                                   padding:
-                                      const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                                  const EdgeInsets.fromLTRB(10, 5, 10, 0),
                                   child: new Container(
                                     width: 50.0,
                                     height: 50.0,
@@ -641,9 +642,9 @@ class _VideoHomePageState extends State<VideoHomePage> {
                                     padding: const EdgeInsets.all(10),
                                     child: Column(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.start,
+                                      MainAxisAlignment.start,
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      CrossAxisAlignment.start,
                                       children: <Widget>[
                                         Padding(
                                           padding: const EdgeInsets.fromLTRB(
@@ -685,8 +686,8 @@ class _VideoHomePageState extends State<VideoHomePage> {
                                           children: <Widget>[
                                             Padding(
                                               padding:
-                                                  const EdgeInsets.fromLTRB(
-                                                      0.0, 5.0, 0.0, 0.0),
+                                              const EdgeInsets.fromLTRB(
+                                                  0.0, 5.0, 0.0, 0.0),
                                               child: Align(
                                                 child: new Text(
                                                   'Good Morning',
@@ -698,15 +699,15 @@ class _VideoHomePageState extends State<VideoHomePage> {
                                                   ),
                                                   textAlign: TextAlign.left,
                                                   textDirection:
-                                                      TextDirection.ltr,
+                                                  TextDirection.ltr,
                                                 ),
                                                 alignment: Alignment.centerLeft,
                                               ),
                                             ),
                                             Padding(
                                               padding:
-                                                  const EdgeInsets.fromLTRB(
-                                                      10.0, 5.0, 0.0, 0.0),
+                                              const EdgeInsets.fromLTRB(
+                                                  10.0, 5.0, 0.0, 0.0),
                                               child: Align(
                                                 child: new Text(
                                                   'Dig',
@@ -718,7 +719,7 @@ class _VideoHomePageState extends State<VideoHomePage> {
                                                   ),
                                                   textAlign: TextAlign.left,
                                                   textDirection:
-                                                      TextDirection.ltr,
+                                                  TextDirection.ltr,
                                                 ),
                                                 alignment: Alignment.centerLeft,
                                               ),
@@ -839,7 +840,7 @@ class _VideoHomePageState extends State<VideoHomePage> {
                                 scrollDirection: Axis.horizontal,
                                 itemCount: 15,
                                 itemBuilder: (BuildContext context,
-                                        int index) =>
+                                    int index) =>
                                     Container(
                                       padding: EdgeInsets.all(10),
                                       decoration: BoxDecoration(
@@ -855,7 +856,7 @@ class _VideoHomePageState extends State<VideoHomePage> {
                                       child: Container(
                                         decoration: BoxDecoration(
                                           borderRadius:
-                                              BorderRadius.circular(10.0),
+                                          BorderRadius.circular(10.0),
 //                        image: DecorationImage(
 //                          image: AssetImage("assets/images/card_background.png"),
 //                          fit: BoxFit.fill,
@@ -870,31 +871,31 @@ class _VideoHomePageState extends State<VideoHomePage> {
                                         padding: EdgeInsets.all(0),
                                         child: Column(
                                           mainAxisAlignment:
-                                              MainAxisAlignment.center,
+                                          MainAxisAlignment.center,
                                           crossAxisAlignment:
-                                              CrossAxisAlignment.center,
+                                          CrossAxisAlignment.center,
                                           children: <Widget>[
                                             Padding(
                                               padding: EdgeInsets.fromLTRB(
                                                   10, 10, 10, 10),
                                               child: Row(
                                                 mainAxisAlignment:
-                                                    MainAxisAlignment.center,
+                                                MainAxisAlignment.center,
                                                 crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
+                                                CrossAxisAlignment.center,
                                                 children: <Widget>[
                                                   Padding(
                                                     padding:
-                                                        EdgeInsets.fromLTRB(
-                                                            0, 0, 20, 0),
+                                                    EdgeInsets.fromLTRB(
+                                                        0, 0, 20, 0),
                                                     child: Center(
                                                       child: Padding(
                                                         padding:
-                                                            EdgeInsets.all(0),
+                                                        EdgeInsets.all(0),
                                                         child: SvgPicture.asset(
                                                           "assets/images/tie.svg",
                                                           color:
-                                                              Color(0xff00adef),
+                                                          Color(0xff00adef),
 //                                              semanticsLabel: 'A red up arrow'
                                                           height: 35,
                                                           width: 35,
@@ -905,11 +906,11 @@ class _VideoHomePageState extends State<VideoHomePage> {
                                                   Expanded(
                                                     child: Column(
                                                       mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
+                                                      MainAxisAlignment
+                                                          .start,
                                                       crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
+                                                      CrossAxisAlignment
+                                                          .start,
                                                       children: <Widget>[
                                                         Text(
                                                           'Full Time',
@@ -918,8 +919,8 @@ class _VideoHomePageState extends State<VideoHomePage> {
                                                                   0xff00adef),
                                                               fontSize: 18,
                                                               fontWeight:
-                                                                  FontWeight
-                                                                      .bold),
+                                                              FontWeight
+                                                                  .bold),
                                                         ),
                                                       ],
                                                     ),
@@ -993,7 +994,7 @@ class _VideoHomePageState extends State<VideoHomePage> {
                                 scrollDirection: Axis.horizontal,
                                 itemCount: 15,
                                 itemBuilder: (BuildContext context,
-                                        int index) =>
+                                    int index) =>
                                     Container(
                                       padding: EdgeInsets.all(10),
                                       decoration: BoxDecoration(
@@ -1009,7 +1010,7 @@ class _VideoHomePageState extends State<VideoHomePage> {
                                       child: Container(
                                         decoration: BoxDecoration(
                                           borderRadius:
-                                              BorderRadius.circular(10.0),
+                                          BorderRadius.circular(10.0),
 //                        image: DecorationImage(
 //                          image: AssetImage("assets/images/card_background.png"),
 //                          fit: BoxFit.fill,
@@ -1022,14 +1023,14 @@ class _VideoHomePageState extends State<VideoHomePage> {
                                           children: <Widget>[
                                             Padding(
                                               padding:
-                                                  const EdgeInsets.fromLTRB(
-                                                      10, 5, 10, 0),
+                                              const EdgeInsets.fromLTRB(
+                                                  10, 5, 10, 0),
                                               child: new Container(
                                                 width: 75.0,
                                                 height: 75.0,
                                                 decoration: new BoxDecoration(
                                                   color:
-                                                      const Color(0xff7c94b6),
+                                                  const Color(0xff7c94b6),
                                                   image: new DecorationImage(
                                                     image: new AssetImage(
                                                       "assets/images/company_logo.png",
@@ -1037,9 +1038,9 @@ class _VideoHomePageState extends State<VideoHomePage> {
                                                     fit: BoxFit.fitHeight,
                                                   ),
                                                   borderRadius:
-                                                      new BorderRadius.all(
-                                                          new Radius.circular(
-                                                              50.0)),
+                                                  new BorderRadius.all(
+                                                      new Radius.circular(
+                                                          50.0)),
                                                   border: new Border.all(
                                                     color: Color(0xff00adef),
                                                     width: 2.0,
@@ -1055,11 +1056,11 @@ class _VideoHomePageState extends State<VideoHomePage> {
                                                   Expanded(
                                                     child: Column(
                                                       mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
+                                                      MainAxisAlignment
+                                                          .center,
                                                       crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .center,
+                                                      CrossAxisAlignment
+                                                          .center,
                                                       children: <Widget>[
                                                         Text(
                                                           'McDonalds',
@@ -1068,8 +1069,8 @@ class _VideoHomePageState extends State<VideoHomePage> {
                                                                   0xff444b69),
                                                               fontSize: 15,
                                                               fontWeight:
-                                                                  FontWeight
-                                                                      .bold),
+                                                              FontWeight
+                                                                  .bold),
                                                         ),
                                                         Text(
                                                           'Noida',
@@ -1093,41 +1094,41 @@ class _VideoHomePageState extends State<VideoHomePage> {
                                                   decoration: new BoxDecoration(
                                                       color: Color(0xff00adef),
                                                       borderRadius:
-                                                          new BorderRadius
-                                                              .circular(40),
+                                                      new BorderRadius
+                                                          .circular(40),
                                                       border: Border.all(
                                                           color: Color(
                                                               0xff00adef))),
                                                   height:
-                                                      40.0, // height of the button
+                                                  40.0, // height of the button
 //                                                width: 120.0, // width of the button
                                                   child: Center(
                                                       child: Row(
-                                                    mainAxisAlignment:
+                                                        mainAxisAlignment:
                                                         MainAxisAlignment
                                                             .center,
-                                                    children: <Widget>[
-                                                      Text(
-                                                        '3 Job vacancy',
-                                                        style: TextStyle(
-                                                            color: Colors.white,
-                                                            fontWeight:
+                                                        children: <Widget>[
+                                                          Text(
+                                                            '3 Job vacancy',
+                                                            style: TextStyle(
+                                                                color: Colors.white,
+                                                                fontWeight:
                                                                 FontWeight
                                                                     .w600),
-                                                      ),
-                                                      Icon(
-                                                        Icons
-                                                            .keyboard_arrow_right,
-                                                        color: Colors.white,
-                                                      ),
-                                                    ],
-                                                  )),
+                                                          ),
+                                                          Icon(
+                                                            Icons
+                                                                .keyboard_arrow_right,
+                                                            color: Colors.white,
+                                                          ),
+                                                        ],
+                                                      )),
                                                 ),
                                                 elevation: 0,
                                                 shape: RoundedRectangleBorder(
                                                   borderRadius:
-                                                      BorderRadius.circular(
-                                                          40.0),
+                                                  BorderRadius.circular(
+                                                      40.0),
                                                 ),
                                               ),
                                             ),
@@ -1204,12 +1205,12 @@ class _VideoHomePageState extends State<VideoHomePage> {
                                 children: <Widget>[
                                   Padding(
                                     padding:
-                                        const EdgeInsets.fromLTRB(0, 5, 0, 0),
+                                    const EdgeInsets.fromLTRB(0, 5, 0, 0),
                                     child: Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.start,
+                                      MainAxisAlignment.start,
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      CrossAxisAlignment.start,
                                       children: <Widget>[
                                         Padding(
                                           padding: const EdgeInsets.fromLTRB(
@@ -1226,7 +1227,7 @@ class _VideoHomePageState extends State<VideoHomePage> {
                                                 fit: BoxFit.cover,
                                               ),
                                               borderRadius: new BorderRadius
-                                                      .all(
+                                                  .all(
                                                   new Radius.circular(50.0)),
                                             ),
                                           ),
@@ -1236,54 +1237,54 @@ class _VideoHomePageState extends State<VideoHomePage> {
                                             padding: const EdgeInsets.all(4.0),
                                             child: Column(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment.start,
+                                              MainAxisAlignment.start,
                                               crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                                              CrossAxisAlignment.start,
                                               children: <Widget>[
                                                 Padding(
                                                   padding:
-                                                      const EdgeInsets.fromLTRB(
-                                                          0.0, 0.0, 0.0, 0.0),
+                                                  const EdgeInsets.fromLTRB(
+                                                      0.0, 0.0, 0.0, 0.0),
                                                   child: Align(
                                                     child: new Text(
                                                       'Agriculture Group',
                                                       style: TextStyle(
                                                         color:
-                                                            Color(0xff444b69),
+                                                        Color(0xff444b69),
                                                         fontSize: 16,
                                                         letterSpacing: 0,
                                                         fontWeight:
-                                                            FontWeight.w400,
+                                                        FontWeight.w400,
                                                       ),
                                                       textAlign: TextAlign.left,
                                                       textDirection:
-                                                          TextDirection.ltr,
+                                                      TextDirection.ltr,
                                                     ),
                                                     alignment:
-                                                        Alignment.centerLeft,
+                                                    Alignment.centerLeft,
                                                   ),
                                                 ),
                                                 Padding(
                                                   padding:
-                                                      const EdgeInsets.fromLTRB(
-                                                          0.0, 0.0, 0.0, 0.0),
+                                                  const EdgeInsets.fromLTRB(
+                                                      0.0, 0.0, 0.0, 0.0),
                                                   child: Align(
                                                     child: new Text(
                                                       'Shell Lubricant',
                                                       style: TextStyle(
                                                         color:
-                                                            Color(0xff444b69),
+                                                        Color(0xff444b69),
                                                         fontSize: 13,
                                                         letterSpacing: 0,
                                                         fontWeight:
-                                                            FontWeight.w400,
+                                                        FontWeight.w400,
                                                       ),
                                                       textAlign: TextAlign.left,
                                                       textDirection:
-                                                          TextDirection.ltr,
+                                                      TextDirection.ltr,
                                                     ),
                                                     alignment:
-                                                        Alignment.centerLeft,
+                                                    Alignment.centerLeft,
                                                   ),
                                                 ),
                                                 Card(
@@ -1291,38 +1292,38 @@ class _VideoHomePageState extends State<VideoHomePage> {
                                                     decoration: new BoxDecoration(
                                                         color: Colors.white,
                                                         borderRadius:
-                                                            new BorderRadius
-                                                                .circular(40),
+                                                        new BorderRadius
+                                                            .circular(40),
                                                         border: Border.all(
                                                             color: Color(
                                                                 0xff00adef))),
                                                     height:
-                                                        30.0, // height of the button
+                                                    30.0, // height of the button
                                                     width:
-                                                        80.0, // width of the button
+                                                    80.0, // width of the button
                                                     child: Center(
                                                         child: Row(
-                                                      mainAxisAlignment:
+                                                          mainAxisAlignment:
                                                           MainAxisAlignment
                                                               .center,
-                                                      children: <Widget>[
-                                                        Text(
-                                                          'Full Time',
-                                                          style: TextStyle(
-                                                              color: Color(
-                                                                  0xff00adef),
-                                                              fontWeight:
+                                                          children: <Widget>[
+                                                            Text(
+                                                              'Full Time',
+                                                              style: TextStyle(
+                                                                  color: Color(
+                                                                      0xff00adef),
+                                                                  fontWeight:
                                                                   FontWeight
                                                                       .w600),
-                                                        ),
-                                                      ],
-                                                    )),
+                                                            ),
+                                                          ],
+                                                        )),
                                                   ),
                                                   elevation: 0,
                                                   shape: RoundedRectangleBorder(
                                                     borderRadius:
-                                                        BorderRadius.circular(
-                                                            40.0),
+                                                    BorderRadius.circular(
+                                                        40.0),
                                                   ),
                                                 ),
                                               ],
@@ -1346,12 +1347,12 @@ class _VideoHomePageState extends State<VideoHomePage> {
                                   ),
                                   Padding(
                                     padding:
-                                        const EdgeInsets.fromLTRB(0, 5, 0, 0),
+                                    const EdgeInsets.fromLTRB(0, 5, 0, 0),
                                     child: Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.start,
+                                      MainAxisAlignment.start,
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      CrossAxisAlignment.start,
                                       children: <Widget>[
                                         Expanded(
                                           child: Card(
@@ -1359,34 +1360,34 @@ class _VideoHomePageState extends State<VideoHomePage> {
                                               decoration: new BoxDecoration(
                                                   color: Color(0xff90dbf8),
                                                   borderRadius:
-                                                      new BorderRadius.circular(
-                                                          10),
+                                                  new BorderRadius.circular(
+                                                      10),
                                                   border: Border.all(
                                                       color:
-                                                          Color(0xff90dbf8))),
+                                                      Color(0xff90dbf8))),
                                               height:
-                                                  30.0, // height of the button
+                                              30.0, // height of the button
 //                                              width: 80.0, // width of the button
                                               child: Center(
                                                   child: Row(
-                                                mainAxisAlignment:
+                                                    mainAxisAlignment:
                                                     MainAxisAlignment.center,
-                                                children: <Widget>[
-                                                  Text(
-                                                    'Ux Design',
-                                                    style: TextStyle(
-                                                        color:
+                                                    children: <Widget>[
+                                                      Text(
+                                                        'Ux Design',
+                                                        style: TextStyle(
+                                                            color:
                                                             Color(0xff444b69),
-                                                        fontWeight:
+                                                            fontWeight:
                                                             FontWeight.w600),
-                                                  ),
-                                                ],
-                                              )),
+                                                      ),
+                                                    ],
+                                                  )),
                                             ),
                                             elevation: 0,
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
-                                                  BorderRadius.circular(40.0),
+                                              BorderRadius.circular(40.0),
                                             ),
                                           ),
                                         ),
@@ -1396,34 +1397,34 @@ class _VideoHomePageState extends State<VideoHomePage> {
                                               decoration: new BoxDecoration(
                                                   color: Color(0xff90dbf8),
                                                   borderRadius:
-                                                      new BorderRadius.circular(
-                                                          10),
+                                                  new BorderRadius.circular(
+                                                      10),
                                                   border: Border.all(
                                                       color:
-                                                          Color(0xff90dbf8))),
+                                                      Color(0xff90dbf8))),
                                               height:
-                                                  30.0, // height of the button
+                                              30.0, // height of the button
 //                                              width: 80.0, // width of the button
                                               child: Center(
                                                   child: Row(
-                                                mainAxisAlignment:
+                                                    mainAxisAlignment:
                                                     MainAxisAlignment.center,
-                                                children: <Widget>[
-                                                  Text(
-                                                    'Communication',
-                                                    style: TextStyle(
-                                                        color:
+                                                    children: <Widget>[
+                                                      Text(
+                                                        'Communication',
+                                                        style: TextStyle(
+                                                            color:
                                                             Color(0xff444b69),
-                                                        fontWeight:
+                                                            fontWeight:
                                                             FontWeight.w600),
-                                                  ),
-                                                ],
-                                              )),
+                                                      ),
+                                                    ],
+                                                  )),
                                             ),
                                             elevation: 0,
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
-                                                  BorderRadius.circular(40.0),
+                                              BorderRadius.circular(40.0),
                                             ),
                                           ),
                                         ),
@@ -1433,34 +1434,34 @@ class _VideoHomePageState extends State<VideoHomePage> {
                                               decoration: new BoxDecoration(
                                                   color: Color(0xff90dbf8),
                                                   borderRadius:
-                                                      new BorderRadius.circular(
-                                                          10),
+                                                  new BorderRadius.circular(
+                                                      10),
                                                   border: Border.all(
                                                       color:
-                                                          Color(0xff90dbf8))),
+                                                      Color(0xff90dbf8))),
                                               height:
-                                                  30.0, // height of the button
+                                              30.0, // height of the button
 //                                              width: 80.0, // width of the button
                                               child: Center(
                                                   child: Row(
-                                                mainAxisAlignment:
+                                                    mainAxisAlignment:
                                                     MainAxisAlignment.center,
-                                                children: <Widget>[
-                                                  Text(
-                                                    'Team Work',
-                                                    style: TextStyle(
-                                                        color:
+                                                    children: <Widget>[
+                                                      Text(
+                                                        'Team Work',
+                                                        style: TextStyle(
+                                                            color:
                                                             Color(0xff444b69),
-                                                        fontWeight:
+                                                            fontWeight:
                                                             FontWeight.w600),
-                                                  ),
-                                                ],
-                                              )),
+                                                      ),
+                                                    ],
+                                                  )),
                                             ),
                                             elevation: 0,
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
-                                                  BorderRadius.circular(40.0),
+                                              BorderRadius.circular(40.0),
                                             ),
                                           ),
                                         ),
@@ -1472,9 +1473,9 @@ class _VideoHomePageState extends State<VideoHomePage> {
                                     padding: const EdgeInsets.all(10),
                                     child: Column(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.start,
+                                      MainAxisAlignment.start,
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      CrossAxisAlignment.start,
                                       children: <Widget>[
                                         Padding(
                                           padding: const EdgeInsets.fromLTRB(
@@ -1499,21 +1500,21 @@ class _VideoHomePageState extends State<VideoHomePage> {
                                   ),
                                   Padding(
                                     padding:
-                                        const EdgeInsets.fromLTRB(0, 5, 0, 0),
+                                    const EdgeInsets.fromLTRB(0, 5, 0, 0),
                                     child: Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.start,
+                                      MainAxisAlignment.start,
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      CrossAxisAlignment.start,
                                       children: <Widget>[
                                         Expanded(
                                           child: Padding(
                                             padding: const EdgeInsets.all(10),
                                             child: Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment.center,
+                                              MainAxisAlignment.center,
                                               crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
+                                              CrossAxisAlignment.center,
                                               children: <Widget>[
                                                 Padding(
                                                   padding: EdgeInsets.fromLTRB(
@@ -1521,7 +1522,7 @@ class _VideoHomePageState extends State<VideoHomePage> {
                                                   child: Center(
                                                     child: Padding(
                                                       padding:
-                                                          EdgeInsets.all(0),
+                                                      EdgeInsets.all(0),
                                                       child: SvgPicture.asset(
                                                         "assets/images/location.svg",
 //                                              color: Colors.red,
@@ -1534,23 +1535,23 @@ class _VideoHomePageState extends State<VideoHomePage> {
                                                 ),
                                                 Padding(
                                                   padding:
-                                                      const EdgeInsets.fromLTRB(
-                                                          10.0, 0.0, 0.0, 0.0),
+                                                  const EdgeInsets.fromLTRB(
+                                                      10.0, 0.0, 0.0, 0.0),
                                                   child: Align(
                                                     child: new Text(
                                                       'Delhi NCR',
                                                       style: TextStyle(
                                                         color:
-                                                            Color(0xff444b69),
+                                                        Color(0xff444b69),
                                                         fontSize: 16,
                                                         letterSpacing: 0,
                                                         fontWeight:
-                                                            FontWeight.w600,
+                                                        FontWeight.w600,
                                                       ),
                                                       textAlign:
-                                                          TextAlign.center,
+                                                      TextAlign.center,
                                                       textDirection:
-                                                          TextDirection.ltr,
+                                                      TextDirection.ltr,
                                                     ),
                                                     alignment: Alignment.center,
                                                   ),
@@ -1565,33 +1566,33 @@ class _VideoHomePageState extends State<VideoHomePage> {
                                             padding: const EdgeInsets.all(10),
                                             child: Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment.center,
+                                              MainAxisAlignment.center,
                                               crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
+                                              CrossAxisAlignment.center,
                                               children: <Widget>[
                                                 Expanded(
                                                   child: Padding(
                                                     padding: const EdgeInsets
-                                                            .fromLTRB(
+                                                        .fromLTRB(
                                                         10.0, 0.0, 0.0, 0.0),
                                                     child: Align(
                                                       child: new Text(
                                                         'Delhi NCR',
                                                         style: TextStyle(
                                                           color:
-                                                              Color(0xff444b69),
+                                                          Color(0xff444b69),
                                                           fontSize: 13,
                                                           letterSpacing: 0,
 //                                                        fontWeight:
 //                                                        FontWeight.w600,
                                                         ),
                                                         textAlign:
-                                                            TextAlign.center,
+                                                        TextAlign.center,
                                                         textDirection:
-                                                            TextDirection.ltr,
+                                                        TextDirection.ltr,
                                                       ),
                                                       alignment:
-                                                          Alignment.center,
+                                                      Alignment.center,
                                                     ),
                                                   ),
                                                 ),
@@ -1649,12 +1650,12 @@ class _VideoHomePageState extends State<VideoHomePage> {
                                 children: <Widget>[
                                   Padding(
                                     padding:
-                                        const EdgeInsets.fromLTRB(0, 5, 0, 0),
+                                    const EdgeInsets.fromLTRB(0, 5, 0, 0),
                                     child: Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.start,
+                                      MainAxisAlignment.start,
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      CrossAxisAlignment.start,
                                       children: <Widget>[
                                         Padding(
                                           padding: const EdgeInsets.fromLTRB(
@@ -1671,7 +1672,7 @@ class _VideoHomePageState extends State<VideoHomePage> {
                                                 fit: BoxFit.cover,
                                               ),
                                               borderRadius: new BorderRadius
-                                                      .all(
+                                                  .all(
                                                   new Radius.circular(50.0)),
                                             ),
                                           ),
@@ -1681,54 +1682,54 @@ class _VideoHomePageState extends State<VideoHomePage> {
                                             padding: const EdgeInsets.all(4.0),
                                             child: Column(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment.start,
+                                              MainAxisAlignment.start,
                                               crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                                              CrossAxisAlignment.start,
                                               children: <Widget>[
                                                 Padding(
                                                   padding:
-                                                      const EdgeInsets.fromLTRB(
-                                                          0.0, 0.0, 0.0, 0.0),
+                                                  const EdgeInsets.fromLTRB(
+                                                      0.0, 0.0, 0.0, 0.0),
                                                   child: Align(
                                                     child: new Text(
                                                       'Agriculture Group',
                                                       style: TextStyle(
                                                         color:
-                                                            Color(0xff444b69),
+                                                        Color(0xff444b69),
                                                         fontSize: 16,
                                                         letterSpacing: 0,
                                                         fontWeight:
-                                                            FontWeight.w400,
+                                                        FontWeight.w400,
                                                       ),
                                                       textAlign: TextAlign.left,
                                                       textDirection:
-                                                          TextDirection.ltr,
+                                                      TextDirection.ltr,
                                                     ),
                                                     alignment:
-                                                        Alignment.centerLeft,
+                                                    Alignment.centerLeft,
                                                   ),
                                                 ),
                                                 Padding(
                                                   padding:
-                                                      const EdgeInsets.fromLTRB(
-                                                          0.0, 0.0, 0.0, 0.0),
+                                                  const EdgeInsets.fromLTRB(
+                                                      0.0, 0.0, 0.0, 0.0),
                                                   child: Align(
                                                     child: new Text(
                                                       'Shell Lubricant',
                                                       style: TextStyle(
                                                         color:
-                                                            Color(0xff444b69),
+                                                        Color(0xff444b69),
                                                         fontSize: 13,
                                                         letterSpacing: 0,
                                                         fontWeight:
-                                                            FontWeight.w400,
+                                                        FontWeight.w400,
                                                       ),
                                                       textAlign: TextAlign.left,
                                                       textDirection:
-                                                          TextDirection.ltr,
+                                                      TextDirection.ltr,
                                                     ),
                                                     alignment:
-                                                        Alignment.centerLeft,
+                                                    Alignment.centerLeft,
                                                   ),
                                                 ),
                                                 Card(
@@ -1736,38 +1737,38 @@ class _VideoHomePageState extends State<VideoHomePage> {
                                                     decoration: new BoxDecoration(
                                                         color: Colors.white,
                                                         borderRadius:
-                                                            new BorderRadius
-                                                                .circular(40),
+                                                        new BorderRadius
+                                                            .circular(40),
                                                         border: Border.all(
                                                             color: Color(
                                                                 0xff00adef))),
                                                     height:
-                                                        30.0, // height of the button
+                                                    30.0, // height of the button
                                                     width:
-                                                        80.0, // width of the button
+                                                    80.0, // width of the button
                                                     child: Center(
                                                         child: Row(
-                                                      mainAxisAlignment:
+                                                          mainAxisAlignment:
                                                           MainAxisAlignment
                                                               .center,
-                                                      children: <Widget>[
-                                                        Text(
-                                                          'Full Time',
-                                                          style: TextStyle(
-                                                              color: Color(
-                                                                  0xff00adef),
-                                                              fontWeight:
+                                                          children: <Widget>[
+                                                            Text(
+                                                              'Full Time',
+                                                              style: TextStyle(
+                                                                  color: Color(
+                                                                      0xff00adef),
+                                                                  fontWeight:
                                                                   FontWeight
                                                                       .w600),
-                                                        ),
-                                                      ],
-                                                    )),
+                                                            ),
+                                                          ],
+                                                        )),
                                                   ),
                                                   elevation: 0,
                                                   shape: RoundedRectangleBorder(
                                                     borderRadius:
-                                                        BorderRadius.circular(
-                                                            40.0),
+                                                    BorderRadius.circular(
+                                                        40.0),
                                                   ),
                                                 ),
                                               ],
@@ -1791,12 +1792,12 @@ class _VideoHomePageState extends State<VideoHomePage> {
                                   ),
                                   Padding(
                                     padding:
-                                        const EdgeInsets.fromLTRB(0, 5, 0, 0),
+                                    const EdgeInsets.fromLTRB(0, 5, 0, 0),
                                     child: Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.start,
+                                      MainAxisAlignment.start,
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      CrossAxisAlignment.start,
                                       children: <Widget>[
                                         Expanded(
                                           child: Card(
@@ -1804,34 +1805,34 @@ class _VideoHomePageState extends State<VideoHomePage> {
                                               decoration: new BoxDecoration(
                                                   color: Color(0xff90dbf8),
                                                   borderRadius:
-                                                      new BorderRadius.circular(
-                                                          10),
+                                                  new BorderRadius.circular(
+                                                      10),
                                                   border: Border.all(
                                                       color:
-                                                          Color(0xff90dbf8))),
+                                                      Color(0xff90dbf8))),
                                               height:
-                                                  30.0, // height of the button
+                                              30.0, // height of the button
 //                                              width: 80.0, // width of the button
                                               child: Center(
                                                   child: Row(
-                                                mainAxisAlignment:
+                                                    mainAxisAlignment:
                                                     MainAxisAlignment.center,
-                                                children: <Widget>[
-                                                  Text(
-                                                    'Ux Design',
-                                                    style: TextStyle(
-                                                        color:
+                                                    children: <Widget>[
+                                                      Text(
+                                                        'Ux Design',
+                                                        style: TextStyle(
+                                                            color:
                                                             Color(0xff444b69),
-                                                        fontWeight:
+                                                            fontWeight:
                                                             FontWeight.w600),
-                                                  ),
-                                                ],
-                                              )),
+                                                      ),
+                                                    ],
+                                                  )),
                                             ),
                                             elevation: 0,
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
-                                                  BorderRadius.circular(40.0),
+                                              BorderRadius.circular(40.0),
                                             ),
                                           ),
                                         ),
@@ -1841,34 +1842,34 @@ class _VideoHomePageState extends State<VideoHomePage> {
                                               decoration: new BoxDecoration(
                                                   color: Color(0xff90dbf8),
                                                   borderRadius:
-                                                      new BorderRadius.circular(
-                                                          10),
+                                                  new BorderRadius.circular(
+                                                      10),
                                                   border: Border.all(
                                                       color:
-                                                          Color(0xff90dbf8))),
+                                                      Color(0xff90dbf8))),
                                               height:
-                                                  30.0, // height of the button
+                                              30.0, // height of the button
 //                                              width: 80.0, // width of the button
                                               child: Center(
                                                   child: Row(
-                                                mainAxisAlignment:
+                                                    mainAxisAlignment:
                                                     MainAxisAlignment.center,
-                                                children: <Widget>[
-                                                  Text(
-                                                    'Communication',
-                                                    style: TextStyle(
-                                                        color:
+                                                    children: <Widget>[
+                                                      Text(
+                                                        'Communication',
+                                                        style: TextStyle(
+                                                            color:
                                                             Color(0xff444b69),
-                                                        fontWeight:
+                                                            fontWeight:
                                                             FontWeight.w600),
-                                                  ),
-                                                ],
-                                              )),
+                                                      ),
+                                                    ],
+                                                  )),
                                             ),
                                             elevation: 0,
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
-                                                  BorderRadius.circular(40.0),
+                                              BorderRadius.circular(40.0),
                                             ),
                                           ),
                                         ),
@@ -1878,34 +1879,34 @@ class _VideoHomePageState extends State<VideoHomePage> {
                                               decoration: new BoxDecoration(
                                                   color: Color(0xff90dbf8),
                                                   borderRadius:
-                                                      new BorderRadius.circular(
-                                                          10),
+                                                  new BorderRadius.circular(
+                                                      10),
                                                   border: Border.all(
                                                       color:
-                                                          Color(0xff90dbf8))),
+                                                      Color(0xff90dbf8))),
                                               height:
-                                                  30.0, // height of the button
+                                              30.0, // height of the button
 //                                              width: 80.0, // width of the button
                                               child: Center(
                                                   child: Row(
-                                                mainAxisAlignment:
+                                                    mainAxisAlignment:
                                                     MainAxisAlignment.center,
-                                                children: <Widget>[
-                                                  Text(
-                                                    'Team Work',
-                                                    style: TextStyle(
-                                                        color:
+                                                    children: <Widget>[
+                                                      Text(
+                                                        'Team Work',
+                                                        style: TextStyle(
+                                                            color:
                                                             Color(0xff444b69),
-                                                        fontWeight:
+                                                            fontWeight:
                                                             FontWeight.w600),
-                                                  ),
-                                                ],
-                                              )),
+                                                      ),
+                                                    ],
+                                                  )),
                                             ),
                                             elevation: 0,
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
-                                                  BorderRadius.circular(40.0),
+                                              BorderRadius.circular(40.0),
                                             ),
                                           ),
                                         ),
@@ -1917,9 +1918,9 @@ class _VideoHomePageState extends State<VideoHomePage> {
                                     padding: const EdgeInsets.all(10),
                                     child: Column(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.start,
+                                      MainAxisAlignment.start,
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      CrossAxisAlignment.start,
                                       children: <Widget>[
                                         Padding(
                                           padding: const EdgeInsets.fromLTRB(
@@ -1944,21 +1945,21 @@ class _VideoHomePageState extends State<VideoHomePage> {
                                   ),
                                   Padding(
                                     padding:
-                                        const EdgeInsets.fromLTRB(0, 5, 0, 0),
+                                    const EdgeInsets.fromLTRB(0, 5, 0, 0),
                                     child: Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.start,
+                                      MainAxisAlignment.start,
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      CrossAxisAlignment.start,
                                       children: <Widget>[
                                         Expanded(
                                           child: Padding(
                                             padding: const EdgeInsets.all(10),
                                             child: Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment.center,
+                                              MainAxisAlignment.center,
                                               crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
+                                              CrossAxisAlignment.center,
                                               children: <Widget>[
                                                 Padding(
                                                   padding: EdgeInsets.fromLTRB(
@@ -1966,7 +1967,7 @@ class _VideoHomePageState extends State<VideoHomePage> {
                                                   child: Center(
                                                     child: Padding(
                                                       padding:
-                                                          EdgeInsets.all(0),
+                                                      EdgeInsets.all(0),
                                                       child: SvgPicture.asset(
                                                         "assets/images/location.svg",
 //                                              color: Colors.red,
@@ -1979,23 +1980,23 @@ class _VideoHomePageState extends State<VideoHomePage> {
                                                 ),
                                                 Padding(
                                                   padding:
-                                                      const EdgeInsets.fromLTRB(
-                                                          10.0, 0.0, 0.0, 0.0),
+                                                  const EdgeInsets.fromLTRB(
+                                                      10.0, 0.0, 0.0, 0.0),
                                                   child: Align(
                                                     child: new Text(
                                                       'Delhi NCR',
                                                       style: TextStyle(
                                                         color:
-                                                            Color(0xff444b69),
+                                                        Color(0xff444b69),
                                                         fontSize: 16,
                                                         letterSpacing: 0,
                                                         fontWeight:
-                                                            FontWeight.w600,
+                                                        FontWeight.w600,
                                                       ),
                                                       textAlign:
-                                                          TextAlign.center,
+                                                      TextAlign.center,
                                                       textDirection:
-                                                          TextDirection.ltr,
+                                                      TextDirection.ltr,
                                                     ),
                                                     alignment: Alignment.center,
                                                   ),
@@ -2010,33 +2011,33 @@ class _VideoHomePageState extends State<VideoHomePage> {
                                             padding: const EdgeInsets.all(10),
                                             child: Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment.center,
+                                              MainAxisAlignment.center,
                                               crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
+                                              CrossAxisAlignment.center,
                                               children: <Widget>[
                                                 Expanded(
                                                   child: Padding(
                                                     padding: const EdgeInsets
-                                                            .fromLTRB(
+                                                        .fromLTRB(
                                                         10.0, 0.0, 0.0, 0.0),
                                                     child: Align(
                                                       child: new Text(
                                                         'Delhi NCR',
                                                         style: TextStyle(
                                                           color:
-                                                              Color(0xff444b69),
+                                                          Color(0xff444b69),
                                                           fontSize: 13,
                                                           letterSpacing: 0,
 //                                                        fontWeight:
 //                                                        FontWeight.w600,
                                                         ),
                                                         textAlign:
-                                                            TextAlign.center,
+                                                        TextAlign.center,
                                                         textDirection:
-                                                            TextDirection.ltr,
+                                                        TextDirection.ltr,
                                                       ),
                                                       alignment:
-                                                          Alignment.center,
+                                                      Alignment.center,
                                                     ),
                                                   ),
                                                 ),
@@ -2078,7 +2079,6 @@ class _VideoHomePageState extends State<VideoHomePage> {
           );
         },
       ),
-      Container(),
       Container(),
     ];
     Size size = MediaQuery.of(context).size;
@@ -2698,9 +2698,10 @@ class _VideoHomePageState extends State<VideoHomePage> {
             ),
             title: Text(''),
           ),
+
           BottomNavigationBarItem(
             icon: SvgPicture.asset(
-              "assets/images/social_workers.svg",
+              "assets/images/job.svg",
               color: Color(0xff444b69),
               height: 20,
               width: 20,
@@ -2709,7 +2710,7 @@ class _VideoHomePageState extends State<VideoHomePage> {
           ),
           BottomNavigationBarItem(
             icon: SvgPicture.asset(
-              "assets/images/job.svg",
+              "assets/images/social_workers.svg",
               color: Color(0xff444b69),
               height: 20,
               width: 20,

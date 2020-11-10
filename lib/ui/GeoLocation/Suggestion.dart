@@ -23,7 +23,7 @@ class PlaceApiProvider {
 
   final sessionToken;
 
-  static final String androidKey = 'AIzaSyAl_DrFzKqFTx54VoG2fAgopn5M2pC2sk4';
+  static final String androidKey = 'AIzaSyCOgR1rslP9UAqZbYFm2ZL5QB79Sx6XP_c';
   static final String iosKey = 'IOS_API_KEY_HERE';
   final apiKey = Platform.isAndroid ? androidKey : iosKey;
 
@@ -31,7 +31,7 @@ class PlaceApiProvider {
     final request =
         'https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$input&types=address&language=$lang&components=country:ch&key=$apiKey&sessiontoken=$sessionToken';
     final response = await client.get(request);
-
+    print("place data"+response.toString()+response.body);
     if (response.statusCode == 200) {
       final result = json.decode(response.body);
       if (result['status'] == 'OK') {

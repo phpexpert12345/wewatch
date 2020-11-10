@@ -19,7 +19,7 @@ class _GeoLocationState extends State<GeoLocation> {
   @override
   void initState() {
     placesAutocomplete =
-        pr.PlacesAutocomplete(apiKey: "AIzaSyAl_DrFzKqFTx54VoG2fAgopn5M2pC2sk4");
+        pr.PlacesAutocomplete(apiKey: "AIzaSyCOgR1rslP9UAqZbYFm2ZL5QB79Sx6XP_c");
     predictions = [];
   }
 
@@ -45,7 +45,7 @@ class _GeoLocationState extends State<GeoLocation> {
             controller: _controller,
             onTap: () async {
               // should show search screen here
-              Prediction p=await PlacesAutocomplete.show(context: context, apiKey: "AIzaSyAl_DrFzKqFTx54VoG2fAgopn5M2pC2sk4",
+              Prediction pr=await PlacesAutocomplete.show(context: context, apiKey: "AIzaSyCOgR1rslP9UAqZbYFm2ZL5QB79Sx6XP_c",
                    language: "en",
               components: [Component(Component.country,"in"),
               ]);

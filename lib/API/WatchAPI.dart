@@ -8,4 +8,5 @@ class WatchAPI {
   static const String PROFILE= "https://wewatch.in/wewatch-up/api/v1/profile";
   static const String CATEGORIES="https://wewatch.in/wewatch-up/api/v1/categories";
   static const String ON_OFF_NOTIFICATION="https://wewatch.in/wewatch-up/api/v1/onoffNotification";
+  static const String PERMISSION_TO_ACCESS_VIDEO_MODULE="https://wewatch.in/wewatch-up/api/v1/setpermission";
 }

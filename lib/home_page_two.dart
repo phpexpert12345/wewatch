@@ -11,6 +11,8 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart' as
 
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:package_info/package_info.dart';
+import 'package:share/share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:we_watch_app/LoginScreenProcessTwo.dart';
 import 'package:we_watch_app/NavigationPages/page_five.dart';
@@ -5643,7 +5645,7 @@ class _HomePageTwoState extends State<HomePageTwo> {
                                   ),
                                 ),
                                 Image.asset(
-                                  'assets/images/profile_pic.png',
+                                  'assets/images/logo_splash.png',
                                   height: 75.0,
                                   width: 75.0,
                                   fit: BoxFit.cover,
@@ -6005,6 +6007,40 @@ class _HomePageTwoState extends State<HomePageTwo> {
                             height: 35,
                             width: 35,
                             decoration: BoxDecoration(
+                              color: Color(0xfffa4e02),
+                              borderRadius:
+                              BorderRadius.all(Radius.circular(50)),
+//                                                border: Border.all(width: 1, color: Color(0xffe25705), style: BorderStyle.solid)
+                            ),
+                            child: Center(
+                              child: Padding(
+                                padding: EdgeInsets.all(5),
+                                child: Image.asset(
+                                  "assets/images/share_grey.png",color: Colors.white,
+//                                                                          height: 50.0,
+//                                                                          width: 50.0,
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
+                            ),
+                          ),
+                          title: Text(
+                            "Share App",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 18,
+                            ),
+                          ),
+                          onTap: () {
+                            Navigator.of(context).pop();
+                            shareApp();
+                          },
+                        ),
+                        ListTile(
+                          leading: Container(
+                            height: 35,
+                            width: 35,
+                            decoration: BoxDecoration(
                               color: Color(0xffff0504),
                               borderRadius:
                                   BorderRadius.all(Radius.circular(50)),
@@ -6279,6 +6315,7 @@ class _HomePageTwoState extends State<HomePageTwo> {
                           },
                         ),
 
+
                         ListTile(
                           leading: Container(
                             height: 35,
@@ -6438,6 +6475,15 @@ class _HomePageTwoState extends State<HomePageTwo> {
 //          ),
 //        ),
     );
+  }
+  PackageInfo packageInfo;
+  shareApp() async{
+    packageInfo = await PackageInfo.fromPlatform();
+    final RenderBox box = context.findRenderObject();
+    String packageName = packageInfo.packageName;
+    Share.share("See the latest video download we watch app, click on this link : https://play.google.com/store/apps/details?id="+packageName,
+        subject: packageInfo.appName,
+        sharePositionOrigin:box.localToGlobal(Offset.zero) & box.size);
   }
 }
 

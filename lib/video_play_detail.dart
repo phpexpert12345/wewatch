@@ -242,12 +242,15 @@ class _VideoPlayState extends State<VideoPlay> {
 
     // Getting Server response into variable.
 
-    var body = json.decode(response.body);
-    var message = jsonDecode(response.body);
+
 
     try {
       if (response.statusCode == 200) {
+        var body = json.decode(response.body);
+        var message = jsonDecode(response.body);
         // Hiding the CircularProgressIndicator.
+        _appNotifierClass.setChange(true);
+        _appNotifierClass.notifyListeners();
         setState(() {
           visible = false;
         });
@@ -1140,6 +1143,74 @@ class _VideoPlayState extends State<VideoPlay> {
                                               ),
                                             ],
                                           ),
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Padding(
+                                        padding:
+                                        const EdgeInsets.fromLTRB(5, 15, 5, 10),
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                          children: <Widget>[
+                                            Padding(
+                                              padding:
+                                              EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                              child: Center(
+                                                child: Container(
+                                                  height: 25,
+                                                  width: 25,
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius: BorderRadius.all(
+                                                        Radius.circular(30)),
+//                                            border: Border.all(
+//                                                                   width: 0,
+//                                                                   color: Colors
+//                                                                       .lightBlue,
+//                                                                   style:
+//                                                                   BorderStyle
+//                                                                       .solid)
+                                                  ),
+                                                  child: Center(
+                                                    child: Padding(
+                                                      padding: EdgeInsets.all(0),
+                                                      child: Image.asset(
+                                                        "assets/images/comments.png",
+//                                              height: 150.0,
+//                                              width: 50.0,
+                                                        fit: BoxFit.fill,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: const EdgeInsets.fromLTRB(
+                                                  0.0, 0.0, 0.0, 0.0),
+                                              child: Align(
+                                                child: new Text(
+                                                  !["", null].contains(widget.comments_count
+                                                      .toString())
+                                                      ? widget.comments_count
+                                                      .toString() +
+                                                      ' Comment'
+                                                      : '0 Comment',
+                                                  style: TextStyle(
+                                                    color: Color(0xff444b69),
+                                                    fontSize: 12,
+                                                    letterSpacing: 0,
+                                                    fontWeight: FontWeight.w400,
+                                                  ),
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                                alignment: Alignment.center,
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
                                     ),
