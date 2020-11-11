@@ -335,20 +335,20 @@ class _DashboardState extends State<Dashboard> {
         'Authorization': 'Bearer $access_token',
       });
 
-      print(response.body);
 
-      //Simulate a service call
-      print('submitting to backend...');
-      Map<String, dynamic> decodedMap = jsonDecode(response.body);
-      Map<String, dynamic> decodedMapAttachment = jsonDecode(response.body);
-     // var body = await json.decode(response.body);
-      apiCalled=true;
-      _appNotifierClass.setChange(false);
-      _appNotifierClass.notifyListeners();
       try {
         if (response.statusCode == 200) {
           //print("Ankit" + body.toString());
+          print(response.body);
 
+          //Simulate a service call
+          print('submitting to backend...');
+          Map<String, dynamic> decodedMap = jsonDecode(response.body);
+          Map<String, dynamic> decodedMapAttachment = jsonDecode(response.body);
+          // var body = await json.decode(response.body);
+          apiCalled=true;
+          _appNotifierClass.setChange(false);
+          _appNotifierClass.notifyListeners();
 
           if(decodedMap['data']['results']!=null) {
             List<dynamic> dynamicList = decodedMap['data']['results'];

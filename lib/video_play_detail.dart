@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/services.dart';
+import 'package:package_info/package_info.dart';
 import 'package:provider/provider.dart';
 import 'package:slide_popup_dialog/slide_popup_dialog.dart' as slideDialog;
 
@@ -1217,10 +1218,11 @@ class _VideoPlayState extends State<VideoPlay> {
                                     Expanded(
                                       child: GestureDetector(
                                         onTap: () {
-                                          Share.share(
-                                            state_id,
-                                            subject: video_title,
-                                          );
+                                          // Share.share(
+                                          //   state_id,
+                                          //   subject: video_title,
+                                          // );
+                                          shareVideo(state_id,video_title);
                                         },
                                         child: Padding(
                                           padding: const EdgeInsets.all(10),
@@ -4246,13 +4248,21 @@ class _VideoPlayState extends State<VideoPlay> {
 //            ],
 //            selectedItemColor: Color(0xff00adef),
 //            unselectedItemColor: Colors.black54,
-//          ),
+//          ),_
         ),
       ),
     );
   }
 
-
+  PackageInfo packageInfo;
+  shareVideo(String state_id, String video_title) async{
+    packageInfo = await PackageInfo.fromPlatform();
+    final RenderBox box = context.findRenderObject();
+    String packageName = packageInfo.packageName;
+    Share.share("see the latest video "+video_title +" "+state_id+" \nSee the latest video download we watch app, click on this link : https://play.google.com/store/apps/details?id="+packageName,
+        subject: packageInfo.appName,
+        sharePositionOrigin:box.localToGlobal(Offset.zero) & box.size);
+  }
 }
 
 class Comments {

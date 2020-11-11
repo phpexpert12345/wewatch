@@ -30,7 +30,9 @@ import 'package:we_watch_app/util/UtilityClass.dart';
 
 import '../../trim_video.dart';
 import 'package:http/http.dart' as http;
-
+import 'package:google_maps_webservice/directions.dart';
+import 'package:google_maps_webservice/src/places.dart';
+import 'package:flutter_google_places/flutter_google_places.dart';
 
 class CreatePost extends StatefulWidget {
   final userName;
@@ -63,6 +65,19 @@ class _CreatePostState extends State<CreatePost> {
   String imageName;
   final Trimmer _trimmer = Trimmer();
   var uint8list;
+  File _imageFile;
+  File _videoFile;
+  Geolocator geolocator;
+  Position _currentPosition;
+  String _currentAddress;
+  String userCity,userState,userLocality,userPostalCode;
+  String categoryName="Local News";
+  double percentage = 0.0;
+  List<int> byteimage;
+  List<int> bytevideo;
+  String base64 = '', imageFileName;
+  String base64video = '', fileNameVideo;
+
 
   int rc = 1;
   int id = 0;
@@ -238,7 +253,7 @@ class _CreatePostState extends State<CreatePost> {
                       Divider(
                         color: Colors.black26,
                       ),
-                      _videoFile!=null ? Align(
+                      _videoFile!=null && _recording!=null ? Align(
                         alignment: Alignment.bottomRight,
                         child: Container(
                           padding: EdgeInsets.all(5),
@@ -252,15 +267,16 @@ class _CreatePostState extends State<CreatePost> {
                             onTap: (){
                               setState(() async{
                                 String filePath='/storage/emulated/0/news_${id}.mkv';
-                                if(_recording!=null){
+                                if(_videoFile!=null){
                                   if(!await File('/storage/emulated/0/news_${id}.mkv').exists())
-                                      await combine();
+                                      await _videoMerger();
                                   _videoPlayerController = VideoPlayerController.file(
                                       File('/storage/emulated/0/news_${id}.mkv'))
                                     ..initialize().then((_) {
                                       setState(() {
                                         _videoPlayerController.play();
                                         _videoFile = File('/storage/emulated/0/news_${id}.mkv');
+                                        fileNameVideo=_videoFile.path.split('/').last;
                                         preview = true;
                                       });
                                     }, onError: (g) {
@@ -389,7 +405,7 @@ class _CreatePostState extends State<CreatePost> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text('Add Image'),
-                              fileName!=null?Icon(Icons.check_circle,size: 18,color: Colors.green.shade500,):Container()
+                              imageFileName!=null?Icon(Icons.check_circle,size: 18,color: Colors.green.shade500,):Container()
 
                             ],
                           ),
@@ -498,8 +514,20 @@ class _CreatePostState extends State<CreatePost> {
                         color: Colors.black26,
                       ),
                       GestureDetector(
-                        onTap: (){
-                          Navigator.push(context, new MaterialPageRoute(builder: (context) => GeoLocation()));
+                        onTap: () async{
+                          //Navigator.push(context, new MaterialPageRoute(builder: (context) => GeoLocation()));
+                          try {
+                            Prediction pr = await PlacesAutocomplete.show(
+                                context: context,
+                                apiKey: "AIzaSyAfySREHfRw2x8bEFT6b7Nc4z3Te80LiyI",
+                                language: "en",
+                                components: [Component(Component.country, "in"),
+                                ]);
+                            _getLatLng(pr);
+                            print("place id=>" + pr.placeId);
+                          }catch(ex){
+
+                          }
 
                         },
                         child: ListTile(
@@ -564,11 +592,9 @@ class _CreatePostState extends State<CreatePost> {
                             ),
                             onPressed: () async{
                               if(await File('/storage/emulated/0/news_${id}.mkv').exists()){
-                                await new File('/storage/emulated/0/news_${id}.mkv').copy("/storage/emulated/0/${DateTime.now().millisecondsSinceEpoch}.mkv");
-
+                                  new File('/storage/emulated/0/news_${id}.mkv').copy("/storage/emulated/0/${controllerTitle.text.isNotEmpty?controllerTitle.text:""+"_"+DateTime.now().millisecondsSinceEpoch.toString()}.mkv");
                               }
-
-                              //postData();  Api call
+                              postData();    //Api call
                             },
                             child: Text(
                               'Post',
@@ -690,29 +716,21 @@ class _CreatePostState extends State<CreatePost> {
       );
     });
   }
-  Future<void> captureVideo(ImageSource imageSource) async {
+
+  void _getLatLng(Prediction prediction) async {
     try {
-      var videoFile = await ImagePicker.pickVideo(source: imageSource);
-//      videoFile = await videoFile.rename("${_videoFile.path}.mp4");
-      int dt=DateTime.now().millisecondsSinceEpoch;
-
-      await new File(videoFile.toString()).copy("/storage/emulated/0/${dt}.mp4");
-      await new File(videoFile.toString()).delete();
-      setState(() {
-
-        _videoFile = videoFile;
-        print("path"+_videoFile.path);
-        bytevideo = videoFile.readAsBytesSync();
-        base64video = base64Encode(videoFile.readAsBytesSync());
-        fileNameVideo = videoFile.path.split('/').last;
-        final letter = 'jpg';
-        final newLetter = 'mp4';
-        fileNameVideo = fileNameVideo.replaceAll(letter, newLetter);
-
-        print(fileNameVideo + '------' + base64video);
-      });
-    } catch (e) {
-      print(e);
+      GoogleMapsPlaces _places = new
+      GoogleMapsPlaces(
+          apiKey: "AIzaSyAfySREHfRw2x8bEFT6b7Nc4z3Te80LiyI"); //Same API_KEY as above
+      PlacesDetailsResponse detail =
+      await _places.getDetailsByPlaceId(prediction.placeId);
+      double latitude = detail.result.geometry.location.lat;
+      double longitude = detail.result.geometry.location.lng;
+      String address = prediction.description;
+      print("lati " + latitude.toString() + " langi " + longitude.toString());
+      _getAddressFromLatLng(latitude, longitude);
+    }catch(e){
+      debugPrint(e);
     }
   }
 
@@ -825,13 +843,14 @@ class _CreatePostState extends State<CreatePost> {
         _imageFile = imageFile;
         byteimage = imageFile.readAsBytesSync();
         base64 = base64Encode(imageFile.readAsBytesSync());
-        fileName = imageFile.path.split('/').last;
-        print(fileName + '------' + base64);
+        imageFileName = imageFile.path.split('/').last;
+        print(imageFileName + '------' + base64);
       });
     } catch (e) {
       print(e);
     }
   }
+
 
   // void _pickVideo() async {
   //   File video = await ImagePicker.pickVideo(source: ImageSource.gallery);
@@ -868,9 +887,12 @@ class _CreatePostState extends State<CreatePost> {
         _flutterFFmpeg.execute(commandToExecute).then((r) {
           setState(() {
             rc = r;
-            setState(() {
               visible=false;
-            });
+              _videoFile=new File(op);
+              _videoPlayerController.pause();
+              fileNameVideo=_videoFile.path.split('/').last;
+              //_videoPlayerController.dispose();
+              _videoPlayerController.initialize();
           });
         });
       }else{
@@ -927,78 +949,39 @@ class _CreatePostState extends State<CreatePost> {
       //if(_videoPlayerController.play().)
     //  _videoPlayerController.pause();
       preview=false;
-      // if(_videoFile!=null){
+      // if(recording.path!=null){
       //   createVideoMuteFile();
       // }
+      _videoMerger();
     });
     print(recording.path);
   }
 
-  void combine() {
-    _videoMerger();
-  }
+  // void combine() {
+  //   _videoMerger();
+  // }
 
   final videoInfo = FlutterVideoInfo();
   String audioLength;
   Future<String> _recordVideo() async {
-    final op = '/storage/emulated/0/mute_${id}.mp4';
-    File f = File(op);
-    bool c= await f.exists();
-    if(c){
-      f.delete();
-    }
     final appDir = await syspaths.getApplicationDocumentsDirectory();
     String rawDocumentPath = appDir.path;
     final outputPath = '$rawDocumentPath/output.mp4';
-    final FlutterFFmpeg _flutterFFmpeg = new FlutterFFmpeg();
     ImagePicker.pickVideo(source: ImageSource.camera)
         .then((File recordedVideo) {
       setState(() {
         _buttonText = 'Saving in Progress...';
       });
       GallerySaver.saveVideo(recordedVideo.path).then((_) {
-        setState(() async{
+        setState(() {
+          final FlutterFFmpeg _flutterFFmpeg = new FlutterFFmpeg();
           visible=true;
           _buttonText = 'Video Saved!\n\nClick to Record New Video';
-          var  info= await videoInfo.getVideoInfo(recordedVideo.path);
-          print("length=+"+info.duration.toString());
-          if (_videoFile == null) {
-            _videoFile = recordedVideo;
-            setState(() {
-              _videoFile = recordedVideo;
-            });
-            String commandToExecute =
-            // '-y -i ${_storedVideoOne.path} -i ${recording.path} -c:v copy -c:a aac ${op}';
-                '-y -i ${_videoFile.path} -an ${op}';
-            // '-y -i ${_storedVideoOne.path} -i ${_storedVideoTwo.path} -r 24000/1001 -filter_complex \'[0:v:0][0:a:0][1:v:0][1:a:0]concat=n=2:v=1:a=1[out]\' -map \'[out]\' $outputPath';
-            // '-y -i ${_storedVideoOne.path} -i ${_storedVideoTwo.path} -filter_complex \'[0:0][1:0]concat=n=2:v=1:a=0[out]\' -map \'[out]\' $outputPath';
-            _flutterFFmpeg
-                .execute(commandToExecute)
-                .then((rc) {
-                  setState(() {
-                    visible=false;
-                  });
-              print("FFmpeg process exited with rc $rc");
-            });
-            print('video 1 done');
-          } else {
-            _videoFile = recordedVideo;
-            setState(() {
-              _videoFile = recordedVideo;
-
-            });
-            String commandToExecute =
-            // '-y -i ${_storedVideoOne.path} -i ${recording.path} -c:v copy -c:a aac ${op}';
-                '-y -i ${_videoFile.path} -an ${op}';
-            // '-y -i ${_storedVideoOne.path} -i ${_storedVideoTwo.path} -r 24000/1001 -filter_complex \'[0:v:0][0:a:0][1:v:0][1:a:0]concat=n=2:v=1:a=1[out]\' -map \'[out]\' $outputPath';
-            // '-y -i ${_storedVideoOne.path} -i ${_storedVideoTwo.path} -filter_complex \'[0:0][1:0]concat=n=2:v=1:a=0[out]\' -map \'[out]\' $outputPath';
-            _flutterFFmpeg.execute(commandToExecute).then((rc) {
-              if (rc == 0) {
-                visible=false;
-                print(rc);
-              }
-            });
-          }
+          // var  info= await videoInfo.getVideoInfo(recordedVideo.path);
+          // print("length=+"+info.duration.toString());
+          _videoFile = recordedVideo;
+          fileNameVideo=_videoFile.path.split('/').last;
+          createVideoMuteFile();
         });
       });
     });
@@ -1020,13 +1003,7 @@ class _CreatePostState extends State<CreatePost> {
       }
     }
   }
-  File _imageFile;
-  File _videoFile;
 
-  List<int> byteimage;
-  List<int> bytevideo;
-  String base64 = '', fileName;
-  String base64video = '', fileNameVideo;
   Future<void> videoFromGallery() async {
     try {
       var videoFile = await ImagePicker.pickVideo(source: ImageSource.gallery,);
@@ -1056,13 +1033,13 @@ class _CreatePostState extends State<CreatePost> {
     }
   }
 
+
+
   createVideoMuteFile() async{
     final FlutterFFmpeg _flutterFFmpeg = new FlutterFFmpeg();
     final op = '/storage/emulated/0/mute_${id}.mp4';
-    File f=new File(op);
-    bool c= await f.exists();
-    if(c){
-      f.delete();
+    if(await File(op).exists()){
+      File(op).delete();
     }
     setState(() {
       _buttonText = 'Video Saved!\n\nClick to Record New Video';
@@ -1079,7 +1056,7 @@ class _CreatePostState extends State<CreatePost> {
               setState(() {
                 visible=false;
               });
-          print("FFmpeg process exited with rc $rc");
+          print("FFmpeg process exited with rc mute file created $rc");
         });
         print('video 1 done');
       } else {
@@ -1102,46 +1079,33 @@ class _CreatePostState extends State<CreatePost> {
     });
   }
 
-  final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
-  Position _currentPosition;
-  String _currentAddress;
-  _getCurrentLocation() {
-    geolocator
-        .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
-        .then((Position position) {
-      setState(() {
-        _currentPosition = position;
-      });
 
-      _getAddressFromLatLng();
-    }).catchError((e) {
-      print(e);
-    });
-  }
-
-  _getAddressFromLatLng() async {
+  _getAddressFromLatLng(double latitude, double longitude) async {
     try {
+      geolocator = Geolocator();
       List<Placemark> p = await geolocator.placemarkFromCoordinates(
-          _currentPosition.latitude, _currentPosition.longitude);
+          latitude,longitude);
 
       Placemark place = p[0];
 
       setState(() {
         _currentAddress =
         "${place.locality}, ${place.postalCode}, ${place.country}";
-        print("sunny District "+place.locality+" state " +place.administrativeArea+" country "+place.country );
+        print("sunny District "+place.locality+" state " +place.administrativeArea+" country "+place.country +"pin code"+place.postalCode);
+        userCity=place.locality;
+        userState=place.administrativeArea;
+        userLocality=place.country;
+        userPostalCode=place.postalCode;
       });
-      UtilityClass.showMsg("District "+place.locality+" state " +place.administrativeArea+" country "+place.country );
+     // UtilityClass.showMsg("District "+place.locality+" state " +place.administrativeArea+" country "+place.country );
 
     } catch (e) {
       print(e);
-      print("sunny locality exception"+e.toString());
+      print("locality exception"+e.toString());
     }
   }
 
-  String userCity,userState,userLocality;
-  String categoryName="Local News";
-  double percentage = 0.0;
+
 
   postData(){
     // updateProfile();
@@ -1185,55 +1149,48 @@ class _CreatePostState extends State<CreatePost> {
                   false,
                   0,
                 ].contains(_videoFile)) {
-                  FocusScope.of(context)
-                      .requestFocus(FocusNode());
+                  if(!["",null].contains(_imageFile)){
 
-                  ProgressDialog pr;
-                  pr = ProgressDialog(
-                    context,
-                    // customBody: LinearProgressIndicator(
-                    //   valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),
-                    //   backgroundColor: Colors.white,
-                    // ),
-                  );
-                  pr.show();
-                  updateProfile();
-                  Future.delayed(Duration(seconds: 2))
-                      .then((onvalue) {
-                    percentage = percentage + 10.0;
-                    print(percentage);
+                    FocusScope.of(context)
+                        .requestFocus(FocusNode());
 
-                    pr.update(
-                      progress: percentage,
-                      message:
-                      "Uploading...${percentage}",
-                      progressWidget: Container(
-                          padding: EdgeInsets.all(8.0),
-                          child:
-                          CircularProgressIndicator()),
-                      maxProgress: 100.0,
-                      progressTextStyle: TextStyle(
-                          color: Colors.black,
-                          fontSize: 13.0,
-                          fontWeight: FontWeight.w400),
-                      messageTextStyle: TextStyle(
-                          color: Colors.black,
-                          fontSize: 19.0,
-                          fontWeight: FontWeight.w600),
+                    ProgressDialog pr;
+                    pr = ProgressDialog(
+                      context,
+                      // customBody: LinearProgressIndicator(
+                      //   valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),
+                      //   backgroundColor: Colors.white,
+                      // ),
                     );
-
+                    pr.show();
+                    updateProfile();
                     Future.delayed(Duration(seconds: 2))
-                        .then((value) {
+                        .then((onvalue) {
+                      percentage = percentage + 10.0;
+                      print(percentage);
+
+                      pr.update(
+                        progress: percentage,
+                        message:
+                        "Uploading...${percentage}",
+                        progressWidget: Container(
+                            padding: EdgeInsets.all(8.0),
+                            child:
+                            CircularProgressIndicator()),
+                        maxProgress: 100.0,
+                        progressTextStyle: TextStyle(
+                            color: Colors.black,
+                            fontSize: 13.0,
+                            fontWeight: FontWeight.w400),
+                        messageTextStyle: TextStyle(
+                            color: Colors.black,
+                            fontSize: 19.0,
+                            fontWeight: FontWeight.w600),
+                      );
+
                       Future.delayed(Duration(seconds: 2))
                           .then((value) {
-                        percentage = percentage + 10.0;
-                        pr.update(
-                            progress: percentage,
-                            message:
-                            "Uploading...${percentage}");
-                        print(percentage);
-                        Future.delayed(
-                            Duration(seconds: 2))
+                        Future.delayed(Duration(seconds: 2))
                             .then((value) {
                           percentage = percentage + 10.0;
                           pr.update(
@@ -1244,8 +1201,7 @@ class _CreatePostState extends State<CreatePost> {
                           Future.delayed(
                               Duration(seconds: 2))
                               .then((value) {
-                            percentage =
-                                percentage + 10.0;
+                            percentage = percentage + 10.0;
                             pr.update(
                                 progress: percentage,
                                 message:
@@ -1261,8 +1217,8 @@ class _CreatePostState extends State<CreatePost> {
                                   message:
                                   "Uploading...${percentage}");
                               print(percentage);
-                              Future.delayed(Duration(
-                                  seconds: 2))
+                              Future.delayed(
+                                  Duration(seconds: 2))
                                   .then((value) {
                                 percentage =
                                     percentage + 10.0;
@@ -1277,8 +1233,7 @@ class _CreatePostState extends State<CreatePost> {
                                   percentage =
                                       percentage + 10.0;
                                   pr.update(
-                                      progress:
-                                      percentage,
+                                      progress: percentage,
                                       message:
                                       "Uploading...${percentage}");
                                   print(percentage);
@@ -1293,28 +1248,16 @@ class _CreatePostState extends State<CreatePost> {
                                         message:
                                         "Uploading...${percentage}");
                                     print(percentage);
-                                    Future.delayed(
-                                        Duration(
-                                            seconds:
-                                            2))
+                                    Future.delayed(Duration(
+                                        seconds: 2))
                                         .then((value) {
                                       percentage =
-                                          percentage +
-                                              10.0;
+                                          percentage + 10.0;
                                       pr.update(
                                           progress:
                                           percentage,
                                           message:
                                           "Uploading...${percentage}");
-                                      print(percentage);
-                                      percentage =
-                                          percentage +
-                                              10.0;
-                                      pr.update(
-                                          progress:
-                                          percentage,
-                                          message:
-                                          "Almost done...");
                                       print(percentage);
                                       Future.delayed(
                                           Duration(
@@ -1324,21 +1267,45 @@ class _CreatePostState extends State<CreatePost> {
                                         percentage =
                                             percentage +
                                                 10.0;
-                                        pr
-                                            .hide()
-                                            .whenComplete(
-                                                () {
-                                              print(pr
-                                                  .isShowing());
-                                              Navigator
-                                                  .pushReplacement(
-                                                context,
-                                                CupertinoPageRoute(
-                                                    builder:
-                                                        (context) =>
-                                                        HomePageTwo()),
-                                              );
-                                            });
+                                        pr.update(
+                                            progress:
+                                            percentage,
+                                            message:
+                                            "Uploading...${percentage}");
+                                        print(percentage);
+                                        percentage =
+                                            percentage +
+                                                10.0;
+                                        pr.update(
+                                            progress:
+                                            percentage,
+                                            message:
+                                            "Almost done...");
+                                        print(percentage);
+                                        Future.delayed(
+                                            Duration(
+                                                seconds:
+                                                2))
+                                            .then((value) {
+                                          percentage =
+                                              percentage +
+                                                  10.0;
+                                          pr
+                                              .hide()
+                                              .whenComplete(
+                                                  () {
+                                                print(pr
+                                                    .isShowing());
+                                                Navigator
+                                                    .pushReplacement(
+                                                  context,
+                                                  CupertinoPageRoute(
+                                                      builder:
+                                                          (context) =>
+                                                          HomePageTwo()),
+                                                );
+                                              });
+                                        });
                                       });
                                     });
                                   });
@@ -1349,8 +1316,17 @@ class _CreatePostState extends State<CreatePost> {
                         });
                       });
                     });
-                  });
-                  print("Done");
+                    print("Done");
+                  }else{
+                    Fluttertoast.showToast(
+                        msg: "Please add image file",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.CENTER,
+                        timeInSecForIosWeb: 10,
+                        backgroundColor: Colors.red,
+                        textColor: Colors.white,
+                        fontSize: 16.0);
+                  }
                 } else {
                   Fluttertoast.showToast(
                       msg: "Please add video file",
@@ -1432,64 +1408,79 @@ class _CreatePostState extends State<CreatePost> {
   }
 
   Future updateProfile() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String access_token = prefs.getString('access_token');
-    setState(() {
-      //visible = true;
-    });
-    Map<String, String> headers = {'Authorization': 'Bearer $access_token'};
-    var stream = new http.ByteStream(_imageFile.openRead());
-    var streamVideo = new http.ByteStream(_videoFile.openRead());
-    // get file length
-    var length = await _imageFile.length();
-    var lengthVideo = await _videoFile.length();
-    var request = http.MultipartRequest(
-        'POST', Uri.parse('https://wewatch.in/wewatch-up/api/v1/video'));
-    request.fields["video_title"] = controllerTitle.text;
-    request.fields["video_description"] = controllerDescription.text;
-    request.fields["video_locality"] = "";// _localityController.text;
-    request.fields["state_id"] ="";// _myselection2;
-    request.fields["city_id"] = "";//_mySelection;
-    request.fields["video_tag"] = ""; // _videoTagController.text;
-    request.fields["video_category"] = "Local News";//categoryName;
-    request.files.add(await http.MultipartFile(
-        'video_thumb_image', stream, length,
-        filename: fileName));
-    request.files.add(await http.MultipartFile(
-        'video_file', streamVideo, lengthVideo,
-        filename: fileNameVideo));
-    request.headers.addAll(headers);
-    var response = await request.send();
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String access_token = prefs.getString('access_token');
+      setState(() {
+        //visible = true;
+      });
+      Map<String, String> headers = {'Authorization': 'Bearer $access_token'};
+      var stream = new http.ByteStream(_imageFile.openRead());
+      var streamVideo = new http.ByteStream(_videoFile.openRead());
+      // get file length
+      var length = await _imageFile.length();
+      var lengthVideo = await _videoFile.length();
+      var request = http.MultipartRequest(
+          'POST', Uri.parse('https://wewatch.in/wewatch-up/api/v1/video'));
+      request.fields["video_title"] = controllerTitle.text;
+      request.fields["video_description"] = controllerDescription.text;
+      request.fields["video_locality"] =
+          userLocality; // _localityController.text;
+      request.fields["state_name"] =userState;// 14.toString(); //// _myselection2;
+      request.fields["city_name"] =userCity;// 1208.toString();// _mySelection;
+      request.fields["video_tag"] = "news"; // _videoTagController.text;
+      request.fields["video_category"] = "reporter"; //categoryName;   //
+      request.fields["pincode"]=  userPostalCode;// postal_code
+      request.files.add(await http.MultipartFile(
+          'video_thumb_image', stream, length,
+          filename: imageFileName));
+      request.files.add(await http.MultipartFile(
+          'video_file', streamVideo, lengthVideo,
+          filename: fileNameVideo));
+      request.headers.addAll(headers);
+      var response = await request.send();
 
-    if (response.statusCode == 200) {
-      setState(() {
-       // visible = false;
+      if (response.statusCode == 200) {
+        // setState(() {
+        //   // visible = false;
+        // });
+        // Navigator
+        //     .pushReplacement(
+        //   context,
+        //   CupertinoPageRoute(
+        //       builder:
+        //           (context) =>
+        //           HomePageTwo()),
+        // );
+        Fluttertoast.showToast(
+            msg: "Your video uploaded successfully!!",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.lightGreen,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      } else {
+        // setState(() {
+        //   // visible = false;
+        // });
+        Fluttertoast.showToast(
+            msg: "Failed!!",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.redAccent,
+            textColor: Colors.white,
+            fontSize: 16.0);
+        print("Upload Failed");
+      }
+      response.stream.transform(utf8.decoder).listen((value) {
+        print(value);
       });
-      Fluttertoast.showToast(
-          msg: "Your video uploaded successfully!!",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.lightGreen,
-          textColor: Colors.white,
-          fontSize: 16.0);
-    } else {
-      setState(() {
-       // visible = false;
-      });
-      Fluttertoast.showToast(
-          msg: "Failed!!",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.redAccent,
-          textColor: Colors.white,
-          fontSize: 16.0);
-      print("Upload Failed");
     }
-    response.stream.transform(utf8.decoder).listen((value) {
-      print(value);
-    });
+    catch(ex){
+      print(ex);
+    }
   }
 
 }

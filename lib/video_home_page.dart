@@ -109,446 +109,446 @@ class _VideoHomePageState extends State<VideoHomePage> {
               ListView(
                 shrinkWrap: true,
                 children: <Widget>[
-                  ShowUp(
-                    child: Card(
-                      elevation: 3,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      margin: EdgeInsets.all(10),
-                      child: ClipPath(
-                        child: Container(
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Center(
-                                  child: Padding(
-                                    padding: EdgeInsets.all(10),
-                                    child: Image.asset(
-                                      "assets/images/bbbb.png",
-//                                                           height: 50.0,
-//                                                           width: 50.0,
-                                      fit: BoxFit.fill,
-                                    ),
-                                  ),
-                                ),
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(10),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        Padding(
-                                          padding: const EdgeInsets.fromLTRB(
-                                              0.0, 0.0, 0.0, 0.0),
-                                          child: Align(
-                                            child: new Text(
-                                              'Hi! Raj Kaushal',
-                                              style: TextStyle(
-                                                color: Colors.black45,
-                                                fontSize: 16,
-                                                letterSpacing: 0,
-                                                fontWeight: FontWeight.w400,
-                                              ),
-                                              textAlign: TextAlign.left,
-                                              textDirection: TextDirection.ltr,
-                                            ),
-                                            alignment: Alignment.centerLeft,
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.fromLTRB(
-                                              0.0, 5.0, 0.0, 0.0),
-                                          child: Align(
-                                            child: new Text(
-                                              'Morning 23 April',
-                                              style: TextStyle(
-                                                color: Colors.black45,
-                                                fontSize: 14,
-                                                letterSpacing: 0,
-                                                fontWeight: FontWeight.w400,
-                                              ),
-                                              textAlign: TextAlign.left,
-                                              textDirection: TextDirection.ltr,
-                                            ),
-                                            alignment: Alignment.centerLeft,
-                                          ),
-                                        ),
-                                        Row(
-                                          children: <Widget>[
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.fromLTRB(
-                                                      0.0, 5.0, 0.0, 0.0),
-                                              child: Align(
-                                                child: new Text(
-                                                  'Good Morning',
-                                                  style: TextStyle(
-                                                    color: Colors.black45,
-                                                    fontSize: 14,
-                                                    letterSpacing: 0,
-                                                    fontWeight: FontWeight.w400,
-                                                  ),
-                                                  textAlign: TextAlign.left,
-                                                  textDirection:
-                                                      TextDirection.ltr,
-                                                ),
-                                                alignment: Alignment.centerLeft,
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.fromLTRB(
-                                                      10.0, 5.0, 0.0, 0.0),
-                                              child: Align(
-                                                child: new Text(
-                                                  'Dig',
-                                                  style: TextStyle(
-                                                    color: Color(0xff00adef),
-                                                    fontSize: 14,
-                                                    letterSpacing: 0,
-                                                    fontWeight: FontWeight.w400,
-                                                  ),
-                                                  textAlign: TextAlign.left,
-                                                  textDirection:
-                                                      TextDirection.ltr,
-                                                ),
-                                                alignment: Alignment.centerLeft,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                                  child: Center(
-                                    child: Padding(
-                                      padding: EdgeInsets.all(0),
-                                      child: SvgPicture.asset(
-                                        "assets/images/tea.svg",
-//                                              color: Colors.red,
-//                                              semanticsLabel: 'A red up arrow'
-                                        height: 40,
-                                        width: 40,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    delay: 400,
-                  ),
-                  ShowUp(
-                    child: Card(
-                      elevation: 3,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      margin: EdgeInsets.all(10),
-                      child: ClipPath(
-                        child: Container(
-                          child: Column(
-                            children: <Widget>[
-                              GridView.builder(
-                                physics: NeverScrollableScrollPhysics(),
-                                shrinkWrap: true,
-                                itemCount: press ? 6 : 15,
-                                gridDelegate:
-                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                        childAspectRatio:
-                                            SizeConfig.heightMultiplier * 0.14,
-                                        crossAxisCount: 3),
-                                itemBuilder: (BuildContext context, int index) {
-                                  return GestureDetector(
-                                    onTap: () {
-                                      if (index == 0) {
-                                        // Navigator.push(
-                                        //     context,
-                                        //     MaterialPageRoute(
-                                        //         builder: (context) =>
-                                        //             Community()));
-                                      } else if (index == 1) {
-                                        // Navigator.push(
-                                        //     context,
-                                        //     MaterialPageRoute(
-                                        //         builder: (context) =>
-                                        //             Community()));
-                                      } else if (index == 2) {
-                                        // Navigator.push(
-                                        //     context,
-                                        //     MaterialPageRoute(
-                                        //         builder: (context) =>
-                                        //             Community()));
-                                      }
-                                    },
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: <Widget>[
-                                        Padding(
-                                          padding:
-                                              EdgeInsets.fromLTRB(5, 0, 5, 0),
-                                          child: Container(
-                                            padding: EdgeInsets.all(0),
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(10.0),
-                                              color: (Colors.accents[Random()
-                                                  .nextInt(Colors
-                                                      .accents.length)])[100],
-                                            ),
-//                            width: 75.0,
-                                            height: 100,
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(8.0),
-//                        image: DecorationImage(
-//                          image: AssetImage("assets/images/card_background.png"),
-//                          fit: BoxFit.fill,
-//
-//                        ),
-                                                color: Colors.transparent,
-                                              ),
-                                              padding: EdgeInsets.all(0),
-                                              child: Stack(
-                                                children: <Widget>[
-                                                  Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .center,
-                                                    children: <Widget>[
-                                                      Padding(
-                                                        padding:
-                                                            EdgeInsets.fromLTRB(
-                                                                0, 10, 0, 0),
-                                                        child: SvgPicture.asset(
-                                                          "assets/images/${itemListTwo[index].image}.svg",
-//                                              color: Colors.red,
-//                                              semanticsLabel: 'A red up arrow'
-                                                          height: 40,
-                                                          width: 40,
-                                                        ),
-                                                      ),
-                                                      Expanded(
-                                                        child: Align(
-                                                          alignment:
-                                                              FractionalOffset
-                                                                  .bottomCenter,
-                                                          child: Container(
-                                                            color: Colors
-                                                                .transparent,
-                                                            width:
-                                                                double.infinity,
-                                                            child: Padding(
-                                                              padding:
-                                                                  EdgeInsets
-                                                                      .fromLTRB(
-                                                                          5,
-                                                                          5,
-                                                                          5,
-                                                                          5),
-                                                              child: Text(
-                                                                itemListTwo[
-                                                                        index]
-                                                                    .text,
-                                                                textAlign:
-                                                                    TextAlign
-                                                                        .center,
-                                                                style:
-                                                                    TextStyle(
-                                                                  color: Color(
-                                                                      0xff444b69),
-                                                                  fontSize: 12,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                              ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(0, 20, 0, 10),
-                                child: Center(
-                                    child: GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      _animatedHeight != 0.0
-                                          ? _animatedHeight = 0.0
-                                          : _animatedHeight = 100.0;
-                                      press = !press;
-                                    });
-//                          if(!["", null, false, 0].contains(_name.text.toString())){
-//                            if(!["", null, false, 0].contains(gender))
-//                            {
-//                              if(!["", null, false, 0,"Select Date"].contains(dob))
-//                              {
-//                                if(!["", null, false, 0,"Select Time"].contains(time1))
-//                                {
-//                                  if(!["", null, false, 0,].contains(_pob.text.toString()))
-//                                  {
-//
-//                                    if(!["", null, false, 0,].contains(_state.text.toString()))
-//                                    {
-//                                      FocusScope.of(context)
-//                                          .requestFocus(FocusNode());
-//                                      pr.show();
-//                                      getToekn();
-//                                    }
-//                                    else{
-//                                      Fluttertoast.showToast(
-//                                          msg: "Please Enter State",
-//                                          toastLength: Toast.LENGTH_SHORT,
-//                                          gravity: ToastGravity.CENTER,
-//                                          timeInSecForIos: 10
-//                                      );
-//                                    }
-//
-//
-//                                    //getToekn();
-//
-//                                  }else{
-//                                    Fluttertoast.showToast(
-//                                        msg: "Enter Place of birth",
-//                                        toastLength: Toast.LENGTH_SHORT,
-//                                        gravity: ToastGravity.CENTER,
-//                                        timeInSecForIos: 1
-//                                    );
-//
-//
-//                                  }
-//
-//
-//
-//                                }else{
-//
-//                                  Fluttertoast.showToast(
-//                                      msg: "Enter time of birth",
-//                                      toastLength: Toast.LENGTH_SHORT,
-//                                      gravity: ToastGravity.CENTER,
-//                                      timeInSecForIos: 1
-//                                  );
-//
-//
-//                                }
-//
-//                                //getToekn();
-//
-//                              }else{
-//
-//                                Fluttertoast.showToast(
-//                                    msg: "Enter Date of birth",
-//                                    toastLength: Toast.LENGTH_SHORT,
-//                                    gravity: ToastGravity.CENTER,
-//                                    timeInSecForIos: 1
-//                                );
-//
-//                              }
-//
-//
-//                            }else{
-//
-//                              Fluttertoast.showToast(
-//                                  msg: "Please Select Gender",
-//                                  toastLength: Toast.LENGTH_SHORT,
-//                                  gravity: ToastGravity.CENTER,
-//                                  timeInSecForIos: 1
-//                              );
-//
-//                            }
-//
-//                          }else{
-//
-//
-//                            Fluttertoast.showToast(
-//                                msg: "Please Enter Name",
-//                                toastLength: Toast.LENGTH_SHORT,
-//                                gravity: ToastGravity.CENTER,
-//                                timeInSecForIos: 1
-//                            );
-//
-//
-//                          }
-//
-////                    setPersonalData();
-                                  },
-                                  child: Card(
-                                    child: Container(
-                                      decoration: new BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius:
-                                              new BorderRadius.circular(40),
-                                          border: Border.all(
-                                              color: Color(0xff00adef))),
-                                      height: 40.0, // height of the button
-                                      width: 120.0, // width of the button
-                                      child: Center(
-                                          child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: <Widget>[
-                                          Text(
-                                            'View All',
-                                            style: TextStyle(
-                                                color: Color(0xff00adef),
-                                                fontWeight: FontWeight.w600),
-                                          ),
-                                          press
-                                              ? Icon(
-                                                  Icons.keyboard_arrow_down,
-                                                  color: Color(0xff00adef),
-                                                )
-                                              : Icon(
-                                                  Icons.keyboard_arrow_up,
-                                                  color: Color(0xff00adef),
-                                                ),
-                                        ],
-                                      )),
-                                    ),
-                                    elevation: 0,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(40.0),
-                                    ),
-                                  ),
-                                )),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    delay: 600,
-                  ),
+//                   ShowUp(
+//                     child: Card(
+//                       elevation: 3,
+//                       shape: RoundedRectangleBorder(
+//                         borderRadius: BorderRadius.circular(15),
+//                       ),
+//                       margin: EdgeInsets.all(10),
+//                       child: ClipPath(
+//                         child: Container(
+//                           child: Padding(
+//                             padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+//                             child: Row(
+//                               mainAxisAlignment: MainAxisAlignment.start,
+//                               crossAxisAlignment: CrossAxisAlignment.start,
+//                               children: <Widget>[
+//                                 Center(
+//                                   child: Padding(
+//                                     padding: EdgeInsets.all(10),
+//                                     child: Image.asset(
+//                                       "assets/images/bbbb.png",
+// //                                                           height: 50.0,
+// //                                                           width: 50.0,
+//                                       fit: BoxFit.fill,
+//                                     ),
+//                                   ),
+//                                 ),
+//                                 Expanded(
+//                                   child: Padding(
+//                                     padding: const EdgeInsets.all(10),
+//                                     child: Column(
+//                                       mainAxisAlignment:
+//                                           MainAxisAlignment.start,
+//                                       crossAxisAlignment:
+//                                           CrossAxisAlignment.start,
+//                                       children: <Widget>[
+//                                         Padding(
+//                                           padding: const EdgeInsets.fromLTRB(
+//                                               0.0, 0.0, 0.0, 0.0),
+//                                           child: Align(
+//                                             child: new Text(
+//                                               'Hi! Raj Kaushal',
+//                                               style: TextStyle(
+//                                                 color: Colors.black45,
+//                                                 fontSize: 16,
+//                                                 letterSpacing: 0,
+//                                                 fontWeight: FontWeight.w400,
+//                                               ),
+//                                               textAlign: TextAlign.left,
+//                                               textDirection: TextDirection.ltr,
+//                                             ),
+//                                             alignment: Alignment.centerLeft,
+//                                           ),
+//                                         ),
+//                                         Padding(
+//                                           padding: const EdgeInsets.fromLTRB(
+//                                               0.0, 5.0, 0.0, 0.0),
+//                                           child: Align(
+//                                             child: new Text(
+//                                               'Morning 23 April',
+//                                               style: TextStyle(
+//                                                 color: Colors.black45,
+//                                                 fontSize: 14,
+//                                                 letterSpacing: 0,
+//                                                 fontWeight: FontWeight.w400,
+//                                               ),
+//                                               textAlign: TextAlign.left,
+//                                               textDirection: TextDirection.ltr,
+//                                             ),
+//                                             alignment: Alignment.centerLeft,
+//                                           ),
+//                                         ),
+//                                         Row(
+//                                           children: <Widget>[
+//                                             Padding(
+//                                               padding:
+//                                                   const EdgeInsets.fromLTRB(
+//                                                       0.0, 5.0, 0.0, 0.0),
+//                                               child: Align(
+//                                                 child: new Text(
+//                                                   'Good Morning',
+//                                                   style: TextStyle(
+//                                                     color: Colors.black45,
+//                                                     fontSize: 14,
+//                                                     letterSpacing: 0,
+//                                                     fontWeight: FontWeight.w400,
+//                                                   ),
+//                                                   textAlign: TextAlign.left,
+//                                                   textDirection:
+//                                                       TextDirection.ltr,
+//                                                 ),
+//                                                 alignment: Alignment.centerLeft,
+//                                               ),
+//                                             ),
+//                                             Padding(
+//                                               padding:
+//                                                   const EdgeInsets.fromLTRB(
+//                                                       10.0, 5.0, 0.0, 0.0),
+//                                               child: Align(
+//                                                 child: new Text(
+//                                                   'Dig',
+//                                                   style: TextStyle(
+//                                                     color: Color(0xff00adef),
+//                                                     fontSize: 14,
+//                                                     letterSpacing: 0,
+//                                                     fontWeight: FontWeight.w400,
+//                                                   ),
+//                                                   textAlign: TextAlign.left,
+//                                                   textDirection:
+//                                                       TextDirection.ltr,
+//                                                 ),
+//                                                 alignment: Alignment.centerLeft,
+//                                               ),
+//                                             ),
+//                                           ],
+//                                         ),
+//                                       ],
+//                                     ),
+//                                   ),
+//                                 ),
+//                                 Padding(
+//                                   padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+//                                   child: Center(
+//                                     child: Padding(
+//                                       padding: EdgeInsets.all(0),
+//                                       child: SvgPicture.asset(
+//                                         "assets/images/tea.svg",
+// //                                              color: Colors.red,
+// //                                              semanticsLabel: 'A red up arrow'
+//                                         height: 40,
+//                                         width: 40,
+//                                       ),
+//                                     ),
+//                                   ),
+//                                 ),
+//                               ],
+//                             ),
+//                           ),
+//                         ),
+//                       ),
+//                     ),
+//                     delay: 400,
+//                   ),
+//                   ShowUp(
+//                     child: Card(
+//                       elevation: 3,
+//                       shape: RoundedRectangleBorder(
+//                         borderRadius: BorderRadius.circular(15),
+//                       ),
+//                       margin: EdgeInsets.all(10),
+//                       child: ClipPath(
+//                         child: Container(
+//                           child: Column(
+//                             children: <Widget>[
+//                               GridView.builder(
+//                                 physics: NeverScrollableScrollPhysics(),
+//                                 shrinkWrap: true,
+//                                 itemCount: press ? 6 : 15,
+//                                 gridDelegate:
+//                                     SliverGridDelegateWithFixedCrossAxisCount(
+//                                         childAspectRatio:
+//                                             SizeConfig.heightMultiplier * 0.14,
+//                                         crossAxisCount: 3),
+//                                 itemBuilder: (BuildContext context, int index) {
+//                                   return GestureDetector(
+//                                     onTap: () {
+//                                       if (index == 0) {
+//                                         // Navigator.push(
+//                                         //     context,
+//                                         //     MaterialPageRoute(
+//                                         //         builder: (context) =>
+//                                         //             Community()));
+//                                       } else if (index == 1) {
+//                                         // Navigator.push(
+//                                         //     context,
+//                                         //     MaterialPageRoute(
+//                                         //         builder: (context) =>
+//                                         //             Community()));
+//                                       } else if (index == 2) {
+//                                         // Navigator.push(
+//                                         //     context,
+//                                         //     MaterialPageRoute(
+//                                         //         builder: (context) =>
+//                                         //             Community()));
+//                                       }
+//                                     },
+//                                     child: Column(
+//                                       mainAxisAlignment:
+//                                           MainAxisAlignment.center,
+//                                       crossAxisAlignment:
+//                                           CrossAxisAlignment.center,
+//                                       children: <Widget>[
+//                                         Padding(
+//                                           padding:
+//                                               EdgeInsets.fromLTRB(5, 0, 5, 0),
+//                                           child: Container(
+//                                             padding: EdgeInsets.all(0),
+//                                             decoration: BoxDecoration(
+//                                               borderRadius:
+//                                                   BorderRadius.circular(10.0),
+//                                               color: (Colors.accents[Random()
+//                                                   .nextInt(Colors
+//                                                       .accents.length)])[100],
+//                                             ),
+// //                            width: 75.0,
+//                                             height: 100,
+//                                             child: Container(
+//                                               decoration: BoxDecoration(
+//                                                 borderRadius:
+//                                                     BorderRadius.circular(8.0),
+// //                        image: DecorationImage(
+// //                          image: AssetImage("assets/images/card_background.png"),
+// //                          fit: BoxFit.fill,
+// //
+// //                        ),
+//                                                 color: Colors.transparent,
+//                                               ),
+//                                               padding: EdgeInsets.all(0),
+//                                               child: Stack(
+//                                                 children: <Widget>[
+//                                                   Column(
+//                                                     mainAxisAlignment:
+//                                                         MainAxisAlignment
+//                                                             .center,
+//                                                     crossAxisAlignment:
+//                                                         CrossAxisAlignment
+//                                                             .center,
+//                                                     children: <Widget>[
+//                                                       Padding(
+//                                                         padding:
+//                                                             EdgeInsets.fromLTRB(
+//                                                                 0, 10, 0, 0),
+//                                                         child: SvgPicture.asset(
+//                                                           "assets/images/${itemListTwo[index].image}.svg",
+// //                                              color: Colors.red,
+// //                                              semanticsLabel: 'A red up arrow'
+//                                                           height: 40,
+//                                                           width: 40,
+//                                                         ),
+//                                                       ),
+//                                                       Expanded(
+//                                                         child: Align(
+//                                                           alignment:
+//                                                               FractionalOffset
+//                                                                   .bottomCenter,
+//                                                           child: Container(
+//                                                             color: Colors
+//                                                                 .transparent,
+//                                                             width:
+//                                                                 double.infinity,
+//                                                             child: Padding(
+//                                                               padding:
+//                                                                   EdgeInsets
+//                                                                       .fromLTRB(
+//                                                                           5,
+//                                                                           5,
+//                                                                           5,
+//                                                                           5),
+//                                                               child: Text(
+//                                                                 itemListTwo[
+//                                                                         index]
+//                                                                     .text,
+//                                                                 textAlign:
+//                                                                     TextAlign
+//                                                                         .center,
+//                                                                 style:
+//                                                                     TextStyle(
+//                                                                   color: Color(
+//                                                                       0xff444b69),
+//                                                                   fontSize: 12,
+//                                                                 ),
+//                                                               ),
+//                                                             ),
+//                                                           ),
+//                                                         ),
+//                                                       ),
+//                                                     ],
+//                                                   ),
+//                                                 ],
+//                                               ),
+//                                             ),
+//                                           ),
+//                                         ),
+//                                       ],
+//                                     ),
+//                                   );
+//                                 },
+//                               ),
+//                               Padding(
+//                                 padding:
+//                                     const EdgeInsets.fromLTRB(0, 20, 0, 10),
+//                                 child: Center(
+//                                     child: GestureDetector(
+//                                   onTap: () {
+//                                     setState(() {
+//                                       _animatedHeight != 0.0
+//                                           ? _animatedHeight = 0.0
+//                                           : _animatedHeight = 100.0;
+//                                       press = !press;
+//                                     });
+// //                          if(!["", null, false, 0].contains(_name.text.toString())){
+// //                            if(!["", null, false, 0].contains(gender))
+// //                            {
+// //                              if(!["", null, false, 0,"Select Date"].contains(dob))
+// //                              {
+// //                                if(!["", null, false, 0,"Select Time"].contains(time1))
+// //                                {
+// //                                  if(!["", null, false, 0,].contains(_pob.text.toString()))
+// //                                  {
+// //
+// //                                    if(!["", null, false, 0,].contains(_state.text.toString()))
+// //                                    {
+// //                                      FocusScope.of(context)
+// //                                          .requestFocus(FocusNode());
+// //                                      pr.show();
+// //                                      getToekn();
+// //                                    }
+// //                                    else{
+// //                                      Fluttertoast.showToast(
+// //                                          msg: "Please Enter State",
+// //                                          toastLength: Toast.LENGTH_SHORT,
+// //                                          gravity: ToastGravity.CENTER,
+// //                                          timeInSecForIos: 10
+// //                                      );
+// //                                    }
+// //
+// //
+// //                                    //getToekn();
+// //
+// //                                  }else{
+// //                                    Fluttertoast.showToast(
+// //                                        msg: "Enter Place of birth",
+// //                                        toastLength: Toast.LENGTH_SHORT,
+// //                                        gravity: ToastGravity.CENTER,
+// //                                        timeInSecForIos: 1
+// //                                    );
+// //
+// //
+// //                                  }
+// //
+// //
+// //
+// //                                }else{
+// //
+// //                                  Fluttertoast.showToast(
+// //                                      msg: "Enter time of birth",
+// //                                      toastLength: Toast.LENGTH_SHORT,
+// //                                      gravity: ToastGravity.CENTER,
+// //                                      timeInSecForIos: 1
+// //                                  );
+// //
+// //
+// //                                }
+// //
+// //                                //getToekn();
+// //
+// //                              }else{
+// //
+// //                                Fluttertoast.showToast(
+// //                                    msg: "Enter Date of birth",
+// //                                    toastLength: Toast.LENGTH_SHORT,
+// //                                    gravity: ToastGravity.CENTER,
+// //                                    timeInSecForIos: 1
+// //                                );
+// //
+// //                              }
+// //
+// //
+// //                            }else{
+// //
+// //                              Fluttertoast.showToast(
+// //                                  msg: "Please Select Gender",
+// //                                  toastLength: Toast.LENGTH_SHORT,
+// //                                  gravity: ToastGravity.CENTER,
+// //                                  timeInSecForIos: 1
+// //                              );
+// //
+// //                            }
+// //
+// //                          }else{
+// //
+// //
+// //                            Fluttertoast.showToast(
+// //                                msg: "Please Enter Name",
+// //                                toastLength: Toast.LENGTH_SHORT,
+// //                                gravity: ToastGravity.CENTER,
+// //                                timeInSecForIos: 1
+// //                            );
+// //
+// //
+// //                          }
+// //
+// ////                    setPersonalData();
+//                                   },
+//                                   child: Card(
+//                                     child: Container(
+//                                       decoration: new BoxDecoration(
+//                                           color: Colors.white,
+//                                           borderRadius:
+//                                               new BorderRadius.circular(40),
+//                                           border: Border.all(
+//                                               color: Color(0xff00adef))),
+//                                       height: 40.0, // height of the button
+//                                       width: 120.0, // width of the button
+//                                       child: Center(
+//                                           child: Row(
+//                                         mainAxisAlignment:
+//                                             MainAxisAlignment.center,
+//                                         children: <Widget>[
+//                                           Text(
+//                                             'View All',
+//                                             style: TextStyle(
+//                                                 color: Color(0xff00adef),
+//                                                 fontWeight: FontWeight.w600),
+//                                           ),
+//                                           press
+//                                               ? Icon(
+//                                                   Icons.keyboard_arrow_down,
+//                                                   color: Color(0xff00adef),
+//                                                 )
+//                                               : Icon(
+//                                                   Icons.keyboard_arrow_up,
+//                                                   color: Color(0xff00adef),
+//                                                 ),
+//                                         ],
+//                                       )),
+//                                     ),
+//                                     elevation: 0,
+//                                     shape: RoundedRectangleBorder(
+//                                       borderRadius: BorderRadius.circular(40.0),
+//                                     ),
+//                                   ),
+//                                 )),
+//                               ),
+//                             ],
+//                           ),
+//                         ),
+//                       ),
+//                     ),
+//                     delay: 600,
+//                   ),
 
                   ShowUp(
                     child: Padding(

@@ -19,7 +19,7 @@ import 'package:we_watch_app/ui/login.dart';
 
 import 'filter_task.dart';
 
-const kGoogleApiKey = "AIzaSyAl_DrFzKqFTx54VoG2fAgopn5M2pC2sk4";
+//const kGoogleApiKey = "AIzaSyAl_DrFzKqFTx54VoG2fAgopn5M2pC2sk4";
 
 // to get places detail (lat/lng)
 //GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: kGoogleApiKey);
@@ -197,7 +197,6 @@ class _LocationAccessState extends State<LocationAccess> {
           _currentPosition.latitude, _currentPosition.longitude);
 
       Placemark place = p[0];
-
       setState(() {
         _currentAddress =
             "${place.name}, ${place.locality}, ${place.postalCode}, ${place.country}";

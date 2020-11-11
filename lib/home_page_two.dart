@@ -11,6 +11,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart' as
 
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:package_info/package_info.dart';
 import 'package:share/share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -44,6 +45,10 @@ import 'package:we_watch_app/watch_later_three.dart';
 import 'package:http/http.dart' as http;
 import 'NavigationPages/dashboard.dart';
 import 'community.dart';
+
+import 'package:google_maps_webservice/directions.dart' as dir;
+import 'package:google_maps_webservice/src/places.dart';
+import 'package:flutter_google_places/flutter_google_places.dart';
 
 class HomePageTwo extends StatefulWidget {
   HomePageTwo({Key key}) : super(key: key);
@@ -442,6 +447,47 @@ class _HomePageTwoState extends State<HomePageTwo> {
   fetch() {
     setLoading(true);
   }
+
+  void _getLatLng(Prediction prediction) async {
+    try {
+      GoogleMapsPlaces _places = new
+      GoogleMapsPlaces(
+          apiKey: "AIzaSyAfySREHfRw2x8bEFT6b7Nc4z3Te80LiyI"); //Same API_KEY as above
+      PlacesDetailsResponse detail =
+      await _places.getDetailsByPlaceId(prediction.placeId);
+      double latitude = detail.result.geometry.location.lat;
+      double longitude = detail.result.geometry.location.lng;
+      String address = prediction.description;
+      print("lati " + latitude.toString() + " langi " + longitude.toString());
+      _getAddressFromLatLng(latitude, longitude);
+    }catch(e){
+      debugPrint(e);
+    }
+  }
+  Geolocator geolocator;
+  _getAddressFromLatLng(double latitude, double longitude) async {
+    try {
+      geolocator = Geolocator();
+      List<Placemark> p = await geolocator.placemarkFromCoordinates(
+          latitude,longitude);
+
+      Placemark place = p[0];
+
+      setState(() {
+        print("sunny District "+place.locality+" state " +place.administrativeArea+" country "+place.country +"pin code"+place.postalCode);
+        // userCity=place.locality;
+        // userState=place.administrativeArea;
+        // userLocality=place.country;
+        // userPostalCode=place.postalCode;
+      });
+      // UtilityClass.showMsg("District "+place.locality+" state " +place.administrativeArea+" country "+place.country );
+
+    } catch (e) {
+      print(e);
+      print("locality exception"+e.toString());
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -5517,12 +5563,25 @@ class _HomePageTwoState extends State<HomePageTwo> {
                           )
                         ],
                       ),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => LocationAccess()),
-                        );
+                      onTap: () async{
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(
+                        //       builder: (context) => LocationAccess()),
+                        // );
+                        try {
+                          Prediction pr = await PlacesAutocomplete.show(
+                              context: context,
+                              apiKey: "AIzaSyAfySREHfRw2x8bEFT6b7Nc4z3Te80LiyI",
+                              language: "en",
+                              components: [dir.Component(dir.Component.country, "in"),
+                              ]);
+                          _getLatLng(pr);
+                          print("place id=>" + pr.placeId);
+                        }catch(ex){
+
+                        }
+
                       },
                     )),
                   ),
