@@ -30,7 +30,9 @@ class _VerifyOTPState extends State<VerifyOTP> {
 
   Future getMobile() async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
-    mobileNo=sharedPreferences.getString('mobile');
+    setState(() {
+      mobileNo=sharedPreferences.getString('mobile');
+    });
     print("Mobile"+mobileNo);
   }
   Future userLogin() async {
@@ -39,16 +41,16 @@ class _VerifyOTPState extends State<VerifyOTP> {
 
     File imgFile=new File(prefs.getString("filePath_profile") ?? '');
     String fileName=prefs.getString("filename_profile") ?? '';
-    var stream = await new http.ByteStream(imgFile.openRead());
+    //var stream = await new http.ByteStream(imgFile.openRead());
 
-    print(prefs.getString('mobile'));
-    print(prefs.getString('type'));
-    print(prefs.getString('first_name'));
-    print(prefs.getString('last_name'));
-    print(prefs.getString('email'));
-    print(prefs.getString('password'));
-    print(prefs.getString('dob'));
-    print(prefs.getString('gender'));
+    // print(prefs.getString('mobile'));
+    // print(prefs.getString('type'));
+    // print(prefs.getString('first_name'));
+    // print(prefs.getString('last_name'));
+    // print(prefs.getString('email'));
+    // print(prefs.getString('password'));
+    // print(prefs.getString('dob'));
+    // print(prefs.getString('gender'));
 
     // Showing CircularProgressIndicator.
     setState(() {

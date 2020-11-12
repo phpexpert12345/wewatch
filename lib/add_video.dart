@@ -8,11 +8,15 @@ import 'package:flutter/services.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:google_maps_webservice/directions.dart';
+import 'package:google_maps_webservice/src/places.dart';
+import 'package:flutter_google_places/flutter_google_places.dart';
 import 'home_page_two.dart';
 
 class AddVideo extends StatefulWidget {
@@ -130,9 +134,10 @@ class _AddVideoState extends State<AddVideo> {
         'POST', Uri.parse('https://wewatch.in/wewatch-up/api/v1/video'));
     request.fields["video_title"] = _videoTitleController.text;
     request.fields["video_description"] = _descriptionController.text;
-    request.fields["video_locality"] = _localityController.text;
-    request.fields["state_id"] = _myselection2;
-    request.fields["city_id"] = _mySelection;
+    request.fields["video_locality"] = userLocality;
+    request.fields["state_name"] = userState;
+    request.fields["city_name"] = userCity;
+    request.fields["pincode"]=  userPostalCode;// postal_code
     request.fields["video_tag"] = _videoTagController.text;
     request.fields["video_category"] = categoryName;
     request.files.add(await http.MultipartFile(
@@ -651,7 +656,7 @@ class _AddVideoState extends State<AddVideo> {
       new TextEditingController();
   final TextEditingController _categoryController = new TextEditingController();
   final TextEditingController _cityController = new TextEditingController();
-  final TextEditingController _stateController = new TextEditingController();
+  final TextEditingController locationController = new TextEditingController();
   final TextEditingController _localityController = new TextEditingController();
   final TextEditingController _videoTagController = new TextEditingController();
 
@@ -913,261 +918,300 @@ class _AddVideoState extends State<AddVideo> {
                                   height: 20,
                                 ),
 
-                                new Container(
-                                  child: new Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      Row(
-                                        children: <Widget>[
-                                          Expanded(
-                                            child: Column(
-                                              children: <Widget>[
-                                                DropdownButton<String>(
-                                                  icon: Container(
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                            vertical: 15),
-                                                    child: SvgPicture.asset(
-                                                      "assets/images/city.svg",
-//                                              color: Colors.red,
-//                                              semanticsLabel: 'A red up arrow'
-                                                      height: 15,
-                                                      width: 15,
-                                                    ),
-                                                  ),
-                                                  iconSize: 24,
-                                                  hint: Row(
-                                                    children: <Widget>[
-//                                                      Text(
-//                                                        '*',
-//                                                        style: TextStyle(color: Colors.red),
-//                                                      ),
-                                                      Text(
-                                                        'State',
-                                                        style: TextStyle(
-                                                          color:
-                                                              Color(0xff444b69),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  isExpanded: true,
-//                                                  underline: null,
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                  ),
-                                                  items: data.map((item) {
-                                                    return new DropdownMenuItem(
-                                                      child: new Text(
-                                                        item['name'],
-                                                        style: TextStyle(
-                                                            color:
-                                                                Colors.black),
-                                                      ),
-                                                      value:
-                                                          item['id'].toString(),
-                                                    );
-                                                  }).toList(),
-                                                  onChanged: (newVal) {
-                                                    setState(() {
-                                                      _myselection2 = newVal;
-//                                          int a=data1.indexOf(_myselection2);
-//                                          String s=data1.elementAt(a);
-//                                          print(_myselection2);
-                                                      _mySelection = null;
-                                                      data1.clear();
-                                                      getCity();
-                                                    });
-                                                  },
-                                                  value: _myselection2,
-                                                ),
-//                                                new TextFormField(
-//                                                  controller: _cityController,
-//                                                  textInputAction: TextInputAction.done,
-//                                                  keyboardType: TextInputType.emailAddress,
-//                                                  decoration: new InputDecoration(
-//                                                    hintText: 'City',
-//                                                    hintStyle:  TextStyle(
+//                                 new Container(
+//                                   child: new Column(
+//                                     mainAxisAlignment: MainAxisAlignment.start,
+//                                     crossAxisAlignment:
+//                                         CrossAxisAlignment.start,
+//                                     children: <Widget>[
+//                                       Row(
+//                                         children: <Widget>[
+//                                           Expanded(
+//                                             child: Column(
+//                                               children: <Widget>[
+//                                                 DropdownButton<String>(
+//                                                   icon: Container(
+//                                                     padding:
+//                                                         EdgeInsets.symmetric(
+//                                                             vertical: 15),
+//                                                     child: SvgPicture.asset(
+//                                                       "assets/images/city.svg",
+// //                                              color: Colors.red,
+// //                                              semanticsLabel: 'A red up arrow'
+//                                                       height: 15,
+//                                                       width: 15,
+//                                                     ),
+//                                                   ),
+//                                                   iconSize: 24,
+//                                                   hint: Row(
+//                                                     children: <Widget>[
+// //                                                      Text(
+// //                                                        '*',
+// //                                                        style: TextStyle(color: Colors.red),
+// //                                                      ),
+//                                                       Text(
+//                                                         'State',
+//                                                         style: TextStyle(
+//                                                           color:
+//                                                               Color(0xff444b69),
+//                                                         ),
+//                                                       ),
+//                                                     ],
+//                                                   ),
+//                                                   isExpanded: true,
+// //                                                  underline: null,
+//                                                   style: TextStyle(
+//                                                     color: Colors.white,
+//                                                   ),
+//                                                   items: data.map((item) {
+//                                                     return new DropdownMenuItem(
+//                                                       child: new Text(
+//                                                         item['name'],
+//                                                         style: TextStyle(
+//                                                             color:
+//                                                                 Colors.black),
+//                                                       ),
+//                                                       value:
+//                                                           item['id'].toString(),
+//                                                     );
+//                                                   }).toList(),
+//                                                   onChanged: (newVal) {
+//                                                     setState(() {
+//                                                       _myselection2 = newVal;
+// //                                          int a=data1.indexOf(_myselection2);
+// //                                          String s=data1.elementAt(a);
+// //                                          print(_myselection2);
+//                                                       _mySelection = null;
+//                                                       data1.clear();
+//                                                       getCity();
+//                                                     });
+//                                                   },
+//                                                   value: _myselection2,
+//                                                 ),
+// //                                                new TextFormField(
+// //                                                  controller: _cityController,
+// //                                                  textInputAction: TextInputAction.done,
+// //                                                  keyboardType: TextInputType.emailAddress,
+// //                                                  decoration: new InputDecoration(
+// //                                                    hintText: 'City',
+// //                                                    hintStyle:  TextStyle(
+// //
+// //                                                      fontSize: 16.0,
+// //                                                      color: Color(0xFF5a6381),),
+// //                                                    suffixIcon: Container(
+// //                                                      padding: EdgeInsets.symmetric(vertical: 15),
+// //                                                      child: SvgPicture.asset(
+// //                                                        "assets/images/city.svg",
+// ////                                              color: Colors.red,
+// ////                                              semanticsLabel: 'A red up arrow'
+// //                                                        height: 15,
+// //                                                        width: 15,
+// //                                                      ),
+// //                                                    ),
+// //                                                  ),
+// //                                                  maxLines: 1,
+// //                                                  autofocus: false,
+// //                                                ),
+//                                               ],
+//                                             ),
+//                                           ),
+//                                           SizedBox(
+//                                             width: 10,
+//                                           ),
+//                                           Expanded(
+//                                             child: Column(
+//                                               children: <Widget>[
+//                                                 DropdownButton<String>(
+//                                                   icon: Container(
+//                                                     padding:
+//                                                         EdgeInsets.symmetric(
+//                                                             vertical: 15),
+//                                                     child: SvgPicture.asset(
+//                                                       "assets/images/city.svg",
+// //                                              color: Colors.red,
+// //                                              semanticsLabel: 'A red up arrow'
+//                                                       height: 15,
+//                                                       width: 15,
+//                                                     ),
+//                                                   ),
+//                                                   iconSize: 24,
+//                                                   hint: Row(
+//                                                     children: <Widget>[
+// //                                                      Text(
+// //                                                        '*',
+// //                                                        style: TextStyle(color: Colors.red),
+// //                                                      ),
+//                                                       Text(
+//                                                         'City',
+//                                                         style: TextStyle(
+//                                                           color:
+//                                                               Color(0xff444b69),
+//                                                         ),
+//                                                       ),
+//                                                     ],
+//                                                   ),
+//                                                   isExpanded: true,
+// //                                                  underline: null,
+//                                                   style: TextStyle(
+//                                                     color: Colors.white,
+//                                                   ),
+//                                                   items: data1.map((item) {
+//                                                     return new DropdownMenuItem(
+//                                                       child: new Text(
+//                                                         item['name'],
+//                                                         style: TextStyle(
+//                                                             color:
+//                                                                 Colors.black),
+//                                                       ),
+//                                                       value:
+//                                                           item['id'].toString(),
+//                                                     );
+//                                                   }).toList(),
+//                                                   onChanged: (newVal) {
+//                                                     setState(() {
+//                                                       _mySelection = newVal;
 //
-//                                                      fontSize: 16.0,
-//                                                      color: Color(0xFF5a6381),),
-//                                                    suffixIcon: Container(
-//                                                      padding: EdgeInsets.symmetric(vertical: 15),
-//                                                      child: SvgPicture.asset(
-//                                                        "assets/images/city.svg",
+// //                                          int a=data1.indexOf(_myselection2);
+// //                                          String s=data1.elementAt(a);
+// //                                          print(_myselection2);
+// //                                                      getRashiReport("");
+//                                                     });
+//                                                   },
+//                                                   value: _mySelection,
+//                                                 ),
+// //                                                new TextFormField(
+// //                                                  controller: _cityController,
+// //                                                  textInputAction: TextInputAction.done,
+// //                                                  keyboardType: TextInputType.emailAddress,
+// //                                                  decoration: new InputDecoration(
+// //                                                    hintText: 'City',
+// //                                                    hintStyle:  TextStyle(
+// //
+// //                                                      fontSize: 16.0,
+// //                                                      color: Color(0xFF5a6381),),
+// //                                                    suffixIcon: Container(
+// //                                                      padding: EdgeInsets.symmetric(vertical: 15),
+// //                                                      child: SvgPicture.asset(
+// //                                                        "assets/images/city.svg",
+// ////                                              color: Colors.red,
+// ////                                              semanticsLabel: 'A red up arrow'
+// //                                                        height: 15,
+// //                                                        width: 15,
+// //                                                      ),
+// //                                                    ),
+// //                                                  ),
+// //                                                  maxLines: 1,
+// //                                                  autofocus: false,
+// //                                                ),
+//                                               ],
+//                                             ),
+//                                           ),
+//                                         ],
+//                                       ),
+//                                     ],
+//                                   ),
+//                                 ),
+//                                 SizedBox(
+//                                   height: 20,
+//                                 ),
+//
+//                                 new Container(
+//                                   child: Column(
+//                                     mainAxisAlignment: MainAxisAlignment.start,
+//                                     crossAxisAlignment:
+//                                         CrossAxisAlignment.start,
+//                                     children: <Widget>[
+//                                       Padding(
+//                                         padding: const EdgeInsets.fromLTRB(
+//                                             0.0, 8, 0, 0),
+//                                         child: Text(
+//                                           'Locality',
+//                                           style: TextStyle(
+//                                               fontWeight: FontWeight.w400,
+//                                               fontSize: 15,
+// //                                        fontWeight: FontWeight.bold,
+//                                               color: Color(0xff444b69),
+//                                               letterSpacing: 1),
+//                                         ),
+//                                       ),
+//                                       new TextFormField(
+//                                         controller: _localityController,
+//                                         textInputAction: TextInputAction.done,
+//                                         decoration: new InputDecoration(
+//                                           fillColor: Color(0xff444b69),
+//                                           hintText: 'Locality',
+//                                           hintStyle: TextStyle(
+// //                                            fontWeight: FontWeight.w400,
+//                                             fontSize: 15,
+// //                                        fontWeight: FontWeight.bold,
+//                                             color: Color(0xff444b69),
+// //                                            letterSpacing: 1
+//                                           ),
+//                                           suffixIcon: Container(
+//                                             padding: EdgeInsets.symmetric(
+//                                                 vertical: 15),
+//                                             child: SvgPicture.asset(
+//                                               "assets/images/location.svg",
+// //                                              color: Colors.red,
+// //                                              semanticsLabel: 'A red up arrow'
+//                                               height: 15,
+//                                               width: 15,
+//                                             ),
+//                                           ),
+//                                         ),
+//                                         style: TextStyle(
+// //                                            fontWeight: FontWeight.w400,
+//                                           fontSize: 15,
+// //                                        fontWeight: FontWeight.bold,
+//                                           color: Color(0xff444b69),
+// //                                            letterSpacing: 1
+//                                         ),
+//                                         maxLines: 1,
+//                                         autofocus: false,
+//                                       ),
+//                                     ],
+//                                   ),
+//                                 ),
+
+                                new TextFormField(
+                                  controller: locationController,
+                                  textInputAction: TextInputAction.done,
+                                  keyboardType: TextInputType.text,
+                                  onTap: () async{
+                                    try {
+                                      Prediction pr = await PlacesAutocomplete.show(
+                                          context: context,
+                                          apiKey: "AIzaSyAfySREHfRw2x8bEFT6b7Nc4z3Te80LiyI",
+                                          language: "en",
+                                          components: [Component(Component.country, "in"),
+                                          ]);
+                                      _getLatLng(pr);
+                                      print("place id=>" + pr.placeId);
+                                    }catch(ex){
+
+                                    }
+                                  },
+                                  decoration: new InputDecoration(
+                                    suffixIcon: Icon(Icons.add_location),
+                                    hintText: 'Add Location',
+                                    hintStyle: TextStyle(
+                                      fontSize: 16.0,
+                                      color: Color(0xFF5a6381),
+                                    ),
+//                                        suffixIcon: Container(
+//                                          padding:
+//                                          EdgeInsets.symmetric(vertical: 15),
+//                                          child: SvgPicture.asset(
+//                                            "assets/images/email.svg",
 ////                                              color: Colors.red,
 ////                                              semanticsLabel: 'A red up arrow'
-//                                                        height: 15,
-//                                                        width: 15,
-//                                                      ),
-//                                                    ),
-//                                                  ),
-//                                                  maxLines: 1,
-//                                                  autofocus: false,
-//                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-                                          Expanded(
-                                            child: Column(
-                                              children: <Widget>[
-                                                DropdownButton<String>(
-                                                  icon: Container(
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                            vertical: 15),
-                                                    child: SvgPicture.asset(
-                                                      "assets/images/city.svg",
-//                                              color: Colors.red,
-//                                              semanticsLabel: 'A red up arrow'
-                                                      height: 15,
-                                                      width: 15,
-                                                    ),
-                                                  ),
-                                                  iconSize: 24,
-                                                  hint: Row(
-                                                    children: <Widget>[
-//                                                      Text(
-//                                                        '*',
-//                                                        style: TextStyle(color: Colors.red),
-//                                                      ),
-                                                      Text(
-                                                        'City',
-                                                        style: TextStyle(
-                                                          color:
-                                                              Color(0xff444b69),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  isExpanded: true,
-//                                                  underline: null,
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                  ),
-                                                  items: data1.map((item) {
-                                                    return new DropdownMenuItem(
-                                                      child: new Text(
-                                                        item['name'],
-                                                        style: TextStyle(
-                                                            color:
-                                                                Colors.black),
-                                                      ),
-                                                      value:
-                                                          item['id'].toString(),
-                                                    );
-                                                  }).toList(),
-                                                  onChanged: (newVal) {
-                                                    setState(() {
-                                                      _mySelection = newVal;
-
-//                                          int a=data1.indexOf(_myselection2);
-//                                          String s=data1.elementAt(a);
-//                                          print(_myselection2);
-//                                                      getRashiReport("");
-                                                    });
-                                                  },
-                                                  value: _mySelection,
-                                                ),
-//                                                new TextFormField(
-//                                                  controller: _cityController,
-//                                                  textInputAction: TextInputAction.done,
-//                                                  keyboardType: TextInputType.emailAddress,
-//                                                  decoration: new InputDecoration(
-//                                                    hintText: 'City',
-//                                                    hintStyle:  TextStyle(
-//
-//                                                      fontSize: 16.0,
-//                                                      color: Color(0xFF5a6381),),
-//                                                    suffixIcon: Container(
-//                                                      padding: EdgeInsets.symmetric(vertical: 15),
-//                                                      child: SvgPicture.asset(
-//                                                        "assets/images/city.svg",
-////                                              color: Colors.red,
-////                                              semanticsLabel: 'A red up arrow'
-//                                                        height: 15,
-//                                                        width: 15,
-//                                                      ),
-//                                                    ),
-//                                                  ),
-//                                                  maxLines: 1,
-//                                                  autofocus: false,
-//                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
+//                                            height: 15,
+//                                            width: 15,
+//                                          ),
+//                                        ),
                                   ),
+                                  autofocus: false,
                                 ),
-                                SizedBox(
-                                  height: 20,
-                                ),
-
-                                new Container(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      Padding(
-                                        padding: const EdgeInsets.fromLTRB(
-                                            0.0, 8, 0, 0),
-                                        child: Text(
-                                          'Locality',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: 15,
-//                                        fontWeight: FontWeight.bold,
-                                              color: Color(0xff444b69),
-                                              letterSpacing: 1),
-                                        ),
-                                      ),
-                                      new TextFormField(
-                                        controller: _localityController,
-                                        textInputAction: TextInputAction.done,
-                                        decoration: new InputDecoration(
-                                          fillColor: Color(0xff444b69),
-                                          hintText: 'Locality',
-                                          hintStyle: TextStyle(
-//                                            fontWeight: FontWeight.w400,
-                                            fontSize: 15,
-//                                        fontWeight: FontWeight.bold,
-                                            color: Color(0xff444b69),
-//                                            letterSpacing: 1
-                                          ),
-                                          suffixIcon: Container(
-                                            padding: EdgeInsets.symmetric(
-                                                vertical: 15),
-                                            child: SvgPicture.asset(
-                                              "assets/images/location.svg",
-//                                              color: Colors.red,
-//                                              semanticsLabel: 'A red up arrow'
-                                              height: 15,
-                                              width: 15,
-                                            ),
-                                          ),
-                                        ),
-                                        style: TextStyle(
-//                                            fontWeight: FontWeight.w400,
-                                          fontSize: 15,
-//                                        fontWeight: FontWeight.bold,
-                                          color: Color(0xff444b69),
-//                                            letterSpacing: 1
-                                        ),
-                                        maxLines: 1,
-                                        autofocus: false,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-
                                 SizedBox(
                                   height: 10,
                                 ),
@@ -1411,48 +1455,13 @@ class _AddVideoState extends State<AddVideo> {
                         onTap: () {
                           // updateProfile();
 
-                          if (![
-                            "",
-                            null,
-                            false,
-                            0
-                          ].contains(_videoTitleController.text.toString())) {
-                            if (!["", null, false, 0].contains(
-                                _descriptionController.text.toString())) {
-                              if (![
-                                "",
-                                null,
-                                false,
-                                0,
-                              ].contains(_myselection2)) {
-                                if (![
-                                  "",
-                                  null,
-                                  false,
-                                  0,
-                                ].contains(_mySelection)) {
-                                  if (![
-                                    "",
-                                    null,
-                                    false,
-                                    0,
-                                  ].contains(
-                                      _localityController.text.toString())) {
-                                    if (![
-                                      "",
-                                      null,
-                                      false,
-                                      0,
-                                    ].contains(_categorySelection)) {
-                                      if (![
-                                        "",
-                                        null,
-                                        false,
-                                        0,
-                                      ].contains(_videoFile)) {
-                                        FocusScope.of(context)
-                                            .requestFocus(FocusNode());
+                          if (!["",null,false,0].contains(_videoTitleController.text.toString())) {
+                            if (!["", null, false, 0].contains( _descriptionController.text.toString())) {
 
+                                  if (!["",null,false,0,].contains( locationController.text.toString())) {
+                                    if (!["",null,false, 0,].contains(_categorySelection)) {
+                                      if (!["",null,false,0,].contains(_videoFile)) {
+                                        FocusScope.of(context).requestFocus(FocusNode());
                                         ProgressDialog pr;
                                         pr = ProgressDialog(
                                           context,
@@ -1641,7 +1650,7 @@ class _AddVideoState extends State<AddVideo> {
 
                                   } else {
                                     Fluttertoast.showToast(
-                                        msg: "Please Enter Locality",
+                                        msg: "Please select location",
                                         toastLength: Toast.LENGTH_SHORT,
                                         gravity: ToastGravity.CENTER,
                                         timeInSecForIosWeb: 1,
@@ -1649,29 +1658,9 @@ class _AddVideoState extends State<AddVideo> {
                                         textColor: Colors.white,
                                         fontSize: 16.0);
                                   }
-                                } else {
-                                  Fluttertoast.showToast(
-                                      msg: "Select City",
-                                      toastLength: Toast.LENGTH_SHORT,
-                                      gravity: ToastGravity.CENTER,
-                                      timeInSecForIosWeb: 1,
-                                      backgroundColor: Colors.red,
-                                      textColor: Colors.white,
-                                      fontSize: 16.0);
-                                }
-
                                 //getToekn();
 
-                              } else {
-                                Fluttertoast.showToast(
-                                    msg: "Select State",
-                                    toastLength: Toast.LENGTH_SHORT,
-                                    gravity: ToastGravity.CENTER,
-                                    timeInSecForIosWeb: 1,
-                                    backgroundColor: Colors.red,
-                                    textColor: Colors.white,
-                                    fontSize: 16.0);
-                              }
+
                             } else {
                               Fluttertoast.showToast(
                                   msg: "Please Enter Description",
@@ -1750,6 +1739,49 @@ class _AddVideoState extends State<AddVideo> {
           ],
         ),
         resizeToAvoidBottomPadding: true);
+  }
+
+  void _getLatLng(Prediction prediction) async {
+    try {
+      GoogleMapsPlaces _places = new
+      GoogleMapsPlaces(
+          apiKey: "AIzaSyAfySREHfRw2x8bEFT6b7Nc4z3Te80LiyI"); //Same API_KEY as above
+      PlacesDetailsResponse detail =
+      await _places.getDetailsByPlaceId(prediction.placeId);
+      double latitude = detail.result.geometry.location.lat;
+      double longitude = detail.result.geometry.location.lng;
+      String address = prediction.description;
+      print("lati " + latitude.toString() + " langi " + longitude.toString());
+      _getAddressFromLatLng(latitude, longitude);
+    }catch(e){
+      debugPrint(e);
+    }
+  }
+  Geolocator geolocator;
+  String userCity,userState,userLocality,userPostalCode;
+
+  _getAddressFromLatLng(double latitude, double longitude) async {
+    try {
+      geolocator = Geolocator();
+      List<Placemark> p = await geolocator.placemarkFromCoordinates(
+          latitude,longitude);
+
+      Placemark place = p[0];
+
+      setState(() {
+        print("sunny District "+place.locality+" state " +place.administrativeArea+" country "+place.country +"pin code"+place.postalCode);
+        userCity=place.locality;
+        userState=place.administrativeArea;
+        userLocality=place.country;
+        userPostalCode=place.postalCode;
+        locationController.text=userCity+","+userState+","+userPostalCode;
+      });
+      // UtilityClass.showMsg("District "+place.locality+" state " +place.administrativeArea+" country "+place.country );
+
+    } catch (e) {
+      print(e);
+      print("locality exception"+e.toString());
+    }
   }
 
   _displayDialog(BuildContext context) async {

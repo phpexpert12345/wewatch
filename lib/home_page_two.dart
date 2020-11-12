@@ -5694,22 +5694,25 @@ class _HomePageTwoState extends State<HomePageTwo> {
                             padding: EdgeInsets.fromLTRB(10, 50, 10, 50),
                             child: Row(
                               children: <Widget>[
-                                Expanded(
-                                  child: Text(
-                                    "Account",
-                                    style: TextStyle(
-                                      color: Color(0xff5c5e6a),
-                                      fontSize: 30,
-                                    ),
+
+                                Container(
+                                  width: 100,
+                                  child: Image.asset(
+                                    'assets/images/logo_splash.png',
+                                    height: 75.0,
+                                    width: 75.0,
+                                    fit: BoxFit.cover,
                                   ),
                                 ),
-                                Image.asset(
-                                  'assets/images/logo_splash.png',
-                                  height: 75.0,
-                                  width: 75.0,
-                                  fit: BoxFit.cover,
+                                //Spacer(),
+                                Text(
+                                  "पहचान भारत की",
+                                  style: TextStyle(
+                                    color: Color(0xff5c5e6a),
+                                    fontSize: 30,
+                                  ),
+                                  textAlign: TextAlign.left,
                                 ),
-                                Spacer(),
                               ],
                             ),
                           ),

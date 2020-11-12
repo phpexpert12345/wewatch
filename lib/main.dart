@@ -1,45 +1,11 @@
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:we_watch_app/LoginScreenProcessTwo.dart';
-import 'package:we_watch_app/LoginScreenprocess2.dart';
 import 'package:we_watch_app/Splash.dart';
-import 'package:we_watch_app/add_video.dart';
-import 'package:we_watch_app/auto_play.dart';
-import 'package:we_watch_app/change_password.dart';
-import 'package:we_watch_app/community.dart';
-import 'package:we_watch_app/create_an_account.dart';
-import 'package:we_watch_app/education__details.dart';
-import 'package:we_watch_app/experience_details.dart';
-import 'package:we_watch_app/experience_details_one.dart';
-
-import 'package:we_watch_app/home_page.dart';
 import 'package:we_watch_app/home_page_two.dart';
-import 'package:we_watch_app/job_description.dart';
-import 'package:we_watch_app/live.dart';
-import 'package:we_watch_app/settings.dart';
 import 'package:we_watch_app/size_config.dart';
-import 'package:we_watch_app/skills.dart';
 import 'package:we_watch_app/ui/CreatePost/Createpost.dart';
-import 'package:we_watch_app/ui/comments.dart';
-import 'package:we_watch_app/ui/show_up.dart';
-import 'package:we_watch_app/NavigationPages/video_list.dart';
-import 'package:we_watch_app/ui/watch_later.dart';
-import 'package:we_watch_app/upload_screen.dart';
 import 'package:we_watch_app/util/AppNotifierClass.dart';
-import 'package:we_watch_app/verify_otp.dart';
-import 'package:we_watch_app/verify_phone.dart';
-import 'package:we_watch_app/video_home_page.dart';
-import 'package:we_watch_app/video_play_detail.dart';
-
-import 'package:we_watch_app/video_screen_two.dart';
-import 'package:we_watch_app/watch_later_three.dart';
-import 'package:we_watch_app/watch_profile.dart';
-import 'package:we_watch_app/who_are_you.dart';
-
-import 'category.dart';
-import 'email_id.dart';
-import 'my_channel.dart';
 
 void main() {
 

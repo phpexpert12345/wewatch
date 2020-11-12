@@ -167,10 +167,10 @@ class SplashScreenState1 extends  State<SplashScreen1>  {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
-                    height: 150,
-                    width: 120,
+                    height: 140,
+                    width: 140,
                     child: Image.asset('assets/images/splash_new.webp',
-                      fit: BoxFit.fill,),
+                      ),
                   ),
                   SizedBox(
                     height: 20,

@@ -476,8 +476,7 @@ class _DashboardState extends State<Dashboard> {
 
 
     return Scaffold(
-        floatingActionButton: !["",null].contains(user_type) && user_type.compareTo("reporter")==0
-            ? FloatingActionButton(
+        floatingActionButton: FloatingActionButton(
                 child: Icon(Icons.switch_video),
                 onPressed: () {
                   if(!["",null].contains(addVideoPermission) && addVideoPermission.trim().compareTo("yes")==0){
@@ -494,8 +493,8 @@ class _DashboardState extends State<Dashboard> {
                     showPermissionDialog();
                   }
 
-                })
-            : null,
+                }),
+
         body:
             // FutureBuilder(
             // future: Future.delayed(Duration(seconds: 1)),
@@ -1172,9 +1171,12 @@ class _DashboardState extends State<Dashboard> {
                                             false,
                                             0,
                                           ].contains(reporter_image))
-                                              ? NetworkImage(
-                                                  reporter_image,
-                                                )
+                                              ? AssetImage(
+                                            "assets/images/logo_splash.png",
+                                          )
+                                          // NetworkImage(           // commented because of server issue
+                                          //         reporter_image,
+                                          //       )
                                               : AssetImage(
                                                   "assets/images/logo_splash.png",
                                                 ),
@@ -1751,26 +1753,26 @@ class _QuotesCellState extends State<QuotesCell> {
     super.dispose();
   }
 
-  static Container homeGrid(AsyncSnapshot<List<Quotes>> snapshot, context) {
-    Size size = MediaQuery.of(context).size;
-
-    return Container(
-//      height: double.infinity,
-//      width: double.infinity,
-      child: ListView.builder(
-        physics: ClampingScrollPhysics(),
-        shrinkWrap: true,
-        scrollDirection: Axis.vertical,
-        padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-        itemCount: snapshot.data.length,
-        itemBuilder: (BuildContext context, int index) {
-          return QuotesCell(
-            snapshot.data[index],
-          );
-        },
-      ),
-    );
-  }
+//   static Container homeGrid(AsyncSnapshot<List<Quotes>> snapshot, context) {
+//     Size size = MediaQuery.of(context).size;
+//
+//     return Container(
+// //      height: double.infinity,
+// //      width: double.infinity,
+//       child: ListView.builder(
+//         physics: ClampingScrollPhysics(),
+//         shrinkWrap: true,
+//         scrollDirection: Axis.vertical,
+//         padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+//         itemCount: snapshot.data.length,
+//         itemBuilder: (BuildContext context, int index) {
+//           return QuotesCell(
+//             snapshot.data[index],
+//           );
+//         },
+//       ),
+//     );
+//   }
 
   static Center circularProgress() {
     return Center(

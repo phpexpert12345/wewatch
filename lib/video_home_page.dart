@@ -2777,15 +2777,17 @@ class _VideoHomePageState extends State<VideoHomePage> {
     print("token: "+access_token);
     String userID=prefs.getString("user_id");
     print("user id=="+userID);
-    String url =
-        "https://wewatch.in/wewatch-up/api/v1/videobyUserProfile";
-    var response = await http.post(url, headers: {
+    // String url ="https://wewatch.in/wewatch-up/api/v1/videobyUserProfile";     // video by user uploaded
+    String url ="https://wewatch.in/wewatch-up/api/v1/video-listing";     // video by user uploaded
+
+    var response = await http.get(url, headers: {
       //'Content-Type': 'application/json',
       'Authorization': 'Bearer $access_token',
     },
-        body: <String ,dynamic>{
-          "userid" :userID
-        });
+        // body: <String ,dynamic>{
+        //   "userid" :userID
+        // }
+        );
 
     //print(response.body);
 
@@ -2797,8 +2799,8 @@ class _VideoHomePageState extends State<VideoHomePage> {
       if (response.statusCode == 200) {
         //print("Ankit" + body.toString());
         Map<String, dynamic> decodedMap = jsonDecode(response.body);
-        if(decodedMap['data']['video-list']['results']!=null && decodedMap['data']['video-list']['results'].length>0) {
-          List<dynamic> dynamicList = decodedMap['data']['video-list']['results'];
+        if(decodedMap['data']['results']!=null && decodedMap['data']['results'].length>0) {
+          List<dynamic> dynamicList = decodedMap['data']['results'];
           List<Quotes> tempList = new List<Quotes>();
           dynamicList.forEach((f) {
             Quotes s = Quotes.fromJson(f);

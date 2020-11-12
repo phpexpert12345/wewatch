@@ -107,8 +107,8 @@ class _CreatePostState extends State<CreatePost> {
     super.initState();
   }
   Future<void> deleteFiles() async{
-    if(await File("/storage/emulated/0/news_${id}.mkv").exists()){
-      File("/storage/emulated/0/news_${id}.mkv").delete();
+    if(await File("/storage/emulated/0/news_${id}.mp4").exists()){
+      File("/storage/emulated/0/news_${id}.mp4").delete();
     }
     if(await File("/storage/emulated/0/mute_${id}.mp4").exists()){
       File("/storage/emulated/0/mute_${id}.mp4").delete();
@@ -176,7 +176,8 @@ class _CreatePostState extends State<CreatePost> {
                         padding: const EdgeInsets.all(15.0),
                         child: ListTile(
                           leading: CircleAvatar(
-                            child:!["",null].contains(widget.userImage)? Image.network(widget.userImage):Image.asset("assets/images/logo_splash.png"),
+                            maxRadius: 25,
+                            backgroundImage:!["",null].contains(widget.userImage)? NetworkImage(widget.userImage,):Image.asset("assets/images/logo_splash.png"),
                           ),
                           title: Text(widget.userName!=null?widget.userName:"",style: new TextStyle(fontSize:18 ),),
                         ),
@@ -253,7 +254,7 @@ class _CreatePostState extends State<CreatePost> {
                       Divider(
                         color: Colors.black26,
                       ),
-                      _videoFile!=null && _recording!=null ? Align(
+                      _videoFile!=null && recording!=null ? Align(
                         alignment: Alignment.bottomRight,
                         child: Container(
                           padding: EdgeInsets.all(5),
@@ -266,16 +267,16 @@ class _CreatePostState extends State<CreatePost> {
                           child: GestureDetector(
                             onTap: (){
                               setState(() async{
-                                String filePath='/storage/emulated/0/news_${id}.mkv';
+                                String filePath='/storage/emulated/0/news_${id}.mp4';
                                 if(_videoFile!=null){
-                                  if(!await File('/storage/emulated/0/news_${id}.mkv').exists())
+                                  if(!await File('/storage/emulated/0/news_${id}.mp4').exists())
                                       await _videoMerger();
                                   _videoPlayerController = VideoPlayerController.file(
-                                      File('/storage/emulated/0/news_${id}.mkv'))
+                                      File('/storage/emulated/0/news_${id}.mp4'))
                                     ..initialize().then((_) {
                                       setState(() {
                                         _videoPlayerController.play();
-                                        _videoFile = File('/storage/emulated/0/news_${id}.mkv');
+                                        _videoFile = File('/storage/emulated/0/news_${id}.mp4');
                                         fileNameVideo=_videoFile.path.split('/').last;
                                         preview = true;
                                       });
@@ -440,6 +441,8 @@ class _CreatePostState extends State<CreatePost> {
                             onPressed: () {
                               if(visible){
                                 UtilityClass.showMsg("Please wait...");
+                              }else if(_videoFile==null){
+                                UtilityClass.showMsg("Please add video file first");
                               }else {
                                 _start();
                                 setState(() {
@@ -591,8 +594,8 @@ class _CreatePostState extends State<CreatePost> {
                               borderRadius: BorderRadius.circular(18.0),
                             ),
                             onPressed: () async{
-                              if(await File('/storage/emulated/0/news_${id}.mkv').exists()){
-                                  new File('/storage/emulated/0/news_${id}.mkv').copy("/storage/emulated/0/${controllerTitle.text.isNotEmpty?controllerTitle.text:""+"_"+DateTime.now().millisecondsSinceEpoch.toString()}.mkv");
+                              if(await File('/storage/emulated/0/news_${id}.mp4').exists()){
+                                  new File('/storage/emulated/0/news_${id}.mp4').copy("/storage/emulated/0/${controllerTitle.text.isNotEmpty?controllerTitle.text:""+"_"+DateTime.now().millisecondsSinceEpoch.toString()}.mp4");
                               }
                               postData();    //Api call
                             },
@@ -867,7 +870,7 @@ class _CreatePostState extends State<CreatePost> {
         setState(() {
           visible=true;
         });
-        final fDelete = '/storage/emulated/0/news_${id}.mkv';
+        final fDelete = '/storage/emulated/0/news_${id}.mp4';
         if(await File(fDelete).exists() ){
             File(fDelete).delete();
         }
@@ -876,7 +879,7 @@ class _CreatePostState extends State<CreatePost> {
         final appDir = await syspaths.getApplicationDocumentsDirectory();
         String rawDocumentPath = appDir.path;
         final outputPath = '$rawDocumentPath/output.mp4';
-        final op = '/storage/emulated/0/news_${id}.mkv';
+        final op = '/storage/emulated/0/news_${id}.mp4';
         final FlutterFFmpeg _flutterFFmpeg = new FlutterFFmpeg();
         print('we_watch' + outputPath);  //  -i video.mp4 -i audio.wav -map 0:v -map 1:a -c:v copy -shortest output.mp4
         String commandToExecute =    //"-i video.mp4 -i audio.mp4 -c copy output.mp4"

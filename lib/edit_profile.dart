@@ -555,7 +555,7 @@ class _EditProfileState extends State<EditProfile> {
   void initState() {
     super.initState();
     getInfoDetails("");
-    getState();
+    //getState();
     getProfile();
 
     // setState(() {
