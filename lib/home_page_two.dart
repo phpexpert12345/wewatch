@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -475,6 +476,7 @@ class _HomePageTwoState extends State<HomePageTwo> {
 
       setState(() {
         print("sunny District "+place.locality+" state " +place.administrativeArea+" country "+place.country +"pin code"+place.postalCode);
+        cityName=place.locality;
         // userCity=place.locality;
         // userState=place.administrativeArea;
         // userLocality=place.country;
@@ -5575,7 +5577,11 @@ class _HomePageTwoState extends State<HomePageTwo> {
                               apiKey: "AIzaSyAfySREHfRw2x8bEFT6b7Nc4z3Te80LiyI",
                               language: "en",
                               components: [dir.Component(dir.Component.country, "in"),
-                              ]);
+                              ],
+                          hint: "Enter your area" ,
+                          logo: Container(
+                              width: MediaQuery.of(context).size.width,
+                              child: Text("Enter your area",style: new TextStyle(fontSize: 16),textAlign: TextAlign.center,)));
                           _getLatLng(pr);
                           print("place id=>" + pr.placeId);
                         }catch(ex){
@@ -5618,26 +5624,13 @@ class _HomePageTwoState extends State<HomePageTwo> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-            child: GestureDetector(
-              child: Icon(
-                Icons.person,
-                color: Colors.white,
+            padding: EdgeInsets.all(8),
+            child: Container(
+              //width: 100,
+              child: Image.asset(
+                'assets/images/logo_splash.png',
+                fit: BoxFit.cover,
               ),
-              onTap: () {
-                if (doLogin == 0) {
-                  Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(
-                          builder: (BuildContext context) => Login()),
-                      (Route<dynamic> route) => false);
-                }
-                if (doLogin == 1) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => EditProfile()),
-                  );
-                }
-              },
             ),
           ),
         ],
@@ -5652,8 +5645,8 @@ class _HomePageTwoState extends State<HomePageTwo> {
           child: Stack(
             children: <Widget>[
               Container(
-                height: size.height / 4.5,
-                width: size.width * 0.9,
+                height: size.height / 4.25,
+                width: size.width * 0.95,
                 decoration: new BoxDecoration(
                     image: new DecorationImage(
                   fit: BoxFit.fill,
@@ -5691,27 +5684,31 @@ class _HomePageTwoState extends State<HomePageTwo> {
 //                  ),
                         ListTile(
                           title: Padding(
-                            padding: EdgeInsets.fromLTRB(10, 50, 10, 50),
+                            padding: EdgeInsets.only(left:20,top: 50,),
                             child: Row(
                               children: <Widget>[
 
                                 Container(
-                                  width: 100,
+                                  width: 70,
+                                  height: 70,
                                   child: Image.asset(
                                     'assets/images/logo_splash.png',
-                                    height: 75.0,
-                                    width: 75.0,
+                                    // height: 75.0,
+                                    // width: 75.0,
                                     fit: BoxFit.cover,
                                   ),
                                 ),
                                 //Spacer(),
-                                Text(
-                                  "पहचान भारत की",
-                                  style: TextStyle(
-                                    color: Color(0xff5c5e6a),
-                                    fontSize: 30,
+                                Padding(
+                                  padding: const EdgeInsets.only(left:5.0),
+                                  child: Text(
+                                    "पहचान भारत की",
+                                    style: TextStyle(
+                                      color: Color(0xff5c5e6a),
+                                      fontSize: 30,
+                                    ),
+                                    textAlign: TextAlign.left,
                                   ),
-                                  textAlign: TextAlign.left,
                                 ),
                               ],
                             ),
@@ -5990,44 +5987,44 @@ class _HomePageTwoState extends State<HomePageTwo> {
                           },
                         ),
 
-                        ListTile(
-                          leading: Container(
-                            height: 35,
-                            width: 35,
-                            decoration: BoxDecoration(
-                              color: Color(0xfffa4e02),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(50)),
-//                                                border: Border.all(width: 1, color: Color(0xffe25705), style: BorderStyle.solid)
-                            ),
-                            child: Center(
-                              child: Padding(
-                                padding: EdgeInsets.all(5),
-                                child: Image.asset(
-                                  "assets/images/help.png",
-//                                                                          height: 50.0,
-//                                                                          width: 50.0,
-                                  fit: BoxFit.fill,
-                                ),
-                              ),
-                            ),
-                          ),
-                          title: Text(
-                            "Help & Feedback",
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 18,
-                            ),
-                          ),
-                          onTap: () {
-                            Navigator.of(context).pop();
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => HelpCenter()),
-                            );
-                          },
-                        ),
+//                         ListTile(
+//                           leading: Container(
+//                             height: 35,
+//                             width: 35,
+//                             decoration: BoxDecoration(
+//                               color: Color(0xfffa4e02),
+//                               borderRadius:
+//                                   BorderRadius.all(Radius.circular(50)),
+// //                                                border: Border.all(width: 1, color: Color(0xffe25705), style: BorderStyle.solid)
+//                             ),
+//                             child: Center(
+//                               child: Padding(
+//                                 padding: EdgeInsets.all(5),
+//                                 child: Image.asset(
+//                                   "assets/images/help.png",
+// //                                                                          height: 50.0,
+// //                                                                          width: 50.0,
+//                                   fit: BoxFit.fill,
+//                                 ),
+//                               ),
+//                             ),
+//                           ),
+//                           title: Text(
+//                             "Help & Feedback",
+//                             style: TextStyle(
+//                               color: Colors.black,
+//                               fontSize: 18,
+//                             ),
+//                           ),
+//                           onTap: () {
+//                             Navigator.of(context).pop();
+//                             Navigator.push(
+//                               context,
+//                               MaterialPageRoute(
+//                                   builder: (context) => HelpCenter()),
+//                             );
+//                           },
+//                         ),
                         ListTile(
                           leading: Container(
                             height: 35,

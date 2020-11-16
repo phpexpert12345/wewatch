@@ -107,13 +107,15 @@ class _DashboardState extends State<Dashboard> {
 
     // Getting Server response into variable.
 
-    var body = await json.decode(response.body);
-    var message = jsonDecode(response.body);
 
-    print("ffff" + message.toString());
+
 
     try {
       if (response.statusCode == 200) {
+        var body = await json.decode(response.body);
+        var message = jsonDecode(response.body);
+        print("ffff" + message.toString());
+
 //        prefs.setString('first_name',body['data']['first_name'] );
 //        prefs.setString('last_name',body['data']['last_name'] );
 //        prefs.setString('email',body['data']['email'] );
@@ -139,7 +141,7 @@ class _DashboardState extends State<Dashboard> {
         addVideoPermission=body['data']["permission"];
         user_type=body['data']['user_type'].toString();
 
-        print("Ankit 22" + first_name);
+        //print("Ankit 22" + first_name);
         prefs.setString("user_name", first_name);
 
         // Hiding the CircularProgressIndicator.
@@ -249,6 +251,7 @@ class _DashboardState extends State<Dashboard> {
 
     try {
       if (response.statusCode == 200) {
+
         setState(() {
           welcome_video_file = body['data']['video_file'];
           headline_title = body['data']['headline_title'];
@@ -519,41 +522,41 @@ class _DashboardState extends State<Dashboard> {
           child: ListView(
             controller: scrollController,
             children: <Widget>[
-              ShowUp(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Center(
-                        child: Container(
-                            width: 40.0,
-                            height: 40.0,
-                            decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                image: DecorationImage(
-                                  fit: BoxFit.fill,
-                                  image:  AssetImage(
-                                    "assets/images/logo_splash.png",
-                                  ),
-                                ))),
-                      ),
-                      Text(
-                        "We Watch App",style: new TextStyle(fontSize: 20,color: Colors.black54,),
-                      )
-                    ],
-                  ),
-                ),
-                delay: 100,
-              ),
-              Padding(
-                padding: EdgeInsets.all(10),
-                child: Container(
-                  height: 1,
-                  color: Colors.grey.shade200,
-                ),
-              ),
+              // ShowUp(
+              //   child: Padding(
+              //     padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+              //     child: Row(
+              //       mainAxisAlignment: MainAxisAlignment.start,
+              //       crossAxisAlignment: CrossAxisAlignment.center,
+              //       children: [
+              //         Center(
+              //           child: Container(
+              //               width: 40.0,
+              //               height: 40.0,
+              //               decoration: BoxDecoration(
+              //                   shape: BoxShape.circle,
+              //                   image: DecorationImage(
+              //                     fit: BoxFit.fill,
+              //                     image:  AssetImage(
+              //                       "assets/images/logo_splash.png",
+              //                     ),
+              //                   ))),
+              //         ),
+              //         Text(
+              //           "We Watch App",style: new TextStyle(fontSize: 20,color: Colors.black54,),
+              //         )
+              //       ],
+              //     ),
+              //   ),
+              //   delay: 100,
+              // ),
+              // Padding(
+              //   padding: EdgeInsets.all(10),
+              //   child: Container(
+              //     height: 1,
+              //     color: Colors.grey.shade200,
+              //   ),
+              // ),
               ShowUp(
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
@@ -1171,12 +1174,13 @@ class _DashboardState extends State<Dashboard> {
                                             false,
                                             0,
                                           ].contains(reporter_image))
-                                              ? AssetImage(
-                                            "assets/images/logo_splash.png",
-                                          )
-                                          // NetworkImage(           // commented because of server issue
-                                          //         reporter_image,
-                                          //       )
+                                              ?
+                                          // AssetImage(
+                                          //   "assets/images/logo_splash.png",
+                                          // )
+                                          NetworkImage(           // commented because of server issue
+                                                  reporter_image,
+                                                )
                                               : AssetImage(
                                                   "assets/images/logo_splash.png",
                                                 ),

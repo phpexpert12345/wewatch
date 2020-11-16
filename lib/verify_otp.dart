@@ -119,12 +119,12 @@ class _VerifyOTPState extends State<VerifyOTP> {
     try {
       // Getting Server response into variable.
 
-      var body = json.decode(response.body);
-      var message = jsonDecode(response.body);
 
-      print("ffff" + message.toString());
 
       if (response.statusCode == 200) {
+        var body = json.decode(response.body);
+        var message = jsonDecode(response.body);
+        print("ffff" + message.toString());
         prefs.setString("filePath_profile", "");
 //        otp = body["otp"];
         //prefs.setString('user_token',body['user_token'] );
@@ -271,16 +271,34 @@ class _VerifyOTPState extends State<VerifyOTP> {
       });
     } catch (e) {
       prefs.setString("filePath_profile", "");
-      Fluttertoast.showToast(
-        msg: "Something went wrong please try again later",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
+      if(response.statusCode==200){
+        Fluttertoast.showToast(
+          msg: "Registration successfully completed.",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
 //        timeInSecForIos: 1,
-      );
-      throw Exception(e);
+        );
+        Navigator.pushReplacement(
+          context,
+          CupertinoPageRoute(builder: (context) => LoginScreenProcessTwo()),
+        );
+      }else {
+        Fluttertoast.showToast(
+          msg: "Something went wrong please try again later",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+//        timeInSecForIos: 1,
+        );
+        throw Exception(e);
+      }
     }
     // If the Response Message is Matched.
+    response.stream.transform(utf8.decoder).listen((value) {
+      print(value);
+    });
   }
+
+
 
   GlobalKey<FormState> _key = new GlobalKey();
   bool _validate = false;

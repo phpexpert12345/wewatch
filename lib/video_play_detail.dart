@@ -1633,7 +1633,7 @@ class _VideoPlayState extends State<VideoPlay> {
                             onTap: (){
                               Navigator.push(context, new MaterialPageRoute(builder: (context)=> SubscribeDetail(userId: user_id,)));
                             },
-                              child: Text(channel_name.toString())),
+                              child: Text(!["",null].contains(channel_name) ?channel_name.toString() :"")),
                           subtitle: Text(widget.subscriber_count.toString()),
 
                           trailing: Container(

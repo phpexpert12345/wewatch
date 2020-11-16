@@ -82,7 +82,7 @@ class _SearchScreenState extends State<SearchScreen> {
         //print("Ankit" + body.toString());
         print('submitting to backend...');
         Map<String, dynamic> decodedMap = jsonDecode(response.body);
-        Map<String, dynamic> decodedMapAttachment = jsonDecode(response.body);
+        //Map<String, dynamic> decodedMapAttachment = jsonDecode(response.body);
         //var body = await json.decode(response.body);
         pageCount++;
         searchApiCalled=true;

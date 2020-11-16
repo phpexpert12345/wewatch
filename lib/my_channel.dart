@@ -51,25 +51,28 @@ class _MyChannelState extends State<MyChannel> {
       //var message = jsonDecode(response.body);
       if (response.statusCode == 200) {
         var body = json.decode(response.body);
-        channel_name=body['data']['results']['channel_name'];
-        channel_logo=body['data']['results']['channel_logo'];
-        channel_cover=body['data']['results']['channel_cover'];
-        channel_description=body['data']['results']['channel_description'];
-        video_private=body['data']['results']['video_private'].toString();
-        if(video_private=="1")
-          isPrivate=true;
-        else
-          isPrivate=false;
-        subscribers_private=body['data']['results']['subscribers_private'].toString();
-        if(subscribers_private=="1")
-          isSubscribers=true;
-        else
-          isSubscribers=false;
-        playlists_private=body['data']['results']['playlists_private'].toString();
-        if(playlists_private=="1")
-          isPlaylist=true;
-        else
-          isPlaylist=false;
+        if(body['data']['results']!=null) {
+          channel_name = body['data']['results']['channel_name'];
+          channel_logo = body['data']['results']['channel_logo'];
+          channel_cover = body['data']['results']['channel_cover'];
+          channel_description = body['data']['results']['channel_description'];
+          video_private = body['data']['results']['video_private'].toString();
+          if (video_private == "1")
+            isPrivate = true;
+          else
+            isPrivate = false;
+          subscribers_private =
+              body['data']['results']['subscribers_private'].toString();
+          if (subscribers_private == "1")
+            isSubscribers = true;
+          else
+            isSubscribers = false;
+          playlists_private =
+              body['data']['results']['playlists_private'].toString();
+          if (playlists_private == "1")
+            isPlaylist = true;
+          else
+            isPlaylist = false;
 //        channel_name=body['data']['results']['channel_name'];
 
 //        prefs.setString('first_name', body['data']['first_name']);
@@ -90,20 +93,21 @@ class _MyChannelState extends State<MyChannel> {
 //        prefs.setString('zipcode', body['data']['zipcode']);
 //        prefs.setString('image', body['data']['image']);
 
-        // Hiding the CircularProgressIndicator.
-        setState(() {
-          visible = false;
-        });
-        Fluttertoast.showToast(
-          msg: body['data']['access_token'],
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-//            timeInSecForIosWeb: 1
-        );
-        SharedPreferences prefs = await SharedPreferences.getInstance();
+          // Hiding the CircularProgressIndicator.
+
+          setState(() {
+            visible = false;
+          });
+//           Fluttertoast.showToast(
+//             msg: body['data']['access_token'],
+//             toastLength: Toast.LENGTH_SHORT,
+//             gravity: ToastGravity.CENTER,
+// //            timeInSecForIosWeb: 1
+//           );
+          SharedPreferences prefs = await SharedPreferences.getInstance();
 
 //         Navigate to Profile Screen & Sending Email to Next Screen.
-
+        }
       } else if (response.statusCode == 422) {
         // If Email or Password did not Matched.
         // Hiding the CircularProgressIndicator.

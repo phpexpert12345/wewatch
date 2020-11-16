@@ -1184,7 +1184,11 @@ class _AddVideoState extends State<AddVideo> {
                                           apiKey: "AIzaSyAfySREHfRw2x8bEFT6b7Nc4z3Te80LiyI",
                                           language: "en",
                                           components: [Component(Component.country, "in"),
-                                          ]);
+                                          ],
+                                          hint: "Enter your area" ,
+                                          logo: Container(
+                                              width: MediaQuery.of(context).size.width,
+                                              child: Text("Enter your area",style: new TextStyle(fontSize: 16),textAlign: TextAlign.center,)));
                                       _getLatLng(pr);
                                       print("place id=>" + pr.placeId);
                                     }catch(ex){

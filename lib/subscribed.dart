@@ -27,17 +27,16 @@ class _SubscribedState extends State<Subscribed> {
       'Authorization': 'Bearer $access_token',
     });
 
-    print(response.body);
 
-    //Simulate a service call
-    print('submitting to backend...');
-    Map<String, dynamic> decodedMap = jsonDecode(response.body);
-    Map<String, dynamic> decodedMapAttachment = jsonDecode(response.body);
-    var body = await json.decode(response.body);
 
     try {
       if (response.statusCode == 200) {
-        print("Ankit"+body.toString());
+        //Simulate a service call
+        print('submitting to backend...');
+        Map<String, dynamic> decodedMap = jsonDecode(response.body);
+        //Map<String, dynamic> decodedMapAttachment = jsonDecode(response.body);
+        //var body = await json.decode(response.body);
+       // print("Ankit"+body.toString());
 
         List<dynamic> dynamicList = decodedMap['data']['results'];
         List<Quotes> students = new List<Quotes>();
@@ -2038,9 +2037,7 @@ class _SubscribedState extends State<Subscribed> {
               fontSize: 16.0,
               color: Colors.white,),
           ),
-
         ),
-
       ),
     );
   }

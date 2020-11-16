@@ -70,6 +70,7 @@ dependencies:
   flutter_video_info: 1.0.1
   rflutter_alert: 1.0.5
   package_info: 0.4.1
+  camera:
 
 
 
