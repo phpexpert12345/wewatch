@@ -5,12 +5,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widgets/flutter_widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
 import 'package:share/share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 import 'package:we_watch_app/conts/config.dart';
 import 'package:http/http.dart' as http;
+import 'package:we_watch_app/util/AppNotifierClass.dart';
 import 'package:we_watch_app/video_play_detail.dart';
+import 'package:slide_popup_dialog/slide_popup_dialog.dart' as slideDialog;
+
+
 class VideoHistory extends StatefulWidget {
   @override
   _VideoHistoryState createState() => new _VideoHistoryState();
@@ -30,10 +35,23 @@ class _VideoHistoryState extends State<VideoHistory> {
     count=1;
     super.initState();
   }
+  reloadData(){
+    setState(() {
+      videoList.clear();
+      dataLoaded=false;
+    });
+    getMyVideos();
+  }
 
+  AppNotifierClass _appNotifierClass;
   @override
   Widget build(BuildContext context) {
     deviceSize=MediaQuery.of(context).size;
+    _appNotifierClass = Provider.of<AppNotifierClass>(context);
+    if(_appNotifierClass.getChange()){
+      reloadData();
+
+    }
     return Scaffold(
       appBar: new AppBar(
         backgroundColor: COLORS.APP_BAR_COLOR,
@@ -236,7 +254,7 @@ class _QuotesCellState extends State<QuotesCell> {
         videoPlayerController: VideoPlayerController.network(
             !["", null].contains(cellModel.video_file)
                 ? cellModel.video_file
-                : '  '),
+                : cellModel.video_file),
         autoPlay: false);
 
     checkFirstSeen();
@@ -309,9 +327,12 @@ class _QuotesCellState extends State<QuotesCell> {
 //    Navigator.of(context).pushReplacement(
 //        new MaterialPageRoute(builder: (context) => new OnboardingScreen()));
   }
+  AppNotifierClass _appNotifierClass;
 
   @override
   Widget build(BuildContext context) {
+    _appNotifierClass = Provider.of<AppNotifierClass>(context);
+
     // Color color2 = HexColor(cellModel.color);
 //    bool _visible = false;
 //    if(!["", null].contains(cellModel.doc))
@@ -517,6 +538,39 @@ class _QuotesCellState extends State<QuotesCell> {
                                   ),
                                 ),
                               ),
+                              Container(
+                                child: PopupMenuButton<int>(
+                                  itemBuilder: (context) => [
+                                    PopupMenuItem(
+                                      value: 1,
+                                      child: Row(
+                                        children: [
+                                          Text("Remove"),
+                                          Icon(Icons.delete),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                  initialValue: 0,
+                                  onCanceled: () {
+                                    print(cellModel.id);
+                                    print(
+                                        "You have canceled the menu.");
+                                  },
+                                  onSelected: (value) {
+                                    setState(() {
+                                      if (value == 1) {
+                                        print(cellModel.id);
+                                        removeVideo(cellModel.id);
+                                        //_VideoPlayState().getComments("", "");
+                                       // deleteVideo(widget.cellModel.id);
+                                       // setState(() => {});
+                                      }
+                                    });
+                                  },
+                                  icon: Icon(Icons.more_vert),
+                                ),
+                              )
                             ],
                           ),
                         ),
@@ -973,7 +1027,106 @@ class _QuotesCellState extends State<QuotesCell> {
       },
     );
   }
+
+  Future removeVideo(int videoId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String access_token = prefs.getString('access_token');
+    var url = 'https://wewatch.in/wewatch-up/api/v1/video-destroy?id=${videoId}';
+
+
+    var response = await http.get(url,
+        headers: {
+          'Authorization': 'Bearer $access_token',
+        });
+    try {
+      if (response.statusCode == 200) {
+        var body = json.decode(response.body);
+        //var message = jsonDecode(response.body);
+
+        _appNotifierClass.setChange(true);
+        _appNotifierClass.notifyListeners();
+        Fluttertoast.showToast(
+            msg: body['data']['message'],
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+//        timeInSecForIosWeb: 1,
+            backgroundColor: Color(0xff00adef),
+            textColor: Colors.white,
+            fontSize: 16.0);
+
+      } else if (response.statusCode == 422) {
+        // If Email or Password did not Matched.
+        // Hiding the CircularProgressIndicator.
+        Fluttertoast.showToast(
+            msg: "Validation Failed",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      } else if (response.statusCode == 400) {
+        // If Email or Password did not Matched.
+        // Hiding the CircularProgressIndicator.
+
+        Fluttertoast.showToast(
+            msg: "Request Fail",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      } else if (response.statusCode == 401) {
+        // If Email or Password did not Matched.
+        // Hiding the CircularProgressIndicator.
+
+        Fluttertoast.showToast(
+            msg: "Authorization Failure",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      } else if (response.statusCode == 500) {
+        // If Email or Password did not Matched.
+        // Hiding the CircularProgressIndicator.
+
+        Fluttertoast.showToast(
+            msg: "Server Error",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      } else {
+        Fluttertoast.showToast(
+            msg: "Something went wrong",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      }
+    } catch (e) {
+//       Fluttertoast.showToast(
+//         msg: e.toString(),
+//         toastLength: Toast.LENGTH_SHORT,
+//         gravity: ToastGravity.CENTER,
+// //        timeInSecForIos: 1,
+//       );
+      throw Exception(e);
+    }
+    // If the Response Message is Matched.
+  }
+
+
 }
+
+
 
 Future saveLike(String videoId, String status) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();

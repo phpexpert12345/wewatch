@@ -10,7 +10,7 @@ import 'package:we_watch_app/util/AppNotifierClass.dart';
 void main() {
 
   runApp(ChangeNotifierProvider<AppNotifierClass>(
-      create:  (_) => AppNotifierClass(false),
+      create:  (_) => AppNotifierClass(false,false,false),
       child: MyApp()));
 }
 // void main() => runApp(DevicePreview(builder: (context) => MyApp()));

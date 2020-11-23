@@ -553,7 +553,7 @@ class _AddVideoState extends State<AddVideo> {
   @override
   void initState() {
     super.initState();
-    getState();
+    //getState();
     getCategory();
   }
 
@@ -1561,7 +1561,7 @@ class _AddVideoState extends State<AddVideo> {
                                                                 "Uploading...${percentage}");
                                                         print(percentage);
                                                         Future.delayed(Duration(
-                                                                seconds: 2))
+                                                                seconds: 3))
                                                             .then((value) {
                                                           percentage =
                                                               percentage + 10.0;
@@ -1574,7 +1574,7 @@ class _AddVideoState extends State<AddVideo> {
                                                           Future.delayed(
                                                                   Duration(
                                                                       seconds:
-                                                                          2))
+                                                                          3))
                                                               .then((value) {
                                                             percentage =
                                                                 percentage +
@@ -1852,17 +1852,17 @@ class _AddVideoState extends State<AddVideo> {
               child: Center(
                 child: Column(
                   children: <Widget>[
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.of(context, rootNavigator: true).pop();
-                        captureVideo(ImageSource.camera);
-                      },
-                      child: Image.asset(
-                        'assets/images/camera.png',
-                        height: 50,
-                        width: 150,
-                      ),
-                    ),
+                    // GestureDetector(
+                    //   onTap: () {
+                    //     Navigator.of(context, rootNavigator: true).pop();
+                    //     captureVideo(ImageSource.camera);
+                    //   },
+                    //   child: Image.asset(
+                    //     'assets/images/camera.png',
+                    //     height: 50,
+                    //     width: 150,
+                    //   ),
+                    // ),
                     GestureDetector(
                       onTap: () {
                         Navigator.of(context, rootNavigator: true).pop();
@@ -1891,7 +1891,7 @@ class _AddVideoState extends State<AddVideo> {
                   ],
                 ),
               ),
-              height: 150,
+              height: 120,
               width: 100,
             ),
           );

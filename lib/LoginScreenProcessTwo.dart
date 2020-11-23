@@ -314,7 +314,7 @@ class _LoginScreenProcessTwoState extends State<LoginScreenProcessTwo> {
 
                 style: TextStyle(
                     fontSize: 2.8 *  SizeConfig.textMultiplier,
-                    color: Color(0xFFb0bbc6)),
+                    color: Colors.black54),
                 validator: validateEmail,
                 onSaved: (String val) {
                   _email = val;
@@ -340,7 +340,7 @@ class _LoginScreenProcessTwoState extends State<LoginScreenProcessTwo> {
                       passwordVisible
                           ? Icons.visibility
                           : Icons.visibility_off,
-                      color: Color(0xFFb0bbc6),
+                      color: Colors.black54,
                     ),
                     onPressed: () {
 // Update the state i.e. toogle the state of passwordVisible variable
@@ -366,7 +366,7 @@ class _LoginScreenProcessTwoState extends State<LoginScreenProcessTwo> {
                 style: TextStyle(
 
                     fontSize: 2.8 *  SizeConfig.textMultiplier,
-                    color: Color(0xFFb0bbc6)),
+                    color: Colors.black54),
                 validator: validatePassword,
                 onSaved: (String val) {
                   _password = val;

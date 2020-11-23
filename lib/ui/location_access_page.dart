@@ -203,7 +203,7 @@ class _LocationAccessState extends State<LocationAccess> {
         prefs.setString('city', place.locality);
         prefs.setString('state', place.administrativeArea);
         print(place.locality + "   " + place.administrativeArea);
-
+        prefs.setString('pincode', place.postalCode);
         checkFirstSeen();
       });
       if (_currentAddress.isNotEmpty) {}

@@ -600,9 +600,7 @@ class _CreatePostState extends State<CreatePost> {
                               borderRadius: BorderRadius.circular(18.0),
                             ),
                             onPressed: () async{
-                              if(await File('/storage/emulated/0/news_${id}.mp4').exists()){
-                                  new File('/storage/emulated/0/news_${id}.mp4').copy("/storage/emulated/0/${controllerTitle.text.isNotEmpty?controllerTitle.text:""+"_"+DateTime.now().millisecondsSinceEpoch.toString()}.mp4");
-                              }
+
                               postData();    //Api call
                             },
                             child: Text(
@@ -782,14 +780,16 @@ class _CreatePostState extends State<CreatePost> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Expanded(child: GestureDetector(
+                          s.trim().compareTo("Image")==0?Expanded(
+                              child: GestureDetector(
                             onTap: () async{
-                              if(s.trim().compareTo("Video")==0){
-                                Navigator.pop(cntxt);
-                                captureVideo(ImageSource.camera);
-                                //await _recordVideo();
-                                //Navigator.push(context, new MaterialPageRoute(builder: (context)=>CustomCamraScreen()));
-                              } else if(s.trim().compareTo("Image")==0){
+                              // if(s.trim().compareTo("Video")==0){
+                              //   Navigator.pop(cntxt);
+                              //   //captureVideo(ImageSource.camera);
+                              //   await _recordVideo();
+                              //   //Navigator.push(context, new MaterialPageRoute(builder: (context)=>CustomCamraScreen()));
+                              // } else
+                                if(s.trim().compareTo("Image")==0){
                                 Navigator.pop(cntxt);
                                 captureImage(ImageSource.camera);
                               }
@@ -798,7 +798,7 @@ class _CreatePostState extends State<CreatePost> {
                               padding: const EdgeInsets.all(8.0),
                               child: Center(child: Text("Camera",style: new TextStyle(fontSize: 18,fontWeight: FontWeight.bold),)),
                             ),
-                          )),
+                          )):Container(),
                           Divider(color: Colors.grey.shade300,thickness: 2,),
                           Expanded(child: GestureDetector(
                             onTap: () async{
@@ -1318,7 +1318,10 @@ class _CreatePostState extends State<CreatePost> {
                                           pr
                                               .hide()
                                               .whenComplete(
-                                                  () {
+                                                  () async{
+                                                    if(await File('/storage/emulated/0/news_${id}.mp4').exists()){
+                                                    new File('/storage/emulated/0/news_${id}.mp4').copy("/storage/emulated/0/${controllerTitle.text.isNotEmpty?controllerTitle.text:""+"_"+DateTime.now().millisecondsSinceEpoch.toString()}.mp4");
+                                                    }
                                                 print(pr
                                                     .isShowing());
                                                 Navigator

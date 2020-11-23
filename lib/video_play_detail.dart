@@ -38,7 +38,7 @@ class VideoPlay extends StatefulWidget {
       video_category,
       date,
       time,
-      reporter_name;
+      reporter_name,reporter_image;
   var channel_name;
   var channel_id;
   int like_count, dislike_count, comments_count;
@@ -46,7 +46,9 @@ class VideoPlay extends StatefulWidget {
   bool is_subscribed;
   int subscriber_count;
   int total_views;
-
+  bool is_dislike;
+  var dislikeVal;
+  var likedVal;
   VideoPlay(
       {Key key,
       @required this.id,
@@ -71,7 +73,10 @@ class VideoPlay extends StatefulWidget {
       @required this.is_subscribed,
       @required this.channel_name,
       @required this.subscriber_count,
-      @required this.total_views})
+      @required this.total_views,this.reporter_image,
+      this.is_dislike,
+      this.dislikeVal,
+      this.likedVal})
       : super(key: key);
 
   @override
@@ -99,6 +104,9 @@ class VideoPlay extends StatefulWidget {
         subscriber_count: subscriber_count,
         channel_name: channel_name,
         total_views: total_views,
+        isDislike: is_dislike,
+      dislikeVal: dislikeVal,
+      likedVal: likedVal
       );
 }
 
@@ -119,6 +127,8 @@ class _VideoPlayState extends State<VideoPlay> {
       date,
       time,
       reporter_name;
+  var dislikeVal;
+  var likedVal;
   var channel_id;
   var channel_name;
   int like_count, dislike_count, comments_count;
@@ -127,7 +137,7 @@ class _VideoPlayState extends State<VideoPlay> {
   int total_views;
   bool islike;
   bool visible = false;
-
+  bool isDislike;
   AppNotifierClass _appNotifierClass;
   GlobalKey<FormState> _key = new GlobalKey();
   bool checkBoxValue2 = false;
@@ -163,15 +173,21 @@ class _VideoPlayState extends State<VideoPlay> {
     @required this.channel_name,
     @required this.subscriber_count,
     @required this.total_views,
+    this.isDislike,
+    this.dislikeVal,
+    this.likedVal
   }) : super();
   TargetPlatform _platform;
   // VideoPlayerController _controller;
-  Future<List<Comments>> getComments(String type, String text) async {
+  void getComments(String type, String text) async {
+    allComments.clear();
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     String access_token = prefs.getString('access_token');
     image = prefs.getString('image');
+    setState(() {
 
+    });
     String login_url =
         "https://wewatch.in/wewatch-up/api/v1/video_comments/${widget.id}";
     var response = await http.get(login_url, headers: {
@@ -181,20 +197,26 @@ class _VideoPlayState extends State<VideoPlay> {
 
     //Simulate a service call
 
-    Map<String, dynamic> decodedMap = jsonDecode(response.body);
-    Map<String, dynamic> decodedMapAttachment = jsonDecode(response.body);
-    var body = await json.decode(response.body);
-    print('sundar' + response.body);
+
     try {
       if (response.statusCode == 200) {
+        Map<String, dynamic> decodedMap = jsonDecode(response.body);
+        //Map<String, dynamic> decodedMapAttachment = jsonDecode(response.body);
+        // var body = await json.decode(response.body);
+        // print('sundar' + response.body);
+
         List<dynamic> dynamicList = decodedMap['data']['results'];
         List<Comments> students = new List<Comments>();
         dynamicList.forEach((f) {
           Comments s = Comments.fromJson(f);
           students.add(s);
         });
-
-        return students;
+        if(students.length<1){
+          noComments=true;
+        }
+        setState(() {
+          allComments.addAll(students);
+        });
       } else {
         throw Exception(MESSAGES.INTERNET_ERROR);
       }
@@ -248,12 +270,12 @@ class _VideoPlayState extends State<VideoPlay> {
     try {
       if (response.statusCode == 200) {
         var body = json.decode(response.body);
-        var message = jsonDecode(response.body);
-        // Hiding the CircularProgressIndicator.
-        _appNotifierClass.setChange(true);
-        _appNotifierClass.notifyListeners();
+       // var message = jsonDecode(response.body);
+               // Hiding the CircularProgressIndicator.
+
         setState(() {
           visible = false;
+          noComments=false;
         });
         Fluttertoast.showToast(
             msg: body['data']['message'],
@@ -263,6 +285,9 @@ class _VideoPlayState extends State<VideoPlay> {
             backgroundColor: Colors.lightGreen,
             textColor: Colors.white,
             fontSize: 16.0);
+        _appNotifierClass.setChange(true);
+        _appNotifierClass.notifyListeners();
+        getComments("", "");
         _commentController.text = "";
       } else if (response.statusCode == 422) {
         // If Email or Password did not Matched.
@@ -617,10 +642,46 @@ class _VideoPlayState extends State<VideoPlay> {
   FlickManager flickManager;
 
   Future checkFirstSeen() async {
+    setState(() {
+      if(dislikeVal!=null){
+        if(!["",null].contains(dislikeVal) && dislikeVal.toString().compareTo("1")==0){
+          setState(() {
+            isDislike=true;
+
+          });
+        }else {
+            setState(() {
+              isDislike=false;
+            });
+        }
+      }else {
+        setState(() {
+          isDislike=false;
+        });
+      }
+      if(likedVal!=null){
+        if(!["",null].contains(likedVal) && likedVal.toString().compareTo("1")==0){
+          setState(() {
+            islike=true;
+
+          });
+        }else {
+          setState(() {
+            islike=false;
+          });
+        }
+      }else {
+        setState(() {
+          islike=false;
+        });
+      }
+    });
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
+    storeVideoView(id);
     bool _isLogin = (prefs.getBool('isLogin') ?? false);
-
+    getComments("", "");
     if (_isLogin) {
       doLogin = 1;
     } else {
@@ -636,6 +697,7 @@ class _VideoPlayState extends State<VideoPlay> {
     // TODO: implement initState
     reportcomment = "";
     val = 0;
+    noComments=false;
     super.initState();
 
     print(video_file);
@@ -707,23 +769,6 @@ class _VideoPlayState extends State<VideoPlay> {
         //var message = jsonDecode(response.body);
         _appNotifierClass.setChange(true);
         _appNotifierClass.notifyListeners();
-//        otp = body["otp"];
-        //prefs.setString('user_token',body['user_token'] );
-//        prefs.setString('id', body['id']);
-//        prefs.setString('std_id', body['std_id']);
-//        prefs.setString('name', body['name']);
-//        prefs.setString('designation', body['designation']);
-//        prefs.setString('phone', body['phone']);
-//        prefs.setString('email', body['email']);
-//        prefs.setString('doj', body['doj']);
-//        prefs.setString('pincode', body['pincode']);
-//        prefs.setString('state', body['state']);
-//        prefs.setString('address', body['address']);
-//        prefs.setString('image', body['image']);
-//        prefs.setString('role', body['role']);
-        //  prefs.setString('image',body['image'] );
-        // prefs.setString('image',body['image'] );
-        // Hiding the CircularProgressIndicator.
 
         Fluttertoast.showToast(
             msg: body['data']['message'],
@@ -739,6 +784,8 @@ class _VideoPlayState extends State<VideoPlay> {
             if (dislike_count > 0) {
               dislike_count = dislike_count - 1;
             }
+            islike=true;
+            isDislike=false;
           }
 
           if (status == "0") {
@@ -747,8 +794,188 @@ class _VideoPlayState extends State<VideoPlay> {
             }
 
             dislike_count = dislike_count + 1;
+            islike=false;
           }
         });
+      } else if (response.statusCode == 422) {
+        // If Email or Password did not Matched.
+        // Hiding the CircularProgressIndicator.
+
+        Fluttertoast.showToast(
+            msg: "Validation Failed",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      } else if (response.statusCode == 400) {
+        // If Email or Password did not Matched.
+        // Hiding the CircularProgressIndicator.
+
+        Fluttertoast.showToast(
+            msg: "Request Fail",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      } else if (response.statusCode == 401) {
+        // If Email or Password did not Matched.
+        // Hiding the CircularProgressIndicator.
+
+        Fluttertoast.showToast(
+            msg: "Authorization Failure",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      } else if (response.statusCode == 500) {
+        // If Email or Password did not Matched.
+        // Hiding the CircularProgressIndicator.
+
+        Fluttertoast.showToast(
+            msg: "Server Error",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      } else {
+        Fluttertoast.showToast(
+            msg: "Something went wrong",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      }
+    } catch (e) {
+//       Fluttertoast.showToast(
+//         msg: e.toString(),
+//         toastLength: Toast.LENGTH_SHORT,
+//         gravity: ToastGravity.CENTER,
+// //        timeInSecForIos: 1,
+//       );
+      throw Exception(e);
+    }
+    // If the Response Message is Matched.
+  }
+
+  Future storeVideoView(String videoId) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String access_token = prefs.getString('access_token');
+    var url = 'https://wewatch.in/wewatch-up/api/v1/view-count?video_id='+videoId;
+
+    var response = await http.get(url,
+        headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $access_token',
+
+      });
+
+    try {
+
+      if (response.statusCode == 200) {
+        var body = json.decode(response.body);
+        //var message = jsonDecode(response.body);
+
+      }
+    } catch (e) {
+//       Fluttertoast.showToast(
+//         msg: e.toString(),
+//         toastLength: Toast.LENGTH_SHORT,
+//         gravity: ToastGravity.CENTER,
+// //        timeInSecForIos: 1,
+//       );
+      throw Exception(e);
+    }
+    // If the Response Message is Matched.
+  }
+
+
+  Future disLike(String videoId, String status) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    // Showing CircularProgressIndicator.
+
+    String access_token = prefs.getString('access_token');
+
+    // Getting value from Controller
+//    String email = _emailFilter.text.toString();
+//    String password = _mobileFilter.text.toString();
+
+    // SERVER LOGIN API URL
+    var url = 'https://wewatch.in/wewatch-up/api/v1/dislike';
+    Map data = {
+//      'API_KEY':"4762265654DFGDF00546FDG4FD654G6DF",
+      'video_id': videoId,
+      'status': status,
+    };
+    String formD = json.encode(data);
+
+    // Store all data with Param Name.
+
+    Map<String, String> headers = {
+      'Content-type': 'application/json',
+      'Accept': 'application/json',
+    };
+
+    // Starting Web API Call.
+//  var response = await http.post(url, body: formD,headers: headers);
+    var response = await http.post(url, body: formD, headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $access_token',
+    });
+
+    // Getting Server response into variable.
+
+
+    try {
+
+
+      if (response.statusCode == 200) {
+        var body = json.decode(response.body);
+        //var message = jsonDecode(response.body);
+        setState(() {
+          if (status == "1") {
+            if (dislike_count >= 0) {
+              setState(() {
+                like_count = like_count>0 ?like_count - 1:like_count;
+                dislike_count = dislike_count + 1;
+              });
+
+            }
+            islike=false;
+          }
+
+          if (status == "0") {
+            if (dislike_count > 0) {
+              setState(() {
+
+              });
+              dislike_count = dislike_count - 1;
+            }
+
+            //dislike_count = dislike_count + 1;
+           islike=false;
+          }
+        });
+        _appNotifierClass.setChange(true);
+        _appNotifierClass.notifyListeners();
+         Fluttertoast.showToast(
+            msg: body['data']['message'],
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+//                                          timeInSecForIosWeb: 1,
+            backgroundColor: Color(0xff00adef),
+            textColor: Colors.white,
+            fontSize: 16.0);
+
       } else if (response.statusCode == 422) {
         // If Email or Password did not Matched.
         // Hiding the CircularProgressIndicator.
@@ -878,9 +1105,20 @@ class _VideoPlayState extends State<VideoPlay> {
   }
   var otherTextController=TextEditingController(text: '');
   // bool pressAttention = is_sub ? true : false;
+  List<Comments> allComments=new List();
+  var scController=ScrollController();
+  bool noComments=false;
   @override
   Widget build(BuildContext context) {
    _appNotifierClass = Provider.of<AppNotifierClass>(context);
+   if(_appNotifierClass.getComment()){
+     _appNotifierClass.setComment(false);
+     _appNotifierClass.notifyListeners();
+     setState(() {
+       allComments.clear();
+     });
+     getComments("", "");
+   }
     print(is_subscribed);
     // TODO: implement build
     return MaterialApp(
@@ -943,6 +1181,7 @@ class _VideoPlayState extends State<VideoPlay> {
                   ),
                   Expanded(
                     child: ListView(
+                      controller: scController,
                       children: [
                         Padding(
                           padding: const EdgeInsets.fromLTRB(10, 1, 10, 20),
@@ -951,22 +1190,18 @@ class _VideoPlayState extends State<VideoPlay> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               ListTile(
-                                leading: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: <Widget>[
-                                    Text(video_title.toString(),style: new TextStyle(fontSize: 18,color: Colors.black,),),
-                                    Text((![
-                                      "",
-                                      null,
-                                      false,
-                                      0,
-                                    ].contains(video_description))
-                                        ? " || "+video_description
-                                        : "",style: new TextStyle(fontSize: 18,color: Colors.black,),)
-
-                                  ],
-                                ),
+                                leading: Text(video_title.toString(),style: new TextStyle(fontSize: 18,color: Colors.black,),),
                               ),
+                               Padding(
+                                 padding: const EdgeInsets.only(left:16.0,right: 8,top: 3,bottom: 3),
+                                 child: Text((![
+                                    "",
+                                    null
+                                  ].contains(video_description))
+                                      ? video_description
+                                      : "",style: new TextStyle(fontSize: 18,color: Colors.black,),),
+                               ),
+
                               ListTile(
                                 leading: Row(
                                   mainAxisSize: MainAxisSize.min,
@@ -992,11 +1227,12 @@ class _VideoPlayState extends State<VideoPlay> {
                                             onTap: () {
                                               if (doLogin == 1) {
                                                 setState(() {
-                                                  if (!countValue) {
-                                                    saveLike(id, "1");
+                                                  //if (!countValue) {
+                                                    saveLike(id, islike?"0":"1");
+                                                    islike=!islike;
                                                     countValue = true;
                                                     countValue1 = false;
-                                                  }
+                                                 // }
                                                 });
                                               }
                                             },
@@ -1033,7 +1269,7 @@ class _VideoPlayState extends State<VideoPlay> {
 //                                              height: 150.0,
 //                                              width: 50.0,
                                                             fit: BoxFit.fill,
-                                                            color: countValue
+                                                            color: islike
                                                                 ? Color(0xff00adef)
                                                                 : Colors.grey,
                                                           ),
@@ -1074,11 +1310,14 @@ class _VideoPlayState extends State<VideoPlay> {
                                           onTap: () {
                                             if (doLogin == 1) {
                                               setState(() {
-                                                if (!countValue1) {
+                                                //if (!countValue1) {
                                                   countValue1 = true;
                                                   countValue = false;
-                                                  saveLike(id, "0");
-                                                }
+                                                 // saveLike(id, "0");
+                                                  disLike(id, isDislike?"0":"1");
+                                                  isDislike=!isDislike;
+
+                                                //}
                                               });
                                             }
                                           },
@@ -1109,11 +1348,10 @@ class _VideoPlayState extends State<VideoPlay> {
                                                         padding: EdgeInsets.all(0),
                                                         child: Image.asset(
                                                           "assets/images/dislike_grey.png",
-//                                              height: 150.0,
-//                                              width: 50.0,
+            //                                              height: 150.0,
+            //                                              width: 50.0,
                                                           fit: BoxFit.fill,
-                                                          color: countValue1
-                                                              ? Color(0xff00adef)
+                                                          color: isDislike ? Color(0xff00adef)
                                                               : Colors.grey,
                                                         ),
                                                       ),
@@ -1126,7 +1364,7 @@ class _VideoPlayState extends State<VideoPlay> {
                                                     0.0, 0.0, 0.0, 0.0),
                                                 child: Align(
                                                   child: new Text(
-                                                    !["", null].contains(dislike_count)
+                                                    !["", null].contains(dislike_count.toString())
                                                         ? dislike_count.toString() +
                                                         " Dislikes"
                                                         : '0 Dislikes',
@@ -1194,12 +1432,12 @@ class _VideoPlayState extends State<VideoPlay> {
                                                   0.0, 0.0, 0.0, 0.0),
                                               child: Align(
                                                 child: new Text(
-                                                  !["", null].contains(widget.comments_count
+                                                  allComments.length>0?allComments.length.toString()+' Comment':(!["", null].contains(widget.comments_count
                                                       .toString())
                                                       ? widget.comments_count
                                                       .toString() +
                                                       ' Comment'
-                                                      : '0 Comment',
+                                                      : '0 Comment'),
                                                   style: TextStyle(
                                                     color: Color(0xff444b69),
                                                     fontSize: 12,
@@ -1628,12 +1866,14 @@ class _VideoPlayState extends State<VideoPlay> {
                           thickness: 0.4,
                         ),
                         ListTile(
-                          leading: CircleAvatar(),
+                          leading: CircleAvatar(
+                            backgroundImage: NetworkImage(![null,""].contains(widget.reporter_image)?widget.reporter_image:""),
+                          ),
                           title: InkWell(
                             onTap: (){
                               Navigator.push(context, new MaterialPageRoute(builder: (context)=> SubscribeDetail(userId: user_id,)));
                             },
-                              child: Text(!["",null].contains(channel_name) ?channel_name.toString() :"")),
+                              child: Text(!["",null].contains(reporter_name) ?reporter_name.toString() :"")),
                           subtitle: Text(widget.subscriber_count.toString()),
 
                           trailing: Container(
@@ -1650,7 +1890,7 @@ class _VideoPlayState extends State<VideoPlay> {
                                               color: Colors.white,
                                             ),
                                             Text(
-                                              'Subscribe',
+                                              is_sub?'Un-follow':'follow',
                                               style: TextStyle(color: Colors.white),
                                             ),
                                           ]),
@@ -1661,7 +1901,7 @@ class _VideoPlayState extends State<VideoPlay> {
                                       ),
                                       color: is_sub ? Colors.grey : Colors.blue,
                                       onPressed: () {
-                                        subscribed(user_id.toString(),
+                                        subscribed(channel_id.toString(),
                                             is_sub ? '0' : '1');
                                         setState(() => is_sub = !is_sub);
                                       }),
@@ -2084,6 +2324,7 @@ class _VideoPlayState extends State<VideoPlay> {
                                               icon: Icon(Icons.send),
                                               onPressed: () {
                                                 if (doLogin == 1) {
+
                                                   addComment();
                                                 } else {
                                                   Fluttertoast.showToast(
@@ -2107,7 +2348,7 @@ class _VideoPlayState extends State<VideoPlay> {
                                         if (doLogin == 1) {
                                           _comment = val;
 
-                                          addComment();
+                                         // addComment();
                                         } else {
                                           Fluttertoast.showToast(
                                               msg: "Login first",
@@ -2126,22 +2367,21 @@ class _VideoPlayState extends State<VideoPlay> {
                             ),
                           ),
                         ),
-                        Padding(
-                          padding: EdgeInsets.all(0),
-                          child: SizedBox(
+                        Container(
+                         /// height: 100,
+                          child: Padding(
+                            padding: EdgeInsets.all(0),
+                            child: SizedBox(
 //                  height: MediaQuery.of(context).size.height/3,
 //                  width: MediaQuery.of(context).size.width,
-                            child: FutureBuilder<List<Comments>>(
-                              future: getComments("", ""),
-                              builder: (context, snapshot) {
-                                return snapshot.connectionState ==
-                                    ConnectionState.done
-                                    ? snapshot.hasData
-                                    ? _CommentsCellState.homeGrid(
-                                    snapshot, context)
-                                    : _CommentsCellState.retryButton(fetch)
-                                    : _CommentsCellState.circularProgress();
-                              },
+                              child:!noComments?(allComments.length>0? ListView.builder(
+                                itemCount: allComments.length,
+                                shrinkWrap: true,
+                                controller: scController,
+                                itemBuilder: (context, index) {
+                                  return CommentsCell(allComments[index],scController);
+                                },
+                              ):_CommentsCellState.circularProgress()):Center(child: Text("No comments available")),
                             ),
                           ),
                         ),
@@ -4323,8 +4563,8 @@ class Channel_details {
 
 class CommentsCell extends StatefulWidget {
   int countValue = 0;
-
-  CommentsCell(this.cellModel);
+  final controller;
+  CommentsCell(this.cellModel,this.controller);
 
   @required
   final Comments cellModel;
@@ -4342,26 +4582,26 @@ class _CommentsCellState extends State<CommentsCell> {
   @required
   final Comments cellModel;
 
-  static Container homeGrid(AsyncSnapshot<List<Comments>> snapshot, context) {
-    Size size = MediaQuery.of(context).size;
-
-    return Container(
-//      height: double.infinity,
-//      width: double.infinity,
-      child: ListView.builder(
-        physics: ClampingScrollPhysics(),
-        shrinkWrap: true,
-        scrollDirection: Axis.vertical,
-        padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-        itemCount: snapshot.data.length,
-        itemBuilder: (BuildContext context, int index) {
-          return CommentsCell(
-            snapshot.data[index],
-          );
-        },
-      ),
-    );
-  }
+//   static Container homeGrid(AsyncSnapshot<List<Comments>> snapshot, context) {
+//     Size size = MediaQuery.of(context).size;
+//
+//     return Container(
+// //      height: double.infinity,
+// //      width: double.infinity,
+//       child: ListView.builder(
+//         physics: ClampingScrollPhysics(),
+//         shrinkWrap: true,
+//         scrollDirection: Axis.vertical,
+//         padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+//         itemCount: snapshot.data.length,
+//         itemBuilder: (BuildContext context, int index) {
+//           return CommentsCell(
+//             snapshot.data[index],
+//           );
+//         },
+//       ),
+//     );
+//   }
 
   static Center circularProgress() {
     return Center(
@@ -4716,6 +4956,9 @@ class _CommentsCellState extends State<CommentsCell> {
     try {
       if (response.statusCode == 200) {
         // Hiding the CircularProgressIndicator.
+        _appNotifierClass.setComment(true);
+        _appNotifierClass.setChange(true);
+        _appNotifierClass.notifyListeners();
         setState(() {
           visible = false;
         });
@@ -4806,8 +5049,12 @@ class _CommentsCellState extends State<CommentsCell> {
     // If the Response Message is Matched.
   }
 
+  AppNotifierClass _appNotifierClass;
+
   @override
   Widget build(BuildContext context) {
+    _appNotifierClass = Provider.of<AppNotifierClass>(context);
+
     // Color color2 = HexColor(cellModel.color);
 //    bool _visible = false;
 //    if(!["", null].contains(cellModel.doc))
@@ -4818,64 +5065,62 @@ class _CommentsCellState extends State<CommentsCell> {
 //      _visible=false;
 //    colorFlag = !colorFlag;
 
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(0.0, 0, 0, 0),
-      child: GestureDetector(
-        onTap: () {},
-        child: Card(
-          child: Container(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(0.0, 0, 0, 10),
-                                child: GestureDetector(
-                                  onTap: () {},
-                                  child: Card(
-                                    child: Container(
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          Padding(
-                                            padding: const EdgeInsets.fromLTRB(
-                                                0, 5, 0, 0),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: <Widget>[
-                                                Padding(
-                                                  padding: EdgeInsets.fromLTRB(
-                                                      0, 0, 0, 0),
-                                                  child: Center(
-                                                    child: Container(
-                                                      height: 50,
-                                                      width: 50,
-                                                      decoration: BoxDecoration(
-                                                        color: Colors.white,
-                                                        borderRadius:
-                                                            BorderRadius.all(
-                                                                Radius.circular(
-                                                                    50)),
+    return GestureDetector(
+      onTap: () {},
+      child: Card(
+        child: Container(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Padding(
+                              padding:
+                              const EdgeInsets.fromLTRB(0.0, 0, 0, 10),
+                              child: GestureDetector(
+                                onTap: () {},
+                                child: Card(
+                                  child: Container(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Padding(
+                                          padding: const EdgeInsets.fromLTRB(
+                                              0, 5, 0, 0),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                            children: <Widget>[
+                                              Padding(
+                                                padding: EdgeInsets.fromLTRB(
+                                                    0, 0, 0, 0),
+                                                child: Center(
+                                                  child: Container(
+                                                    height: 50,
+                                                    width: 50,
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.circular(
+                                                              50)),
 //                                                               border: Border.all(
 //                                                                   width: 0,
 //                                                                   color: Colors
@@ -4883,283 +5128,284 @@ class _CommentsCellState extends State<CommentsCell> {
 //                                                                   style:
 //                                                                   BorderStyle
 //                                                                       .solid)
-                                                      ),
-                                                      child: Center(
-                                                        child: Padding(
-                                                            padding:
-                                                                EdgeInsets.all(
-                                                                    0),
-                                                            child: CircleAvatar(
-                                                              backgroundImage:
-                                                                  NetworkImage(
-                                                                      cellModel
-                                                                          .image),
-                                                            )),
-                                                      ),
                                                     ),
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            4.0),
-                                                    child: Column(
-                                                      children: <Widget>[
-                                                        Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .spaceBetween,
-                                                          children: <Widget>[
-                                                            Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                          .fromLTRB(
-                                                                      0.0,
-                                                                      10.0,
-                                                                      0.0,
-                                                                      0.0),
-                                                              child: Align(
-                                                                child: new Text(
-                                                                  (![
-                                                                    "",
-                                                                    null,
-                                                                    false,
-                                                                    0,
-                                                                  ].contains(cellModel
-                                                                          .name))
-                                                                      ? cellModel
-                                                                          .name
-                                                                      : "",
-                                                                  style:
-                                                                      TextStyle(
-                                                                    color: Colors
-                                                                        .black45,
-                                                                    fontSize:
-                                                                        15,
-                                                                    letterSpacing:
-                                                                        0,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w400,
-                                                                  ),
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .left,
-                                                                  textDirection:
-                                                                      TextDirection
-                                                                          .ltr,
-                                                                ),
-                                                                alignment: Alignment
-                                                                    .centerLeft,
-                                                              ),
-                                                            ),
-                                                            Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                          .fromLTRB(
-                                                                      0.0,
-                                                                      10.0,
-                                                                      0.0,
-                                                                      0.0),
-                                                              child: Align(
-                                                                child: new Text(
-                                                                  (![
-                                                                    "",
-                                                                    null,
-                                                                    false,
-                                                                    0,
-                                                                  ].contains(cellModel
-                                                                          .posted_date))
-                                                                      ? cellModel
-                                                                          .posted_date
-                                                                      : "Date",
-                                                                  style:
-                                                                      TextStyle(
-                                                                    color: Colors
-                                                                        .black45,
-                                                                    fontSize:
-                                                                        15,
-                                                                    letterSpacing:
-                                                                        0,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w400,
-                                                                  ),
-                                                                  textAlign:
-                                                                      TextAlign
-                                                                          .left,
-                                                                  textDirection:
-                                                                      TextDirection
-                                                                          .ltr,
-                                                                ),
-                                                              ),
-                                                            )
-                                                          ],
-                                                        ),
-
-                                                        Padding(
+                                                    child: Center(
+                                                      child: Padding(
                                                           padding:
-                                                              const EdgeInsets
-                                                                      .fromLTRB(
-                                                                  18.0,
-                                                                  10.0,
-                                                                  0.0,
-                                                                  0.0),
-                                                          child: Align(
-                                                            child: new Text(
-                                                              (![
-                                                                "",
-                                                                null,
-                                                                false,
-                                                                0,
-                                                              ].contains(
-                                                                      comment_new))
-                                                                  ? comment_new
-                                                                  : "Comments",
-                                                              style: TextStyle(
-                                                                color: Colors
-                                                                    .black45,
-                                                                fontSize: 16,
-                                                                letterSpacing:
-                                                                    0,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w400,
-                                                              ),
-                                                              textAlign:
-                                                                  TextAlign
-                                                                      .left,
-                                                              textDirection:
-                                                                  TextDirection
-                                                                      .ltr,
-                                                            ),
-                                                            alignment: Alignment
-                                                                .centerLeft,
-                                                          ),
-                                                        ),
-                                                        // Padding(
-                                                        //   padding:
-                                                        //       const EdgeInsets
-                                                        //               .fromLTRB(
-                                                        //           0.0,
-                                                        //           10.0,
-                                                        //           0.0,
-                                                        //           0.0),
-                                                        //   child: Align(
-                                                        //     child: new Text(
-                                                        //       'View 13 Reples',
-                                                        //       style: TextStyle(
-                                                        //         fontFamily:
-                                                        //             'Poppins',
-                                                        //         color: Color(
-                                                        //             0xff08c1f8),
-                                                        //         fontSize: 14,
-                                                        //         letterSpacing:
-                                                        //             0,
-                                                        //         fontWeight:
-                                                        //             FontWeight
-                                                        //                 .w400,
-                                                        //       ),
-                                                        //       textAlign:
-                                                        //           TextAlign
-                                                        //               .left,
-                                                        //       textDirection:
-                                                        //           TextDirection
-                                                        //               .ltr,
-                                                        //     ),
-                                                        //     alignment: Alignment
-                                                        //         .centerLeft,
-                                                        //   ),
-                                                        // ),
-                                                      ],
+                                                          EdgeInsets.all(
+                                                              0),
+                                                          child: CircleAvatar(
+                                                            backgroundImage:
+                                                          !["",null].contains(cellModel.image)?  NetworkImage(
+                                                                cellModel
+                                                                    .image):Image.asset("assets/images/splash_logo.png"),
+                                                          )),
                                                     ),
                                                   ),
                                                 ),
-                                                userName.toString().toLowerCase().trim()==cellModel.name.toString().toLowerCase().trim()?Center(
-                                                  //
-                                                  child: PopupMenuButton<int>(
-                                                    itemBuilder: (context) => [
-                                                      PopupMenuItem(
-                                                        value: 1,
-                                                        child: Text("Edit"),
-                                                      ),
-                                                      PopupMenuItem(
-                                                        value: 2,
-                                                        child: Text("Delete"),
-                                                      ),
-                                                    ],
-                                                    initialValue: 0,
-                                                    onCanceled: () {
-                                                      print(cellModel.name);
-                                                      print(
-                                                          "You have canceled the menu.");
-                                                    },
-                                                    onSelected: (value) {
-                                                      setState(() {
-                                                        if (value == 1) {
-                                                          setState(() {
-                                                            _editcommentController.text=widget
-                                                                .cellModel
-                                                                .comment;
-                                                          });
-                                                          slideDialog
-                                                              .showSlideDialog(
-                                                            barrierDismissible:
-                                                                true,
-                                                            context: context,
-                                                            child: ListTile(
-                                                              leading:
-                                                                  CircleAvatar(
-                                                                backgroundImage:
-                                                                    NetworkImage(widget
-                                                                        .cellModel
-                                                                        .image),
-                                                              ),
-                                                              title: Container(
-                                                                width: 400,
-                                                                child:
-                                                                    TextField(
-                                                                  controller:
-                                                                      _editcommentController,
-                                                                  decoration:
-                                                                      InputDecoration(
-                                                                          suffixIcon:
-                                                                              IconButton(
-                                                                    icon: Icon(
-                                                                        Icons
-                                                                            .send),
-                                                                    onPressed:
-                                                                        () {
-                                                                          updatecomment(widget
-                                                                              .cellModel
-                                                                              .id);
-                                                                          Navigator.of(context,
-                                                                              rootNavigator: true)
-                                                                              .pop();
-                                                                    },
-                                                                  )),
+                                              ),
+                                              Expanded(
+                                                child: Padding(
+                                                  padding:
+                                                  const EdgeInsets.all(
+                                                      4.0),
+                                                  child: Column(
+                                                    children: <Widget>[
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                        children: <Widget>[
+                                                          Padding(
+                                                            padding:
+                                                            const EdgeInsets
+                                                                .fromLTRB(
+                                                                0.0,
+                                                                10.0,
+                                                                0.0,
+                                                                0.0),
+                                                            child: Align(
+                                                              child: new Text(
+                                                                (![
+                                                                  "",
+                                                                  null,
+                                                                  false,
+                                                                  0,
+                                                                ].contains(cellModel
+                                                                    .name))
+                                                                    ? cellModel
+                                                                    .name
+                                                                    : "",
+                                                                style:
+                                                                TextStyle(
+                                                                  color: Colors
+                                                                      .black45,
+                                                                  fontSize:
+                                                                  15,
+                                                                  letterSpacing:
+                                                                  0,
+                                                                  fontWeight:
+                                                                  FontWeight
+                                                                      .w400,
                                                                 ),
+                                                                textAlign:
+                                                                TextAlign
+                                                                    .left,
+                                                                textDirection:
+                                                                TextDirection
+                                                                    .ltr,
+                                                              ),
+                                                              alignment: Alignment
+                                                                  .centerLeft,
+                                                            ),
+                                                          ),
+                                                          Padding(
+                                                            padding:
+                                                            const EdgeInsets
+                                                                .fromLTRB(
+                                                                0.0,
+                                                                10.0,
+                                                                0.0,
+                                                                0.0),
+                                                            child: Align(
+                                                              child: new Text(
+                                                                (![
+                                                                  "",
+                                                                  null,
+                                                                  false,
+                                                                  0,
+                                                                ].contains(cellModel
+                                                                    .posted_date))
+                                                                    ? cellModel
+                                                                    .posted_date
+                                                                    : "Date",
+                                                                style:
+                                                                TextStyle(
+                                                                  color: Colors
+                                                                      .black45,
+                                                                  fontSize:
+                                                                  15,
+                                                                  letterSpacing:
+                                                                  0,
+                                                                  fontWeight:
+                                                                  FontWeight
+                                                                      .w400,
+                                                                ),
+                                                                textAlign:
+                                                                TextAlign
+                                                                    .left,
+                                                                textDirection:
+                                                                TextDirection
+                                                                    .ltr,
                                                               ),
                                                             ),
-                                                          );
+                                                          )
+                                                        ],
+                                                      ),
 
-                                                        }
-                                                        if (value == 2) {
-                                                          deletecomment(widget
-                                                              .cellModel.id);
-                                                          setState(() => {});
-                                                        }
-                                                      });
-                                                    },
-                                                    icon: Icon(Icons.more_vert),
+                                                      Padding(
+                                                        padding:
+                                                        const EdgeInsets
+                                                            .fromLTRB(
+                                                            18.0,
+                                                            10.0,
+                                                            0.0,
+                                                            0.0),
+                                                        child: Align(
+                                                          child: new Text(
+                                                            (![
+                                                              "",
+                                                              null,
+                                                              false,
+                                                              0,
+                                                            ].contains(
+                                                                comment_new))
+                                                                ? comment_new
+                                                                : "Comments",
+                                                            style: TextStyle(
+                                                              color: Colors
+                                                                  .black45,
+                                                              fontSize: 16,
+                                                              letterSpacing:
+                                                              0,
+                                                              fontWeight:
+                                                              FontWeight
+                                                                  .w400,
+                                                            ),
+                                                            textAlign:
+                                                            TextAlign
+                                                                .left,
+                                                            textDirection:
+                                                            TextDirection
+                                                                .ltr,
+                                                          ),
+                                                          alignment: Alignment
+                                                              .centerLeft,
+                                                        ),
+                                                      ),
+                                                      // Padding(
+                                                      //   padding:
+                                                      //       const EdgeInsets
+                                                      //               .fromLTRB(
+                                                      //           0.0,
+                                                      //           10.0,
+                                                      //           0.0,
+                                                      //           0.0),
+                                                      //   child: Align(
+                                                      //     child: new Text(
+                                                      //       'View 13 Reples',
+                                                      //       style: TextStyle(
+                                                      //         fontFamily:
+                                                      //             'Poppins',
+                                                      //         color: Color(
+                                                      //             0xff08c1f8),
+                                                      //         fontSize: 14,
+                                                      //         letterSpacing:
+                                                      //             0,
+                                                      //         fontWeight:
+                                                      //             FontWeight
+                                                      //                 .w400,
+                                                      //       ),
+                                                      //       textAlign:
+                                                      //           TextAlign
+                                                      //               .left,
+                                                      //       textDirection:
+                                                      //           TextDirection
+                                                      //               .ltr,
+                                                      //     ),
+                                                      //     alignment: Alignment
+                                                      //         .centerLeft,
+                                                      //   ),
+                                                      // ),
+                                                    ],
                                                   ),
-                                                ):Container(width: 50,),
-                                              ],
-                                            ),
+                                                ),
+                                              ),
+                                              userName.toString().toLowerCase().trim()==cellModel.name.toString().toLowerCase().trim()?Center(
+                                                //
+                                                child: PopupMenuButton<int>(
+                                                  itemBuilder: (context) => [
+                                                    PopupMenuItem(
+                                                      value: 1,
+                                                      child: Text("Edit"),
+                                                    ),
+                                                    PopupMenuItem(
+                                                      value: 2,
+                                                      child: Text("Delete"),
+                                                    ),
+                                                  ],
+                                                  initialValue: 0,
+                                                  onCanceled: () {
+                                                    print(cellModel.name);
+                                                    print(
+                                                        "You have canceled the menu.");
+                                                  },
+                                                  onSelected: (value) {
+                                                    setState(() {
+                                                      if (value == 1) {
+                                                        setState(() {
+                                                          _editcommentController.text=widget
+                                                              .cellModel
+                                                              .comment;
+                                                        });
+                                                        slideDialog
+                                                            .showSlideDialog(
+                                                          barrierDismissible:
+                                                          true,
+                                                          context: context,
+                                                          child: ListTile(
+                                                            leading:
+                                                            CircleAvatar(
+                                                              backgroundImage:
+                                                              NetworkImage(widget
+                                                                  .cellModel
+                                                                  .image),
+                                                            ),
+                                                            title: Container(
+                                                              width: 400,
+                                                              child:
+                                                              TextField(
+                                                                controller:
+                                                                _editcommentController,
+                                                                decoration:
+                                                                InputDecoration(
+                                                                    suffixIcon:
+                                                                    IconButton(
+                                                                      icon: Icon(
+                                                                          Icons
+                                                                              .send),
+                                                                      onPressed:
+                                                                          () {
+                                                                        updatecomment(widget
+                                                                            .cellModel
+                                                                            .id);
+                                                                        Navigator.of(context,
+                                                                            rootNavigator: true)
+                                                                            .pop();
+                                                                      },
+                                                                    )),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        );
+
+                                                      }
+                                                      if (value == 2) {
+                                                        //_VideoPlayState().getComments("", "");
+                                                        deletecomment(widget
+                                                            .cellModel.id);
+                                                        setState(() => {});
+                                                      }
+                                                    });
+                                                  },
+                                                  icon: Icon(Icons.more_vert),
+                                                ),
+                                              ):Container(width: 50,),
+                                            ],
                                           ),
-                                        ],
-                                      ),
+                                        ),
+                                      ],
+                                    ),
 //                        decoration: BoxDecoration(
 //                          image: DecorationImage(
 //                            image: AssetImage(
@@ -5168,28 +5414,28 @@ class _CommentsCellState extends State<CommentsCell> {
 //                          ),
 //                          borderRadius: BorderRadius.circular(10.0),
 //                        ),
-                                    ),
-                                    elevation: 0,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.only(
-                                        topRight: Radius.circular(15),
-                                        topLeft: Radius.circular(15),
-                                        bottomLeft: Radius.circular(15),
-                                        bottomRight: Radius.circular(15),
-                                      ),
+                                  ),
+                                  elevation: 0,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.only(
+                                      topRight: Radius.circular(15),
+                                      topLeft: Radius.circular(15),
+                                      bottomLeft: Radius.circular(15),
+                                      bottomRight: Radius.circular(15),
                                     ),
                                   ),
                                 ),
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
+          ),
 //                        decoration: BoxDecoration(
 //                          image: DecorationImage(
 //                            image: AssetImage(
@@ -5198,15 +5444,14 @@ class _CommentsCellState extends State<CommentsCell> {
 //                          ),
 //                          borderRadius: BorderRadius.circular(10.0),
 //                        ),
-          ),
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-              topRight: Radius.circular(15),
-              topLeft: Radius.circular(15),
-              bottomLeft: Radius.circular(15),
-              bottomRight: Radius.circular(15),
-            ),
+        ),
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topRight: Radius.circular(15),
+            topLeft: Radius.circular(15),
+            bottomLeft: Radius.circular(15),
+            bottomRight: Radius.circular(15),
           ),
         ),
       ),

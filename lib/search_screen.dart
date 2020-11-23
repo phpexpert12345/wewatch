@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flick_video_player/flick_video_player.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_widgets/flutter_widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
@@ -39,7 +40,7 @@ class _SearchScreenState extends State<SearchScreen> {
   bool isHomeDataLoading = false;
   SharedPreferences prefs;
   bool countValue = false, countValue1 = false;
-  FlickManager flickManagerSearch;
+  List<FlickManager> flickManagerSearch;//=new List();
   int doLogin;
   ScrollController scrollController = new ScrollController();
   bool searchApiCalled=true;
@@ -92,6 +93,16 @@ class _SearchScreenState extends State<SearchScreen> {
         dynamicList.forEach((f) {
           Quotes s = Quotes.fromJson(f);
           quotes.add(s);
+          flickManagerSearch.add(new FlickManager(
+              videoPlayerController:
+              VideoPlayerController.network(![
+                "",
+                null
+              ].contains(s.video_file)
+                  ? s.video_file
+                  : s.video_file,),
+              autoInitialize: true,
+              autoPlay: false));
         });
 
         setState(() {
@@ -115,8 +126,9 @@ class _SearchScreenState extends State<SearchScreen> {
     super.initState();
     moreDataLoading=true;
     pageCount=1;
-
+    flickManagerSearch=new List();
     checkFirstSeen();
+    getVehical('type');
     scrollController.addListener(() {
       if (scrollController.position.pixels ==
           scrollController.position.maxScrollExtent) {
@@ -133,7 +145,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   Future checkFirstSeen() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-
+    await DefaultCacheManager().emptyCache();
     bool _isLogin = (prefs.getBool('isLogin') ?? false);
 
     if (_isLogin) {
@@ -141,17 +153,14 @@ class _SearchScreenState extends State<SearchScreen> {
     } else {
       doLogin = 0;
     }
-    getQuotes("", "", "", "");
 
 //    Navigator.of(context).pushReplacement(
 //        new MaterialPageRoute(builder: (context) => new OnboardingScreen()));
   }
 
   String serachText;
-  Future<List<Category>> getVehical(String type) async {
-
+  void getVehical(String type) async {
     prefs = await SharedPreferences.getInstance();
-
     var response = await http
         .get('https://wewatch.in/wewatch-up/api/v1/categories', headers: {
       'Content-Type': 'application/json',
@@ -171,8 +180,12 @@ class _SearchScreenState extends State<SearchScreen> {
           Category s = Category.fromJson(f);
           students1.add(s);
         });
+        setState(() {
+          categoryList.addAll(students1);
+        });
+        //return students1;
+        getQuotes("", "", "", "");
 
-        return students1;
       } else {
         throw Exception("MESSAGES.INTERNET_ERROR");
       }
@@ -186,19 +199,24 @@ class _SearchScreenState extends State<SearchScreen> {
   int _selectedIndex = -1;
   bool isBotttomVisible = false;
 
-  _onSelected(int index) {
+  _onSelected(int index) async{
+    await DefaultCacheManager().emptyCache();
     setState(() => _selectedIndex = index);
   }
+  List<Category> categoryList=new List();
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
+
     return Scaffold(
       appBar: AppBar(
-//        leading: IconButton(
-//          icon: Icon(Icons.arrow_back_ios, color: Colors.white),
-//          onPressed: () => Navigator.of(context).pop(),
-//        ),
+       leading: IconButton(
+         icon: Icon(Icons.arrow_back_ios, color: Colors.white),
+         onPressed: () async{
+           await DefaultCacheManager().emptyCache();
+           Navigator.of(context).pop();
+         },
+       ),
         backgroundColor: Color(0xff00adef),
         centerTitle: true,
 
@@ -224,82 +242,76 @@ class _SearchScreenState extends State<SearchScreen> {
             children: <Widget>[
               Padding(
                 padding: EdgeInsets.fromLTRB(10, 10, 10, 5),
-                child: FutureBuilder<List<Category>>(
-                  future: getVehical('type'),
-                  builder: (context, snapshot) {
-                    return Container(
-                      height: 40,
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.all(Radius.circular(0.0)),
-                          border: Border.all(
-                            color: Color(0xff00adef),
-                            width: 1,
-                          )),
-                      child: snapshot.hasData
-                          ? ListView.builder(
-                              shrinkWrap: true,
-                              scrollDirection: Axis.horizontal,
-                              itemCount: snapshot.data.length,
-                              itemBuilder: (context, int index) {
-                                return GestureDetector(
-                                    child: Container(
-                                        height: 30,
-                                        decoration: BoxDecoration(
-                                          color: _selectedIndex != null &&
-                                                  _selectedIndex == index
-                                              ? Color(0xff00adef)
-                                              : Colors.white,
-                                        ),
-                                        child: Center(
-                                          child: Padding(
-                                            padding: const EdgeInsets.fromLTRB(
-                                                8, 3, 8, 3),
-                                            child: Text(
-                                              !["", null, false, 0].contains(
-                                                      snapshot.data[index].name)
-                                                  ? snapshot.data[index].name
-                                                  : " ",
-                                              style: TextStyle(
-                                                  fontSize: 15,
-                                                  fontWeight: FontWeight.w500,
-                                                  color:
-                                                      _selectedIndex != null &&
-                                                              _selectedIndex ==
-                                                                  index
-                                                          ? Colors.white
-                                                          : Color(0xff00adef)),
-                                            ),
-                                          ),
-                                        )),
-                                    onTap: () {
-                                      _onSelected(index);
-                                      print("val==="+snapshot.data[index].name.toString());
-
-                                      pageCount=1;
-                                      setState(() {
-                                        students.clear();
-                                        moreDataLoading=true;
-                                      });
-                                      getQuotes(
-                                          _emailFilter.text,
-                                          prefs.getString('city'),
-                                          prefs.getString('state'),
-                                          snapshot.data[index].name.toString());
-                                    });
-                              },
-                              padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                            )
-                          : Center(
-                              child: Container(
-                                height: 50,
-                                width: 50,
-                                child: CircularProgressIndicator(),
-                              ),
+                child:
+                Container(
+                    height: 40,
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(Radius.circular(0.0)),
+                        border: Border.all(
+                          color: Color(0xff00adef),
+                          width: 1,
+                        )),
+                    child:categoryList.length>0 ?ListView.builder(
+                  shrinkWrap: true,
+                  scrollDirection: Axis.horizontal,
+                  itemCount:categoryList.length,
+                  itemBuilder: (context, int index) {
+                    return GestureDetector(
+                        child: Container(
+                            height: 30,
+                            decoration: BoxDecoration(
+                              color: _selectedIndex != null &&
+                                  _selectedIndex == index
+                                  ? Color(0xff00adef)
+                                  : Colors.white,
                             ),
-                    );
+                            child: Center(
+                              child: Padding(
+                                padding: const EdgeInsets.fromLTRB(
+                                    8, 3, 8, 3),
+                                child: Text(
+                                  !["", null, false, 0].contains(
+                                      categoryList[index].name)
+                                      ? categoryList[index].name
+                                      : " ",
+                                  style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w500,
+                                      color:
+                                      _selectedIndex != null &&
+                                          _selectedIndex ==
+                                              index
+                                          ? Colors.white
+                                          : Color(0xff00adef)),
+                                ),
+                              ),
+                            )),
+                        onTap: () {
+                          _onSelected(index);
+                          print("val==="+categoryList[index].name.toString());
+
+                          pageCount=1;
+                          setState(() {
+                            students.clear();
+                            flickManagerSearch.clear();
+                            moreDataLoading=true;
+                          });
+                          getQuotes(
+                              _emailFilter.text,
+                              prefs.getString('city'),
+                              prefs.getString('state'),
+                              categoryList[index].name.toString());
+                        });
                   },
-                ),
+                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                ):Center(
+                      child: Container(
+                        height: 50,
+                        width: 50,
+                        child: CircularProgressIndicator(),
+                      ),
+                    ), )
               ),
               new Padding(
                 padding: new EdgeInsets.all(8.0),
@@ -355,15 +367,8 @@ class _SearchScreenState extends State<SearchScreen> {
                     itemBuilder: (BuildContext context, int index) {
                       countValue = students[index].is_like;
                       countValue1 = students[index].is_like;
-                      flickManagerSearch = new FlickManager(
-                          videoPlayerController:
-                          VideoPlayerController.network(![
-                            "",
-                            null
-                          ].contains(students[index].video_file)
-                              ? students[index].video_file
-                              : '  '),
-                          autoPlay: false);
+                      //await _controllers[initIndex].setLooping(true);
+
                       return GestureDetector(
                         child: Padding(
                             padding:
@@ -774,16 +779,16 @@ class _SearchScreenState extends State<SearchScreen> {
                                                             key: ObjectKey(flickManagerSearch),
                                                             onVisibilityChanged: (visibility) {
                                                               if (visibility.visibleFraction == 0 && this.mounted) {
-                                                                flickManagerSearch.flickControlManager
+                                                                flickManagerSearch[index].flickControlManager
                                                                     .pause();
                                                               } else if (visibility.visibleFraction ==1) {
-                                                                flickManagerSearch.flickControlManager
-                                                                    .play();
+                                                                flickManagerSearch[index].flickControlManager
+                                                                    .pause();
                                                               }
                                                             },
                                                             child: Container(
                                                               child: FlickVideoPlayer(
-                                                                flickManager: flickManagerSearch,
+                                                                flickManager: flickManagerSearch[index],
                                                                 flickVideoWithControls:
                                                                 FlickVideoWithControls(
                                                                   controls: FlickPortraitControls(),
@@ -1455,6 +1460,12 @@ class _SearchScreenState extends State<SearchScreen> {
       ),
     );
   }
+  @override
+  void dispose() async{
+    // TODO: implement dispose
+    await DefaultCacheManager().emptyCache();
+    super.dispose();
+  }
 }
 
 class Quotes {
@@ -1568,8 +1579,10 @@ class _QuotesCellState extends State<QuotesCell> {
     //     autoPlay: false);
   }
 
+
   @override
   void dispose() {
+    flickManager.flickControlManager.dispose();
     flickManager.dispose();
     super.dispose();
   }
@@ -2220,7 +2233,7 @@ class _QuotesCellState extends State<QuotesCell> {
                                             0.0, 0.0, 0.0, 0.0),
                                         child: Align(
                                           child: new Text(
-                                            ["", null].contains(cellModel
+                                            !["", null].contains(cellModel
                                                     .total_comments
                                                     .toString())
                                                 ? cellModel.total_comments

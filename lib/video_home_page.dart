@@ -585,7 +585,7 @@ class _VideoHomePageState extends State<VideoHomePage> {
           );
         },
       ),
-      Container(),
+      //Container(),
       Builder(
         builder: (context) {
           return Stack(
@@ -2079,7 +2079,7 @@ class _VideoHomePageState extends State<VideoHomePage> {
           );
         },
       ),
-      Container(),
+      //Container(),
     ];
     Size size = MediaQuery.of(context).size;
     return Scaffold(
@@ -2699,15 +2699,15 @@ class _VideoHomePageState extends State<VideoHomePage> {
             title: Text(''),
           ),
 
-          BottomNavigationBarItem(
-            icon: SvgPicture.asset(
-              "assets/images/job.svg",
-              color: Color(0xff444b69),
-              height: 20,
-              width: 20,
-            ),
-            title: Text(''),
-          ),
+          // BottomNavigationBarItem(
+          //   icon: SvgPicture.asset(
+          //     "assets/images/job.svg",
+          //     color: Color(0xff444b69),
+          //     height: 20,
+          //     width: 20,
+          //   ),
+          //   title: Text(''),
+          // ),
           BottomNavigationBarItem(
             icon: SvgPicture.asset(
               "assets/images/social_workers.svg",
@@ -2717,15 +2717,15 @@ class _VideoHomePageState extends State<VideoHomePage> {
             ),
             title: Text(''),
           ),
-          BottomNavigationBarItem(
-            icon: SvgPicture.asset(
-              "assets/images/worker.svg",
-              color: Color(0xff444b69),
-              height: 20,
-              width: 20,
-            ),
-            title: Text(''),
-          ),
+          // BottomNavigationBarItem(
+          //   icon: SvgPicture.asset(
+          //     "assets/images/worker.svg",
+          //     color: Color(0xff444b69),
+          //     height: 20,
+          //     width: 20,
+          //   ),
+          //   title: Text(''),
+          // ),
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Color(0xff00adef),
@@ -2799,8 +2799,8 @@ class _VideoHomePageState extends State<VideoHomePage> {
       if (response.statusCode == 200) {
         //print("Ankit" + body.toString());
         Map<String, dynamic> decodedMap = jsonDecode(response.body);
-        if(decodedMap['data']['results']!=null && decodedMap['data']['results'].length>0) {
-          List<dynamic> dynamicList = decodedMap['data']['results'];
+        if(decodedMap['latest_video']['results']!=null && decodedMap['latest_video']['results'].length>0) {
+          List<dynamic> dynamicList = decodedMap['latest_video']['results'];
           List<Quotes> tempList = new List<Quotes>();
           dynamicList.forEach((f) {
             Quotes s = Quotes.fromJson(f);

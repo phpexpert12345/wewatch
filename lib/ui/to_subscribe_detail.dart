@@ -111,8 +111,8 @@ class _SubscribeDetailState extends State<SubscribeDetail> {
                             maxRadius: 40,
                               backgroundColor: Colors.blue.shade200,
                               child:CircleAvatar(
-                              child: !["",null].contains(profileImage)?
-                              Image.network(profileImage): Image.asset("assets/images/logo_splash.png",),
+                              backgroundImage: !["",null].contains(profileImage)?
+                              NetworkImage(profileImage): Image.asset("assets/images/logo_splash.png",),
                                 maxRadius: 37,
                             )
 

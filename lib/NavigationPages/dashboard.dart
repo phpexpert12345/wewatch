@@ -10,6 +10,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:flutter_widgets/flutter_widgets.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:package_info/package_info.dart';
 import 'package:provider/provider.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:share/share.dart';
@@ -76,6 +77,7 @@ class _DashboardState extends State<Dashboard> {
       posted_time;
   static int _listLimit ;
   List<Quotes> students = new List<Quotes>();
+  List<VideoLikes> videoLikes = new List<VideoLikes>();
 
   List names = new List();
   ScrollController scrollController = new ScrollController();
@@ -326,13 +328,14 @@ class _DashboardState extends State<Dashboard> {
 
   //call on scroll
   void getQuotes(String type, String text) async {
+    print("pincode ="+pinCode +"count="+type);
     if (!isLoading) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
 
       String access_token = prefs.getString('access_token');
       print("token: "+access_token);
       String login_url =
-          "https://wewatch.in/wewatch-up/api/v1/video-listing?page=" + type;
+          "https://wewatch.in/wewatch-up/api/v1/video-listing?page=" +type+"&pincode="+pinCode;
       var response = await http.get(login_url, headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $access_token',
@@ -347,28 +350,54 @@ class _DashboardState extends State<Dashboard> {
           //Simulate a service call
           print('submitting to backend...');
           Map<String, dynamic> decodedMap = jsonDecode(response.body);
-          Map<String, dynamic> decodedMapAttachment = jsonDecode(response.body);
+          //Map<String, dynamic> decodedMapAttachment = jsonDecode(response.body);
           // var body = await json.decode(response.body);
           apiCalled=true;
-          _appNotifierClass.setChange(false);
-          _appNotifierClass.notifyListeners();
-
-          if(decodedMap['data']['results']!=null) {
-            List<dynamic> dynamicList = decodedMap['data']['results'];
-
-            List<Quotes> tempList = new List<Quotes>();
+          List<Quotes> tempList = new List<Quotes>();
+          List<VideoLikes> likes=new List<VideoLikes>();
+         if(decodedMap['latest_video']['data']['results']!=null) {
+            List<dynamic> dynamicList = decodedMap['latest_video']['data']['results'];
+            List<dynamic> latestLikeList = decodedMap['latest_video']['likes'];
             dynamicList.forEach((f) {
               Quotes s = Quotes.fromJson(f);
               tempList.add(s);
             });
-            setState(() {
-              moreDataLoading = false;
-              isLoading = false;
-              students.addAll(tempList);
+            latestLikeList.forEach((f) {
+              VideoLikes s = VideoLikes.fromJson(f);
+              likes.add(s);
+            });
+
+          }else{
+            print("no more data available");
+          }
+          if(decodedMap['other_video']['data']['results']!=null) {
+            List<dynamic> dynamicList = decodedMap['other_video']['data']['results'];
+            List<dynamic> otherLikeList = decodedMap['other_video']['likes'];
+
+            dynamicList.forEach((f) {
+              Quotes s = Quotes.fromJson(f);
+              tempList.add(s);
+            });
+            otherLikeList.forEach((f) {
+              VideoLikes s = VideoLikes.fromJson(f);
+              likes.add(s);
             });
           }else{
             print("no more data available");
           }
+          if(decodedMap['likes']!=null) {
+            List<dynamic> dynamicList = decodedMap['likes'];
+            dynamicList.forEach((f) {
+              VideoLikes like = VideoLikes.fromJson(f);
+              likes.add(like);
+            });
+          }
+            setState(() {
+            moreDataLoading = false;
+            isLoading = false;
+            videoLikes.addAll(likes);
+            students.addAll(tempList);
+          });
         } else {
           throw Exception(MESSAGES.INTERNET_ERROR);
         }
@@ -405,8 +434,7 @@ class _DashboardState extends State<Dashboard> {
     getWelcomeVideo();
     moreDataLoading=true;
     _listLimit = 1;
-    this.getQuotes(_listLimit.toString(), "");
-    apiCalled=true;
+    loadPincode();
 
     scrollController.addListener(() {
       if (scrollController.position.pixels ==
@@ -434,6 +462,14 @@ class _DashboardState extends State<Dashboard> {
         autoPlay: false,);
   }
 
+  loadPincode() async {
+    await SharedPreferences.getInstance().then((value) {
+      pinCode=value.getString('pincode') ?? '';
+      apiCalled=true;
+      this.getQuotes(_listLimit.toString(), "");
+    });
+  }
+  String pinCode="";
   void fetchfive() {
     getQuotes(_listLimit.toString(), "");
   }
@@ -469,12 +505,29 @@ class _DashboardState extends State<Dashboard> {
     }
     _appNotifierClass = Provider.of<AppNotifierClass>(context);
     if(_appNotifierClass.getChange()){
+      setState(() {
+        _listLimit=1;
+        moreDataLoading=true;
+        students.clear();
+        videoLikes.clear();
+        students=new List<Quotes>();
+      });
+      _appNotifierClass.setChange(false);
+      _appNotifierClass.notifyListeners();
+      this.getQuotes(_listLimit.toString(), "");
+    }
+    if(_appNotifierClass.getLocationChange()){
       _listLimit=1;
+
+      loadPincode();
       setState(() {
         moreDataLoading=true;
         students.clear();
+        videoLikes.clear();
+        students=new List<Quotes>();
       });
-      this.getQuotes(_listLimit.toString(), "");
+      _appNotifierClass.setLocationChange(false);
+      _appNotifierClass.notifyListeners();
     }
 
 
@@ -1494,9 +1547,18 @@ class _DashboardState extends State<Dashboard> {
                         padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                         itemCount: students.length,
                         itemBuilder: (BuildContext context, int index) {
+                          bool matched=false;
+                          VideoLikes like = null;
+                          // if( videoLikes!=null){
+                          //  for(int i=0;i<videoLikes.length;i++){
+                          //     if(students[index].id.toString().compareTo(videoLikes[i].toString())==0){
+                          //       like=videoLikes[i];
+                          //       break;
+                          //     }
+                          //   }
+                          // }
                           return QuotesCell(
-                            students[index],
-                          );
+                            students[index],videoLikes[index] );
                         },
                 )),
               ),
@@ -1659,7 +1721,7 @@ class Quotes {
   int subscriber_count;
   var channel_name;
   int total_views;
-
+  var reporter_image;
   Quotes({
     this.id,
     this.user_id,
@@ -1684,6 +1746,7 @@ class Quotes {
     this.channel_name,
     this.subscriber_count,
     this.total_views,
+    this.reporter_image
   });
 
   factory Quotes.fromJson(Map<String, dynamic> json) {
@@ -1711,27 +1774,47 @@ class Quotes {
       subscriber_count: json['subscriber_count'],
       channel_name: json['channel_name'],
       total_views: json['total_views'],
+      reporter_image: json['reporter_image']
+    );
+  }
+}
+
+class VideoLikes {
+  var video_id;
+  var user_id;
+  var channel_name;
+  var likes;
+  var dislike;
+
+  VideoLikes({this.video_id,this.user_id,this.channel_name,this.likes,this.dislike});
+  factory VideoLikes.fromJson(Map<String, dynamic> json) {
+    return VideoLikes(
+      video_id: json['video_id'],
+      user_id: json['user_id'],
+      channel_name: json['channel_name'],
+      likes: json['likes'],
+      dislike: json['dislike']
     );
   }
 }
 
 class QuotesCell extends StatefulWidget {
   int countValue = 0;
-
-  QuotesCell(this.cellModel);
-  @required
+  VideoLikes videoLikesModel;
+  QuotesCell(this.cellModel, this.videoLikesModel);
   final Quotes cellModel;
 
   @override
-  _QuotesCellState createState() => _QuotesCellState(this.cellModel);
+  _QuotesCellState createState() => _QuotesCellState(this.cellModel,this.videoLikesModel);
 }
 
 class _QuotesCellState extends State<QuotesCell> {
   bool countValue = false, countValue1 = false;
   int doLogin;
-  _QuotesCellState(this.cellModel);
+  _QuotesCellState(this.cellModel,this.videoLikesModel);
   @required
   final Quotes cellModel;
+  VideoLikes videoLikesModel;
   FlickManager flickManager;
   VideoPlayerController _controller;
 
@@ -1745,10 +1828,49 @@ class _QuotesCellState extends State<QuotesCell> {
         videoPlayerController: VideoPlayerController.network(
             !["", null].contains(cellModel.video_file)
                 ? cellModel.video_file
-                : '  '),
+                : cellModel.video_file),
         autoPlay: false);
 
     checkFirstSeen();
+    checkLIkeStatus();
+  }
+
+  bool isDislike,islike;
+  checkLIkeStatus(){
+    setState(() {
+      if(videoLikesModel.dislike!=null){
+        if(!["",null].contains(videoLikesModel.dislike) && videoLikesModel.dislike.toString().compareTo("1")==0){
+          setState(() {
+            isDislike=true;
+
+          });
+        }else {
+          setState(() {
+            isDislike=false;
+          });
+        }
+      }else {
+        setState(() {
+          isDislike=false;
+        });
+      }
+      if(videoLikesModel.likes!=null){
+        if(!["",null].contains(videoLikesModel.likes) && videoLikesModel.likes.toString().compareTo("1")==0){
+          setState(() {
+            islike=true;
+
+          });
+        }else {
+          setState(() {
+            islike=false;
+          });
+        }
+      }else {
+        setState(() {
+          islike=false;
+        });
+      }
+    });
   }
 
   @override
@@ -2172,6 +2294,10 @@ class _QuotesCellState extends State<QuotesCell> {
                                         subscriber_count:
                                             cellModel.subscriber_count,
                                         total_views: cellModel.total_views,
+                                       reporter_image: cellModel.reporter_image,
+                                       is_dislike: false,
+                                    dislikeVal: videoLikesModel.dislike,
+                                    likedVal: videoLikesModel.likes,
                                       )),
                             );
                           },
@@ -2235,17 +2361,18 @@ class _QuotesCellState extends State<QuotesCell> {
                                       //   countValue=false;
                                       //   countValue1=true;
                                       // }
-                                      if (!countValue) {
+                                     // if (!countValue) {
                                         countValue = true;
                                         countValue1 = false;
-                                        saveLike(cellModel.id.toString(), "1");
-                                        cellModel.total_likes =
-                                            cellModel.total_likes + 1;
-                                        if (cellModel.total_dislikes > 0) {
-                                          cellModel.total_dislikes =
-                                              cellModel.total_dislikes - 1;
-                                        }
-                                      }
+                                        saveLike(cellModel.id.toString(), islike?"0":"1");
+                                        islike=!islike;
+                                        // cellModel.total_likes =
+                                        //     cellModel.total_likes + 1;
+                                        // if (cellModel.total_dislikes > 0) {
+                                        //   cellModel.total_dislikes =
+                                        //       cellModel.total_dislikes - 1;
+                                        // }
+                                      //}
                                     });
                                   }
 
@@ -2285,7 +2412,7 @@ class _QuotesCellState extends State<QuotesCell> {
 //                                              height: 150.0,
 //                                              width: 50.0,
                                                   fit: BoxFit.fill,
-                                                  color: countValue
+                                                  color: islike
                                                       ? Color(0xff00adef)
                                                       : Colors.grey,
                                                 ),
@@ -2328,17 +2455,19 @@ class _QuotesCellState extends State<QuotesCell> {
                                       //   countValue1=false;
                                       //   countValue=true;
                                       // }
-                                      if (!countValue1) {
+                                     // if (!countValue1) {
                                         countValue1 = true;
                                         countValue = false;
-                                        saveLike(cellModel.id.toString(), "0");
-                                        cellModel.total_dislikes =
-                                            cellModel.total_dislikes + 1;
-                                        if (cellModel.total_likes > 0) {
-                                          cellModel.total_likes =
-                                              cellModel.total_likes - 1;
-                                        }
-                                      }
+                                        //saveLike(cellModel.id.toString(), "0");
+                                        disLike(cellModel.id.toString(), isDislike?"0":"1");
+                                        isDislike=!isDislike;
+                                        // cellModel.total_dislikes =
+                                        //     cellModel.total_dislikes + 1;
+                                        // if (cellModel.total_likes > 0) {
+                                        //   cellModel.total_likes =
+                                        //       cellModel.total_likes - 1;
+                                        // }
+                                     // }
                                     });
                                   } else {}
                                 },
@@ -2376,7 +2505,7 @@ class _QuotesCellState extends State<QuotesCell> {
 //                                              height: 150.0,
 //                                              width: 50.0,
                                                     fit: BoxFit.fill,
-                                                    color: countValue1
+                                                    color: isDislike
                                                         ? Color(0xff00adef)
                                                         : Colors.grey),
                                               ),
@@ -2485,10 +2614,11 @@ class _QuotesCellState extends State<QuotesCell> {
                                   padding: const EdgeInsets.all(10),
                                   child: GestureDetector(
                                     onTap: () {
-                                      Share.share(
-                                        cellModel.state_id,
-                                        subject: cellModel.video_title,
-                                      );
+                                      // Share.share(
+                                      //   cellModel.state_id,
+                                      //   subject: cellModel.video_title,
+                                      // );
+                                      shareVideo(cellModel.state_id, cellModel.video_title);
                                     },
                                     child: Column(
                                       mainAxisAlignment:
@@ -2622,6 +2752,7 @@ class _QuotesCellState extends State<QuotesCell> {
             ],
           )),
       onTap: () {
+        print(videoLikesModel.dislike);
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -2649,149 +2780,313 @@ class _QuotesCellState extends State<QuotesCell> {
                     channel_name: cellModel.channel_name,
                     subscriber_count: cellModel.subscriber_count,
                     total_views: cellModel.total_views,
-                  )),
+                  reporter_image: cellModel.reporter_image,
+                  is_dislike: false,
+                  dislikeVal: videoLikesModel.dislike,
+                  likedVal: videoLikesModel.likes,
+
+              )),
         );
         // setState(() => countValue == 0 ? countValue = 1 : countValue = 0);
         // Grid Click
       },
     );
   }
-}
+  PackageInfo packageInfo;
+  shareVideo(String state_id, String video_title) async{
+    packageInfo = await PackageInfo.fromPlatform();
+    final RenderBox box = context.findRenderObject();
+    String packageName = packageInfo.packageName;
+    Share.share("see the latest video "+video_title +" "+state_id+" \nSee the latest video download we watch app, click on this link : https://play.google.com/store/apps/details?id="+packageName,
+        subject: packageInfo.appName,
+        sharePositionOrigin:box.localToGlobal(Offset.zero) & box.size);
+  }
 
-Future saveLike(String videoId, String status) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  // Showing CircularProgressIndicator.
 
-  String access_token = prefs.getString('access_token');
+  Future disLike(String videoId, String status) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    // Showing CircularProgressIndicator.
 
-  // Getting value from Controller
+    String access_token = prefs.getString('access_token');
+
+    // Getting value from Controller
 //    String email = _emailFilter.text.toString();
 //    String password = _mobileFilter.text.toString();
 
-  // SERVER LOGIN API URL
-  var url = 'https://wewatch.in/wewatch-up/api/v1/likes';
-  Map data = {
+    // SERVER LOGIN API URL
+    var url = 'https://wewatch.in/wewatch-up/api/v1/dislike';
+    Map data = {
 //      'API_KEY':"4762265654DFGDF00546FDG4FD654G6DF",
-    'video_id': videoId,
-    'status': status,
-  };
-  String formD = json.encode(data);
+      'video_id': videoId,
+      'status': status,
+    };
+    String formD = json.encode(data);
 
-  // Store all data with Param Name.
+    // Store all data with Param Name.
 
-  Map<String, String> headers = {
-    'Content-type': 'application/json',
-    'Accept': 'application/json',
-  };
+    Map<String, String> headers = {
+      'Content-type': 'application/json',
+      'Accept': 'application/json',
+    };
 
-  // Starting Web API Call.
+    // Starting Web API Call.
 //  var response = await http.post(url, body: formD,headers: headers);
-  var response = await http.post(url, body: formD, headers: {
-    'Content-Type': 'application/json',
-    'Authorization': 'Bearer $access_token',
-  });
+    var response = await http.post(url, body: formD, headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $access_token',
+    });
 
-  // Getting Server response into variable.
+    // Getting Server response into variable.
 
-  var body = json.decode(response.body);
-  var message = jsonDecode(response.body);
 
-  print("ffff" + message.toString());
+    try {
 
-  try {
-    if (response.statusCode == 200) {
-//        otp = body["otp"];
-      //prefs.setString('user_token',body['user_token'] );
-//        prefs.setString('id', body['id']);
-//        prefs.setString('std_id', body['std_id']);
-//        prefs.setString('name', body['name']);
-//        prefs.setString('designation', body['designation']);
-//        prefs.setString('phone', body['phone']);
-//        prefs.setString('email', body['email']);
-//        prefs.setString('doj', body['doj']);
-//        prefs.setString('pincode', body['pincode']);
-//        prefs.setString('state', body['state']);
-//        prefs.setString('address', body['address']);
-//        prefs.setString('image', body['image']);
-//        prefs.setString('role', body['role']);
-      //  prefs.setString('image',body['image'] );
-      // prefs.setString('image',body['image'] );
-      // Hiding the CircularProgressIndicator.
 
-      Fluttertoast.showToast(
-          msg: body['data']['message'],
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
+      if (response.statusCode == 200) {
+        var body = json.decode(response.body);
+        setState(() {
+          if (status == "1") {
+            if (cellModel.total_dislikes >= 0) {
+              setState(() {
+                cellModel.total_likes = cellModel.total_likes>0 ?cellModel.total_likes - 1:cellModel.total_likes;
+                cellModel.total_dislikes = cellModel.total_dislikes + 1;
+              });
+
+            }
+            islike=false;
+          }
+
+          if (status == "0") {
+            if (cellModel.total_dislikes > 0) {
+              setState(() {
+
+              });
+              cellModel.total_dislikes = cellModel.total_dislikes - 1;
+            }
+
+            //dislike_count = dislike_count + 1;
+            islike=false;
+          }
+        });
+        Fluttertoast.showToast(
+            msg: body['data']['message'],
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
 //                                          timeInSecForIosWeb: 1,
-          backgroundColor: Color(0xff00adef),
-          textColor: Colors.white,
-          fontSize: 16.0);
-    } else if (response.statusCode == 422) {
-      // If Email or Password did not Matched.
-      // Hiding the CircularProgressIndicator.
+            backgroundColor: Color(0xff00adef),
+            textColor: Colors.white,
+            fontSize: 16.0);
 
-      Fluttertoast.showToast(
-          msg: "Validation Failed",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 16.0);
-    } else if (response.statusCode == 400) {
-      // If Email or Password did not Matched.
-      // Hiding the CircularProgressIndicator.
+      } else if (response.statusCode == 422) {
+        // If Email or Password did not Matched.
+        // Hiding the CircularProgressIndicator.
 
-      Fluttertoast.showToast(
-          msg: "Request Fail",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 16.0);
-    } else if (response.statusCode == 401) {
-      // If Email or Password did not Matched.
-      // Hiding the CircularProgressIndicator.
+        Fluttertoast.showToast(
+            msg: "Validation Failed",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      } else if (response.statusCode == 400) {
+        // If Email or Password did not Matched.
+        // Hiding the CircularProgressIndicator.
 
-      Fluttertoast.showToast(
-          msg: "Authorization Failure",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 16.0);
-    } else if (response.statusCode == 500) {
-      // If Email or Password did not Matched.
-      // Hiding the CircularProgressIndicator.
+        Fluttertoast.showToast(
+            msg: "Request Fail",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      } else if (response.statusCode == 401) {
+        // If Email or Password did not Matched.
+        // Hiding the CircularProgressIndicator.
 
-      Fluttertoast.showToast(
-          msg: "Server Error",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 16.0);
-    } else {
-      Fluttertoast.showToast(
-          msg: "Something went wrong",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.red,
-          textColor: Colors.white,
-          fontSize: 16.0);
+        Fluttertoast.showToast(
+            msg: "Authorization Failure",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      } else if (response.statusCode == 500) {
+        // If Email or Password did not Matched.
+        // Hiding the CircularProgressIndicator.
+
+        Fluttertoast.showToast(
+            msg: "Server Error",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      } else {
+        Fluttertoast.showToast(
+            msg: "Something went wrong",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      }
+    } catch (e) {
+//       Fluttertoast.showToast(
+//         msg: e.toString(),
+//         toastLength: Toast.LENGTH_SHORT,
+//         gravity: ToastGravity.CENTER,
+// //        timeInSecForIos: 1,
+//       );
+      throw Exception(e);
     }
-  } catch (e) {
+    // If the Response Message is Matched.
+
+  }
+
+  Future saveLike(String videoId, String status) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    // Showing CircularProgressIndicator.
+
+    String access_token = prefs.getString('access_token');
+
+    // Getting value from Controller
+//    String email = _emailFilter.text.toString();
+//    String password = _mobileFilter.text.toString();
+
+    // SERVER LOGIN API URL
+    var url = 'https://wewatch.in/wewatch-up/api/v1/likes';
+    Map data = {
+//      'API_KEY':"4762265654DFGDF00546FDG4FD654G6DF",
+      'video_id': videoId,
+      'status': status,
+    };
+    String formD = json.encode(data);
+
+    // Store all data with Param Name.
+
+    Map<String, String> headers = {
+      'Content-type': 'application/json',
+      'Accept': 'application/json',
+    };
+
+    // Starting Web API Call.
+//  var response = await http.post(url, body: formD,headers: headers);
+    var response = await http.post(url, body: formD, headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $access_token',
+    });
+
+    // Getting Server response into variable.
+
+    var body = json.decode(response.body);
+    var message = jsonDecode(response.body);
+
+    print("ffff" + message.toString());
+
+    try {
+      if (response.statusCode == 200) {
+
+        setState(() {
+          if (status == "1") {
+            cellModel.total_likes = cellModel.total_likes + 1;
+            if (cellModel.total_dislikes > 0) {
+              cellModel.total_dislikes = cellModel.total_dislikes - 1;
+            }
+            islike=true;
+            isDislike=false;
+          }
+
+          if (status == "0") {
+            if (cellModel.total_likes > 0) {
+              cellModel.total_likes = cellModel.total_likes - 1;
+            }
+
+            cellModel.total_dislikes = cellModel.total_dislikes + 1;
+            islike=false;
+          }
+        });
+        Fluttertoast.showToast(
+            msg: body['data']['message'],
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+//                                          timeInSecForIosWeb: 1,
+            backgroundColor: Color(0xff00adef),
+            textColor: Colors.white,
+            fontSize: 16.0);
+      } else if (response.statusCode == 422) {
+        // If Email or Password did not Matched.
+        // Hiding the CircularProgressIndicator.
+
+        Fluttertoast.showToast(
+            msg: "Validation Failed",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      } else if (response.statusCode == 400) {
+        // If Email or Password did not Matched.
+        // Hiding the CircularProgressIndicator.
+
+        Fluttertoast.showToast(
+            msg: "Request Fail",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      } else if (response.statusCode == 401) {
+        // If Email or Password did not Matched.
+        // Hiding the CircularProgressIndicator.
+
+        Fluttertoast.showToast(
+            msg: "Authorization Failure",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      } else if (response.statusCode == 500) {
+        // If Email or Password did not Matched.
+        // Hiding the CircularProgressIndicator.
+
+        Fluttertoast.showToast(
+            msg: "Server Error",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      } else {
+        Fluttertoast.showToast(
+            msg: "Something went wrong",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      }
+    } catch (e) {
 //     Fluttertoast.showToast(
 //       msg: e.toString(),
 //       toastLength: Toast.LENGTH_SHORT,
 //       gravity: ToastGravity.CENTER,
 // //        timeInSecForIos: 1,
 //     );
-    throw Exception(e);
+      throw Exception(e);
+    }
+    // If the Response Message is Matched.
   }
-  // If the Response Message is Matched.
+
 }
+

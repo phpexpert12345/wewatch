@@ -146,41 +146,9 @@ class _VerifyOTPState extends State<VerifyOTP> {
         setState(() {
           visible = false;
         });
-        Fluttertoast.showToast(
-          msg: body['data']['message'],
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-//            timeInSecForIos: 1
-        );
-        Timer.run(() {
-          showDialog(
-            context: context,
-            builder: (_) =>AlertDialog(
-              shape: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16.0)),
-              title: Text('Thank you!'),
-              content: Wrap(
-                children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Text('Registration Successful',
-                        style: TextStyle(
-                          color: Color(0xff00adef),
-                        ),),
-                      Spacer(),
-                      Icon(Icons.check_circle,color: Color(0xff00adef),),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          );
-        });
 
-        Navigator.pushReplacement(
-          context,
-          CupertinoPageRoute(builder: (context) => LoginScreenProcessTwo()),
-        );
+        loginSuccess(body['data']['message']);
+
         // Navigate to Profile Screen & Sending Email to Next Screen.
 //        print("Ankit"+mobile);
 //        mobile=_mobileFilter.text.toString();
@@ -272,16 +240,7 @@ class _VerifyOTPState extends State<VerifyOTP> {
     } catch (e) {
       prefs.setString("filePath_profile", "");
       if(response.statusCode==200){
-        Fluttertoast.showToast(
-          msg: "Registration successfully completed.",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-//        timeInSecForIos: 1,
-        );
-        Navigator.pushReplacement(
-          context,
-          CupertinoPageRoute(builder: (context) => LoginScreenProcessTwo()),
-        );
+        loginSuccess("Registration successfully completed.");
       }else {
         Fluttertoast.showToast(
           msg: "Something went wrong please try again later",
@@ -296,6 +255,44 @@ class _VerifyOTPState extends State<VerifyOTP> {
     response.stream.transform(utf8.decoder).listen((value) {
       print(value);
     });
+  }
+
+  loginSuccess(String msg){
+    Fluttertoast.showToast(
+      msg: msg,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.CENTER,
+//            timeInSecForIos: 1
+    );
+    Timer.run(() {
+      showDialog(
+        context: context,
+        builder: (_) =>AlertDialog(
+          shape: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16.0)),
+          title: Text('Thank you!'),
+          content: Wrap(
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  Text('Registration Successful',
+                    style: TextStyle(
+                      color: Color(0xff00adef),
+                    ),),
+                  Spacer(),
+                  Icon(Icons.check_circle,color: Color(0xff00adef),),
+                ],
+              ),
+            ],
+          ),
+        ),
+      );
+    });
+
+    Navigator.pushReplacement(
+      context,
+      CupertinoPageRoute(builder: (context) => LoginScreenProcessTwo()),
+    );
   }
 
 

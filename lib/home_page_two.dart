@@ -14,6 +14,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:package_info/package_info.dart';
+import 'package:provider/provider.dart';
 import 'package:share/share.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:we_watch_app/LoginScreenProcessTwo.dart';
@@ -21,6 +22,7 @@ import 'package:we_watch_app/NavigationPages/page_five.dart';
 import 'package:we_watch_app/NavigationPages/page_four.dart';
 import 'package:we_watch_app/NavigationPages/page_three.dart';
 import 'package:we_watch_app/NavigationPages/video_list.dart';
+import 'package:we_watch_app/add_video.dart';
 import 'package:we_watch_app/change_password.dart';
 import 'package:we_watch_app/conts/config.dart';
 import 'package:we_watch_app/downloads.dart';
@@ -39,6 +41,7 @@ import 'package:we_watch_app/ui/login.dart';
 import 'package:we_watch_app/ui/show_up.dart';
 import 'package:we_watch_app/ui/watch_later.dart';
 import 'package:we_watch_app/upload_screen.dart';
+import 'package:we_watch_app/util/AppNotifierClass.dart';
 import 'package:we_watch_app/video_history.dart';
 import 'package:we_watch_app/video_home_page.dart';
 import 'package:we_watch_app/video_play_detail.dart';
@@ -62,7 +65,9 @@ int delayAmount = 400;
 
 class _HomePageTwoState extends State<HomePageTwo> {
   String profilePic, profilename, cityName = "", stateName = "";
+  String pinCode;
   static int doLogin;
+  AppNotifierClass _appNotifierClass;
 
   List pages = [
     MyRoute(
@@ -74,9 +79,9 @@ class _HomePageTwoState extends State<HomePageTwo> {
     MyRoute(
       page: PageThree(),
     ),
-    MyRoute(
-      page: ChannelList(),
-    ),
+    // MyRoute(
+    //   page: ChannelList(),
+    // ),
     MyRoute(
       page: EditProfile(),
     ),
@@ -116,13 +121,14 @@ class _HomePageTwoState extends State<HomePageTwo> {
     // Getting Server response into variable.
 
     List<Videos> list;
-    var message = jsonDecode(response.body);
-    Map<String, dynamic> decodedMap = jsonDecode(response.body);
-    Map<String, dynamic> decodedMapAttachment = jsonDecode(response.body);
-    var body = await json.decode(response.body);
+
 
     try {
       if (response.statusCode == 200) {
+       // var message = jsonDecode(response.body);
+        Map<String, dynamic> decodedMap = jsonDecode(response.body);
+       // Map<String, dynamic> decodedMapAttachment = jsonDecode(response.body);
+        var body = await json.decode(response.body);
         print("Ankit" + body.toString());
         print("Check" + body['data']['results'].toString());
         List<dynamic> dynamicList = decodedMap['data']['results'];
@@ -219,7 +225,7 @@ class _HomePageTwoState extends State<HomePageTwo> {
 
     cityName = prefs.getString('city');
     stateName = prefs.getString('state');
-
+    pinCode=prefs.getString('pincode');
     String access_token = prefs.getString('access_token');
     setState(() {
       if (access_token == null)
@@ -473,14 +479,20 @@ class _HomePageTwoState extends State<HomePageTwo> {
           latitude,longitude);
 
       Placemark place = p[0];
+      SharedPreferences prefs = await SharedPreferences.getInstance();
 
       setState(() {
         print("sunny District "+place.locality+" state " +place.administrativeArea+" country "+place.country +"pin code"+place.postalCode);
         cityName=place.locality;
+        prefs.setString('pincode', place.postalCode);
+        print("pin"+place.postalCode);
+        _appNotifierClass.setLocationChange(true);
+        _appNotifierClass.notifyListeners();
         // userCity=place.locality;
         // userState=place.administrativeArea;
         // userLocality=place.country;
         // userPostalCode=place.postalCode;
+        //this.initState();
       });
       // UtilityClass.showMsg("District "+place.locality+" state " +place.administrativeArea+" country "+place.country );
 
@@ -5514,6 +5526,13 @@ class _HomePageTwoState extends State<HomePageTwo> {
         },
       ),
     ];
+    _appNotifierClass = Provider.of<AppNotifierClass>(context);
+    if(_appNotifierClass.getLocationChange()){
+      this.reassemble();
+      // _appNotifierClass.setLocationChange(false);
+      // _appNotifierClass.notifyListeners();
+    }
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: COLORS.APP_BAR_COLOR,
@@ -5821,7 +5840,7 @@ class _HomePageTwoState extends State<HomePageTwo> {
 
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => Upload()),
+                              MaterialPageRoute(builder: (context) => AddVideo()),
                             );
                           },
                         ),
@@ -6419,10 +6438,20 @@ class _HomePageTwoState extends State<HomePageTwo> {
           ),
         ),
       ),
-      body: Center(
-        child: pages[_pageIndex].page,
+      body:
+         RefreshIndicator(
+          backgroundColor: Colors.blue,
+          color: Colors.white,
+          strokeWidth: 3,
+          onRefresh: () async{
+            _appNotifierClass.setChange(true);
+            _appNotifierClass.notifyListeners();
+          },
+          child: pages[_pageIndex].page,
+
       ),
       bottomNavigationBar: BottomNavigationBar(
+
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: SvgPicture.asset(
@@ -6454,15 +6483,15 @@ class _HomePageTwoState extends State<HomePageTwo> {
             ),
             title: Text(''),
           ),
-          BottomNavigationBarItem(
-            icon: SvgPicture.asset(
-              "assets/images/social_workers.svg",
-              color: Color(0xff444b69),
-              height: 20,
-              width: 20,
-            ),
-            title: Text(''),
-          ),
+          // BottomNavigationBarItem(
+          //   icon: SvgPicture.asset(
+          //     "assets/images/social_workers.svg",
+          //     color: Color(0xff444b69),
+          //     height: 20,
+          //     width: 20,
+          //   ),
+          //   title: Text(''),
+          // ),
           BottomNavigationBarItem(
             icon: SvgPicture.asset(
               "assets/images/worker.svg",
@@ -6482,7 +6511,7 @@ class _HomePageTwoState extends State<HomePageTwo> {
                 MaterialPageRoute(builder: (BuildContext context) => Login()),
                 (Route<dynamic> route) => false);
           } else {
-            if (index == 4) {
+            if (index == 3) {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => EditProfile()),

@@ -22,9 +22,7 @@ class _BirthdayState extends State<Birthday> {
   int delayAmount = 400;
   void selectDate(String selectedDate) async{
     SharedPreferences prefs = await SharedPreferences.getInstance();
-
     prefs.setString('dob',selectedDate);
-
   }
 
   @override
@@ -350,7 +348,7 @@ class _BirthdayState extends State<Birthday> {
                               day=_dateTime.day.toString();
                             }
 
-                          selectDate(day+"-"+month+"-"+_dateTime.year.toString());
+                          selectDate(day.toString()+"-"+month.toString()+"-"+_dateTime.year.toString());
                           print(day+"-"+month+"-"+_dateTime.year.toString());
                             Navigator.push(
                               context,
